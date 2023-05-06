@@ -2,9 +2,19 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "web:dev": "turbo run dev --filter=./apps/web",
+    "web:build": "turbo run build --filter=./apps/web",
+    "docs:dev": "turbo run dev --filter=./apps/docs",
+    "docs:build": "turbo run build --filter=./apps/docs",
+    "cli:run": "turbo run build --filter=./packages/interflex-cli && node ./packages/interflex-cli/dist/index.js",
+    "cli:build": "turbo run build --filter=./packages/interflex-cli",
+    "cli:pub": "turbo run pub --filter=./packages/interflex-cli",
+    "core:build": "turbo run build --filter=./packages/interflex-core",
+    "core:pub": "turbo run pub --filter=./packages/interflex-core",
+    "next:build": "turbo run build --filter=./packages/interflex-next",
+    "next:pub": "turbo run pub --filter=./packages/interflex-next"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
