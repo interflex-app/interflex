@@ -2,6 +2,7 @@
 
 import { link, login } from "./auth.js";
 import { generateTypes } from "./generator.js";
+import { runLive } from "./live.js";
 import { sync } from "./syncer.js";
 import { getCommand, readConfig } from "./utils.js";
 
@@ -10,6 +11,9 @@ const main = async () => {
   const config = await readConfig();
 
   switch (command) {
+    case "live":
+      await runLive(config);
+      break;
     case "sync":
       await sync(config);
       break;

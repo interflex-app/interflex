@@ -37,7 +37,7 @@ export const getCommand = () => {
     .description("Interflex CLI for managing your Interflex project.")
     .argument(
       "<command>",
-      "Command to run. Can be 'sync', 'gen', 'login' or 'link'."
+      "Command to run. Can be 'live', 'sync', 'gen', 'login' or 'link'."
     );
 
   if (!process.argv[2]) {
@@ -47,7 +47,7 @@ export const getCommand = () => {
   program.parse(process.argv);
 
   const commandParse = z
-    .enum(["sync", "gen", "login", "link"])
+    .enum(["live", "sync", "gen", "login", "link"])
     .safeParse(program.args[0]);
 
   if (!commandParse.success) {
