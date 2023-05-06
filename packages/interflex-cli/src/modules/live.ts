@@ -1,6 +1,6 @@
 import { type InterflexConfig } from "interflex-core";
-import { warning } from "./cli";
+import { warning } from "../cli";
 
-export const sync = async (config: InterflexConfig) => {
+export const runLive = async (config: InterflexConfig) => {
   warning("Not implemented yet.");
 };

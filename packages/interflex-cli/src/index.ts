@@ -1,9 +1,9 @@
 #! /usr/bin/env node
 
-import { link, login } from "./auth.js";
-import { generateTypes } from "./generator.js";
-import { runLive } from "./live.js";
-import { sync } from "./syncer.js";
+import { link, login } from "./modules/auth.js";
+import { generateTypes } from "./modules/generator.js";
+import { sync } from "./modules/syncer.js";
+import { runLive } from "./modules/live.js";
 import { getCommand, readConfig } from "./utils.js";
 
 const main = async () => {
