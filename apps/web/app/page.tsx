@@ -1,3 +1,3 @@
 export default function Page() {
-  return "Landing page";
+  return "Welcome to Interflex!";
 }
