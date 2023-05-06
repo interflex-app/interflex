@@ -177,6 +177,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@radix-ui/react-slot':
+        specifier: ^1.0.1
+        version: 1.0.1(react@17.0.2)
       class-variance-authority:
         specifier: ^0.6.0
         version: 0.6.0(typescript@4.9.5)
@@ -912,6 +915,25 @@ packages:
 
   /@popperjs/core@2.11.7:
     resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
+    dev: false
+
+  /@radix-ui/react-compose-refs@1.0.0(react@17.0.2):
+    resolution: {integrity: sha512-0KaSv6sx787/hK3eF53iOkiSLwAGlFMx5lotrqD2pTjB18KbybKoEIgkNZTKC60YECDQTKGTRcDBILwZVqVKvA==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+    dependencies:
+      '@babel/runtime': 7.21.5
+      react: 17.0.2
+    dev: false
+
+  /@radix-ui/react-slot@1.0.1(react@17.0.2):
+    resolution: {integrity: sha512-avutXAFL1ehGvAXtPquu0YK5oz6ctS474iM3vNGQIkswrVhdrS52e3uoMQBzZhNRAIE0jBnUyXWNmSjGHhCFcw==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+    dependencies:
+      '@babel/runtime': 7.21.5
+      '@radix-ui/react-compose-refs': 1.0.0(react@17.0.2)
+      react: 17.0.2
     dev: false
 
   /@rushstack/eslint-patch@1.2.0:
