@@ -33,8 +33,10 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "commander": "^10.0.1",
     "interflex-core": "workspace:*",
     "jiti": "^1.18.2",
-    "sucrase": "^3.32.0"
+    "sucrase": "^3.32.0",
+    "zod": "^3.21.4"
   }
 }

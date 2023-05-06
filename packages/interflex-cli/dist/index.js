@@ -1,3 +1,0 @@
-#! /usr/bin/env node
-import n from"path";import{configSchema as c}from"interflex-core";var t=r=>{console.error(`[ERROR]: ${r}`),process.exit(1)};import i from"jiti";import{transform as a}from"sucrase";var f=async()=>{let r=n.resolve(process.cwd(),"interflex.config.ts"),s=i(process.argv[1],{interopDefault:!0,transform:e=>a(e.source,{transforms:["typescript","imports"]})})(r),o=c.safeParse(s);if(!o.success)return t("Could not parse the config file.");console.log(o.data,process.argv)};await f();
-//# sourceMappingURL=index.js.map

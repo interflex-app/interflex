@@ -156,6 +156,9 @@ importers:
 
   packages/interflex-cli:
     dependencies:
+      commander:
+        specifier: ^10.0.1
+        version: 10.0.1
       interflex-core:
         specifier: workspace:*
         version: link:../interflex-core
@@ -165,6 +168,9 @@ importers:
       sucrase:
         specifier: ^3.32.0
         version: 3.32.0
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
     devDependencies:
       '@types/node':
         specifier: ^20.1.0
@@ -1522,6 +1528,11 @@ packages:
 
   /comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
+    dev: false
+
+  /commander@10.0.1:
+    resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
+    engines: {node: '>=14'}
     dev: false
 
   /commander@4.1.1:
