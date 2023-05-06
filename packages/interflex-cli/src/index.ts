@@ -6,7 +6,7 @@ import { error } from "./cli";
 import jitiFactory from "jiti";
 import { transform } from "sucrase";
 
-const main = async () => {
+const readConfig = async () => {
   const configFilePath = path.resolve(process.cwd(), "interflex.config.ts");
 
   const configRaw = jitiFactory(process.argv[1], {
@@ -18,13 +18,17 @@ const main = async () => {
     },
   })(configFilePath);
 
-  const config = configSchema.safeParse(configRaw);
+  const configParse = configSchema.safeParse(configRaw);
 
-  if (!config.success) {
+  if (!configParse.success) {
     return error("Could not parse the config file.");
   }
 
-  console.log(config.data);
+  return configParse.data;
+};
+
+const main = async () => {
+  const config = await readConfig();
 };
 
 await main();
