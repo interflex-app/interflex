@@ -1,3 +1,3 @@
 #! /usr/bin/env node
-console.log("Hello world!");
+import n from"path";import{configSchema as i}from"interflex-core";var t=r=>{console.error(`[ERROR]: ${r}`),process.exit(1)};import c from"jiti";import{transform as a}from"sucrase";var f=async()=>{let r=n.resolve(process.cwd(),"interflex.config.ts"),e=c(process.argv[1],{interopDefault:!0,transform:s=>a(s.source,{transforms:["typescript","imports"]})})(r),o=i.safeParse(e);if(!o.success)return t("Could not parse the config file.");console.log(o.data)};await f();
 //# sourceMappingURL=index.js.map

@@ -47,6 +47,9 @@ importers:
       '@interflex-app/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      interflex-next:
+        specifier: workspace:*
+        version: link:../../packages/interflex-next
       lucide-react:
         specifier: ^0.212.0
         version: 0.212.0(react@18.2.0)
@@ -152,6 +155,16 @@ importers:
   config/tsconfig: {}
 
   packages/interflex-cli:
+    dependencies:
+      interflex-core:
+        specifier: workspace:*
+        version: link:../interflex-core
+      jiti:
+        specifier: ^1.18.2
+        version: 1.18.2
+      sucrase:
+        specifier: ^3.32.0
+        version: 3.32.0
     devDependencies:
       '@types/node':
         specifier: ^20.1.0
@@ -164,12 +177,20 @@ importers:
         version: 5.0.4
 
   packages/interflex-core:
+    dependencies:
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
     devDependencies:
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
 
   packages/interflex-next:
+    dependencies:
+      interflex-core:
+        specifier: workspace:*
+        version: link:../interflex-core
     devDependencies:
       typescript:
         specifier: ^5.0.4

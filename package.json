@@ -10,13 +10,14 @@
     "docs:build": "turbo run build --filter=./apps/docs",
     "test:dev": "turbo run dev --filter=./apps/test",
     "test:build": "turbo run build --filter=./apps/test",
+    "core:build": "turbo run build --filter=./packages/interflex-core",
     "cli:run": "turbo run build --filter=./packages/interflex-cli && node ./packages/interflex-cli/dist/index.js",
+    "cli:test-run": "turbo run build --filter=./packages/interflex-cli && cd apps/test && node ../../packages/interflex-cli/dist/index.js",
     "cli:build": "turbo run build --filter=./packages/interflex-cli",
     "cli:pub": "turbo run pub --filter=./packages/interflex-cli",
-    "core:build": "turbo run build --filter=./packages/interflex-core",
-    "core:pub": "turbo run pub --filter=./packages/interflex-core",
     "next:build": "turbo run build --filter=./packages/interflex-next",
-    "next:pub": "turbo run pub --filter=./packages/interflex-next"
+    "next:pub": "turbo run pub --filter=./packages/interflex-next",
+    "pkg:sync": "turbo run build --filter=./packages/* && pnpm install"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

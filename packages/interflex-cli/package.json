@@ -31,5 +31,10 @@
     "@types/node": "^20.1.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "interflex-core": "workspace:*",
+    "jiti": "^1.18.2",
+    "sucrase": "^3.32.0"
   }
 }

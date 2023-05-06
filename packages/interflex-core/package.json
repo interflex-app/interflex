@@ -14,8 +14,7 @@
   },
   "homepage": "https://interflex.vercel.app/",
   "scripts": {
-    "build": "tsc",
-    "pub": "pnpm run build && npm publish"
+    "build": "tsc"
   },
   "keywords": [
     "i18n",
@@ -29,5 +28,8 @@
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "zod": "^3.21.4"
   }
 }
