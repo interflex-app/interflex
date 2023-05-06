@@ -1,8 +1,34 @@
 {
   "name": "interflex",
   "version": "0.0.0",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/interflex-app/interflex.git"
+  },
+  "homepage": "https://interflex.vercel.app/",
+  "exports": "./dist/index.js",
+  "bin": "./dist/index.js",
+  "engines": {
+    "node": ">=14.16"
+  },
+  "scripts": {
+    "build": "tsup",
+    "pub": "pnpm run build && npm publish"
+  },
+  "keywords": [
+    "i18n",
+    "nextjs",
+    "next",
+    "typescript",
+    "reactjs",
+    "react"
+  ],
+  "author": "Piotr Pilszczek",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.1.0",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.4"
+  }
 }
