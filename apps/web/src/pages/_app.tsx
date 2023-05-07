@@ -1,5 +1,8 @@
 import "@interflex-app/ui/globals.css";
-import type { AppProps } from "next/app";
+import { type AppType } from "next/app";
+import { type Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
+import { api } from "../utils/api";
 import { Inter as FontSans } from "next/font/google";
 
 const font = FontSans({
@@ -7,7 +10,10 @@ const font = FontSans({
   subsets: ["latin", "latin-ext"],
 });
 
-const App = ({ Component, pageProps }: AppProps) => {
+const MyApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   return (
     <>
       <style jsx global>
@@ -19,10 +25,12 @@ const App = ({ Component, pageProps }: AppProps) => {
       </style>
 
       <div className={`${font.className} ${font.variable}`}>
-        <Component {...pageProps} />
+        <SessionProvider session={session}>
+          <Component {...pageProps} />
+        </SessionProvider>
       </div>
     </>
   );
 };
 
-export default App;
+export default api.withTRPC(MyApp);
