@@ -85,7 +85,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    @apply bg-black;
+    @apply bg-gray-600;
   }
 
   body {

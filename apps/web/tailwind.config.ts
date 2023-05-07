@@ -16,6 +16,7 @@ export default {
     extend: {
       backgroundImage: {
         pattern: "url('/assets/background.svg')",
+        "pattern-light": "url('/assets/background-light.svg')",
       },
     },
   },

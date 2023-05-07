@@ -3,11 +3,12 @@ import Navbar from "../components/navbar";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "@interflex-app/ui";
+import Logo from "../components/logo";
+import ThemeSwitcher from "../components/theme-switcher";
 
-const HomeLayout: React.FC<PropsWithChildren<{ authProtected?: boolean }>> = ({
-  children,
-  authProtected = false,
-}) => {
+const HomeLayout: React.FC<
+  PropsWithChildren<{ authProtected?: boolean; footer?: boolean }>
+> = ({ children, authProtected = false, footer = true }) => {
   const router = useRouter();
   const { data, status } = useSession();
 
@@ -34,6 +35,19 @@ const HomeLayout: React.FC<PropsWithChildren<{ authProtected?: boolean }>> = ({
           </div>
         )}
       </div>
+
+      {footer && (
+        <footer className="mt-24 border-t bg-background py-6">
+          <div className="flex items-center justify-between gap-2 px-6">
+            <div className="flex items-center gap-4">
+              <Logo type="small" size={0.7} />
+              Copyright Interflex &copy; {new Date().getFullYear()}
+            </div>
+
+            <ThemeSwitcher />
+          </div>
+        </footer>
+      )}
     </div>
   );
 };

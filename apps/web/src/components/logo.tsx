@@ -1,3 +1,4 @@
+import { useTheme } from "next-themes";
 import Image from "next/image";
 
 const Logo = (
@@ -11,10 +12,17 @@ const Logo = (
     fullWidth: false,
   }
 ) => {
+  const { theme, systemTheme } = useTheme();
+
+  const suffix =
+    theme === "dark" || (systemTheme === "dark" && theme === "system")
+      ? "-light"
+      : "";
+
   if (type === "small") {
     return (
       <Image
-        src={"/assets/logo-sm.svg"}
+        src={`/assets/logo-sm${suffix}.svg`}
         {...(fullWidth
           ? { fill: true, style: { objectFit: "cover" } }
           : { width: 36.65 * (size || 1), height: 36.03 * (size || 1) })}
@@ -25,7 +33,7 @@ const Logo = (
 
   return (
     <Image
-      src={"/assets/logo-lg.svg"}
+      src={`/assets/logo-lg${suffix}.svg`}
       {...(fullWidth
         ? { fill: true, style: { objectFit: "cover" } }
         : { width: 186 * (size || 1), height: 38 * (size || 1) })}

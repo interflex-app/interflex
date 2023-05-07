@@ -10,10 +10,10 @@ const Index: NextPageWithLayout = () => {
   const { data } = useSession();
 
   return (
-    <div className="mt-24 w-full text-center">
+    <div className="mt-24 w-full px-4 text-center">
       <h2 className="text-2xl md:text-4xl">Let your apps be</h2>
 
-      <h1 className="mb-12 mt-6 text-5xl font-bold sm:text-6xl md:text-7xl">
+      <h1 className="mb-12 mt-3 text-4xl font-bold sm:text-6xl md:mt-6 md:text-7xl">
         <span className="gradient-text">multilingual</span>.
       </h1>
 
@@ -35,6 +35,14 @@ const Index: NextPageWithLayout = () => {
         <Link href={env.NEXT_PUBLIC_DOCS_URL}>
           <Button variant={"outline"}>Documentation</Button>
         </Link>
+      </div>
+
+      <div className="mt-48">
+        <h2 className="text-3xl">Manage translations with ease</h2>
+        <p className="mt-4">
+          Use NPM package and our dashboard. Everything is typesafe and easy to
+          use.
+        </p>
       </div>
     </div>
   );

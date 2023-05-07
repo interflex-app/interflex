@@ -8,6 +8,7 @@ import { Montserrat as FontSans } from "next/font/google";
 import Head from "next/head";
 import { type NextPage } from "next";
 import { type ReactElement, type ReactNode } from "react";
+import { ThemeProvider } from "next-themes";
 
 const font = FontSans({
   variable: "--font-sans",
@@ -48,13 +49,15 @@ const App = ({
         `}
       </style>
 
-      <div
-        className={`${font.className} ${font.variable} min-h-screen bg-pattern`}
-      >
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProvider session={session}>
-          {getLayout(<Component {...pageProps} />)}
+          <div
+            className={`${font.className} ${font.variable} min-h-screen bg-pattern dark:bg-pattern-light`}
+          >
+            {getLayout(<Component {...pageProps} />)}
+          </div>
         </SessionProvider>
-      </div>
+      </ThemeProvider>
     </>
   );
 };
