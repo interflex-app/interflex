@@ -4,12 +4,15 @@ import { useSession } from "next-auth/react";
 import { Skeleton } from "@interflex-app/ui";
 import { useRouter } from "next/router";
 
-const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
+const AppLayout: React.FC<PropsWithChildren<{ authProtected?: boolean }>> = ({
+  children,
+  authProtected = true,
+}) => {
   const router = useRouter();
   const { data, status } = useSession();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (status === "unauthenticated" && authProtected) {
       void router.push("/");
     }
   }, [status, router]);
@@ -19,7 +22,7 @@ const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
       <Navbar />
 
       <div className="mt-12 w-full px-8 md:px-14">
-        {!!data ? (
+        {!!data || !authProtected ? (
           children
         ) : (
           <div className="flex items-center space-x-4">
