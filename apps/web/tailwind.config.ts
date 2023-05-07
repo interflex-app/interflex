@@ -12,4 +12,11 @@ export default {
     ),
   ],
   presets: [baseConfig],
+  theme: {
+    extend: {
+      backgroundImage: {
+        pattern: "url('/assets/background.svg')",
+      },
+    },
+  },
 } satisfies Config;
