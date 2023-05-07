@@ -1,1 +1,3 @@
-# Test app
+# `apps/test`
+
+Test app for building Interflex

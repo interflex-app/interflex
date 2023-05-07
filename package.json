@@ -10,10 +10,9 @@
     "docs:build": "turbo run build --filter=./apps/docs",
     "test:dev": "turbo run dev --filter=./apps/test",
     "test:build": "turbo run build --filter=./apps/test",
-    "cli:run": "pnpm pkg:sync && node ./packages/interflex-cli/dist/index.js",
-    "cli:test": "pnpm pkg:sync && cd apps/test && node ../../packages/interflex-cli/dist/index.js",
-    "cli:pub": "turbo run pub --filter=./packages/interflex-cli",
-    "next:pub": "turbo run pub --filter=./packages/interflex-next",
+    "cli:run": "pnpm pkg:sync && node ./packages/interflex/dist/bin/index.js",
+    "cli:test": "pnpm pkg:sync && cd apps/test && node ../../packages/interflex/dist/bin/index.js",
+    "pkg:pub": "turbo run pub --filter=./packages/interflex",
     "pkg:sync": "turbo run build --filter=./packages/* && pnpm install"
   },
   "devDependencies": {

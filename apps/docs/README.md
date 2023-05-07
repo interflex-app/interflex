@@ -1,3 +1,3 @@
 # `apps/docs`
 
-Documentation for Interflex.
+Nextra documentation

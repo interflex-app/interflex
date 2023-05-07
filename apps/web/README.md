@@ -1,1 +1,3 @@
-# Web app
+# `apps/web`
+
+NextJS web dashboard

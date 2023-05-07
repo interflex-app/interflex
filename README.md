@@ -4,6 +4,8 @@
 
 - `apps/web` - NextJS web dashboard
 - `apps/docs` - Nextra documentation
-- `packages/interflex-core` - Interflex core package
-- `packages/interflex-next` - Interflex NextJS package
-- `packages/interflex-cli` - Interflex CLI generator tool
+- `apps/test` - Test app for building Interflex
+- `packages/interflex` - Interflex package
+- `packages/ui` - Shared UI package
+- `config/eslint-config-main` - Shared ESLint config
+- `config/tsconfig` - Shared TSConfig file

@@ -1,16 +1,18 @@
 import path from "path";
 import jitiFactory from "jiti";
 import { transform } from "sucrase";
-import { configSchema } from "interflex-core";
 import { error } from "./cli.js";
 import { Command } from "commander";
 import { z } from "zod";
+import { JITIOptions } from "jiti/dist/types.js";
+import { configSchema } from "../shared/config.js";
 
 export const readModule = (filePath: string): string => {
+  //@ts-expect-error
   const jiti = jitiFactory(process.argv[1], {
     interopDefault: true,
-    transform: (opts) => {
-      return transform(opts.source, {
+    transform: (opts: JITIOptions["transformOptions"]) => {
+      return transform(opts?.source, {
         transforms: ["typescript", "imports"],
       });
     },

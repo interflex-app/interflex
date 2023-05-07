@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@interflex-app/ui": "workspace:*",
-    "interflex-next": "workspace:*",
+    "interflex": "workspace:*",
     "lucide-react": "^0.212.0",
     "next": "13.4.1",
     "react": "^18.2.0",

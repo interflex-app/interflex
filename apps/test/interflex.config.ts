@@ -1,4 +1,4 @@
-import { defineConfig } from "interflex-next";
+import { defineConfig } from "interflex";
 
 export default defineConfig({
   directory: "i18n",

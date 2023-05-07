@@ -1,0 +1,8 @@
+{
+  "name": "interflex/next",
+  "type": "module",
+  "main": "../dist/lib/next.js",
+  "module": "../dist/lib/next.js",
+  "types": "../dist/lib/next.d.ts",
+  "sideEffects": false
+}

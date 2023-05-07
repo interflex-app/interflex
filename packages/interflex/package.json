@@ -1,15 +1,28 @@
 {
   "name": "interflex",
   "private": false,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/interflex-app/interflex.git"
   },
   "homepage": "https://interflex.vercel.app/",
-  "exports": "./dist/index.js",
-  "bin": "./dist/index.js",
+  "types": "dist/lib",
+  "exports": {
+    ".": {
+      "default": "./dist/lib/index.js",
+      "types": "./dist/lib/index.d.ts"
+    },
+    "./next": {
+      "default": "./dist/lib/next.js",
+      "types": "./dist/lib/next.d.ts"
+    }
+  },
+  "files": [
+    "dist/lib"
+  ],
+  "bin": "./dist/bin/index.js",
   "engines": {
     "node": ">=14.16"
   },
@@ -34,7 +47,6 @@
   },
   "dependencies": {
     "commander": "^10.0.1",
-    "interflex-core": "workspace:*",
     "jiti": "^1.18.2",
     "sucrase": "^3.32.0",
     "zod": "^3.21.4"
