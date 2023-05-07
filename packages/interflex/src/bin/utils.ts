@@ -8,17 +8,21 @@ import { JITIOptions } from "jiti/dist/types.js";
 import { configSchema } from "../shared/config.js";
 
 export const readModule = (filePath: string): string => {
-  //@ts-expect-error
-  const jiti = jitiFactory(process.argv[1], {
-    interopDefault: true,
-    transform: (opts: JITIOptions["transformOptions"]) => {
-      return transform(opts?.source, {
-        transforms: ["typescript", "imports"],
-      });
-    },
-  });
+  try {
+    //@ts-expect-error
+    const jiti = jitiFactory(process.argv[1], {
+      interopDefault: true,
+      transform: (opts: JITIOptions["transformOptions"]) => {
+        return transform(opts?.source, {
+          transforms: ["typescript", "imports"],
+        });
+      },
+    });
 
-  return jiti(filePath);
+    return jiti(filePath);
+  } catch (e) {
+    return error("Could not find the config file. Make sure it exists.");
+  }
 };
 
 export const readConfig = async () => {
