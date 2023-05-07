@@ -1,7 +1,7 @@
 {
   "name": "interflex",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     }
   },
   "files": [
-    "dist/lib"
+    "dist"
   ],
   "bin": "./dist/bin/index.js",
   "engines": {
