@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect } from "react";
+import { type PropsWithChildren, useEffect } from "react";
 import Navbar from "../components/navbar";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "@interflex-app/ui";
@@ -10,9 +10,9 @@ const AppLayout: React.FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/");
+      void router.push("/");
     }
-  }, [status]);
+  }, [status, router]);
 
   return (
     <div>

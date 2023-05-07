@@ -88,13 +88,13 @@ const Navbar: React.FC = () => {
                     <span>Profile</span>
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem onClick={async () => await signOut()}>
+                <DropdownMenuItem onClick={() => void signOut()}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </>
             ) : (
-              <DropdownMenuItem onClick={async () => await signIn("github")}>
+              <DropdownMenuItem onClick={() => void signIn("github")}>
                 <LogIn className="mr-2 h-4 w-4" />
                 <span>Sign in</span>
               </DropdownMenuItem>

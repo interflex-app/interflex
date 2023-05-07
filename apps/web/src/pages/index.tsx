@@ -26,9 +26,7 @@ const Index: NextPageWithLayout = () => {
           </Link>
         ) : (
           <Button
-            onClick={async () =>
-              await signIn("github", { callbackUrl: "/app" })
-            }
+            onClick={() => void signIn("github", { callbackUrl: "/app" })}
           >
             Get started <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
