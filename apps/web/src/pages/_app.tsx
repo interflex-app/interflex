@@ -1,11 +1,13 @@
 import "@interflex-app/ui/globals.css";
 import "../styles/globals.css";
-import { type AppType } from "next/app";
+import { type AppProps } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { api } from "../utils/api";
 import { Montserrat as FontSans } from "next/font/google";
 import Head from "next/head";
+import { type NextPage } from "next";
+import { type ReactElement, type ReactNode } from "react";
 
 const font = FontSans({
   variable: "--font-sans",
@@ -13,10 +15,20 @@ const font = FontSans({
   weight: ["400", "600", "900"],
 });
 
-const MyApp: AppType<{ session: Session | null }> = ({
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  getLayout: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout<T> = AppProps<T> & {
+  Component: NextPageWithLayout;
+};
+
+const App = ({
   Component,
   pageProps: { session, ...pageProps },
-}) => {
+}: AppPropsWithLayout<{ session: Session | null }>) => {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
     <>
       <Head>
@@ -40,11 +52,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
         className={`${font.className} ${font.variable} min-h-screen bg-pattern`}
       >
         <SessionProvider session={session}>
-          <Component {...pageProps} />
+          {getLayout(<Component {...pageProps} />)}
         </SessionProvider>
       </div>
     </>
   );
 };
 
-export default api.withTRPC(MyApp);
+export default api.withTRPC(App);
