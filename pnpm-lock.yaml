@@ -205,6 +205,10 @@ importers:
       eslint-plugin-react:
         specifier: 7.28.0
         version: 7.28.0(eslint@8.36.0)
+    devDependencies:
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
 
   config/tsconfig: {}
 
