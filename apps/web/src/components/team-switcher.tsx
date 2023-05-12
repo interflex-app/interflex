@@ -214,23 +214,21 @@ const TeamSwitcher: React.FC<
         </DialogHeader>
 
         <form
-          onSubmit={
-            void handleSubmit(async (formData) => {
-              try {
-                await createTeam(formData);
-                await refetchTeams();
+          onSubmit={handleSubmit(async (formData) => {
+            try {
+              await createTeam(formData);
+              await refetchTeams();
 
-                reset();
-                setShowNewTeamDialog(false);
-              } catch (e) {
-                Object.entries(
-                  (e as RouterError).data.zodError?.fieldErrors ?? []
-                ).forEach(([key, value]) =>
-                  setError(key as "root", { message: value?.[0] ?? "" })
-                );
-              }
-            })
-          }
+              reset();
+              setShowNewTeamDialog(false);
+            } catch (e) {
+              Object.entries(
+                (e as RouterError).data.zodError?.fieldErrors ?? []
+              ).forEach(([key, value]) =>
+                setError(key as "root", { message: value?.[0] ?? "" })
+              );
+            }
+          })}
         >
           <div>
             <div className="space-y-4 py-2 pb-4">
