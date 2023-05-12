@@ -41,6 +41,21 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
   ],
+  events: {
+    createUser: async ({ user }) => {
+      await prisma.team.create({
+        data: {
+          name: user.name ? `${user.name}'s team` : "Personal team",
+          personal: true,
+          members: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
+    },
+  },
 };
 
 export const getServerAuthSession = (ctx: {

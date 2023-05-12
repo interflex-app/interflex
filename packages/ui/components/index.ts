@@ -3,3 +3,8 @@ export * from "./avatar";
 export * from "./popover";
 export * from "./dropdown-menu";
 export * from "./skeleton";
+export * from "./command";
+export * from "./dialog";
+export * from "./input";
+export * from "./label";
+export * from "./select";

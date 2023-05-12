@@ -1,12 +1,12 @@
 import { useTheme } from "next-themes";
 import Image from "next/image";
 
-const Logo = (
-  {
-    size,
-    type,
-    fullWidth,
-  }: { size?: number; type?: "small" | "large"; fullWidth?: boolean } = {
+const Logo: React.FC<{
+  size?: number;
+  type?: "small" | "large";
+  fullWidth?: boolean;
+}> = (
+  { size, type, fullWidth } = {
     size: 1,
     type: "large",
     fullWidth: false,

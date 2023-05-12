@@ -9,12 +9,6 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -52,6 +46,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    teams         Team[]
 }
 
 model VerificationToken {
@@ -60,4 +55,25 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Team {
+    id        String   @id @default(cuid())
+    name      String
+    personal  Boolean  @default(false)
+    members   User[]
+    projects  Project[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Project {
+    id        String   @id @default(cuid())
+    name      String
+    team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+    teamId    String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([teamId])
 }
