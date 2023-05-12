@@ -28,7 +28,12 @@ import {
 } from "@interflex-app/ui";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { RouterError, RouterInputs, RouterOutputs, api } from "../utils/api";
+import {
+  type RouterError,
+  type RouterInputs,
+  type RouterOutputs,
+  api,
+} from "../utils/api";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -175,7 +180,9 @@ const TeamSwitcher: React.FC<
                     </CommandItem>
                   ))
                 ) : (
-                  <div className="p-2 text-xs">You don't have any teams!</div>
+                  <div className="p-2 text-xs">
+                    You don&apos;t have any teams!
+                  </div>
                 )}
               </CommandGroup>
             </CommandList>
@@ -207,21 +214,23 @@ const TeamSwitcher: React.FC<
         </DialogHeader>
 
         <form
-          onSubmit={handleSubmit(async (formData) => {
-            try {
-              await createTeam(formData);
-              await refetchTeams();
+          onSubmit={
+            void handleSubmit(async (formData) => {
+              try {
+                await createTeam(formData);
+                await refetchTeams();
 
-              reset();
-              setShowNewTeamDialog(false);
-            } catch (e) {
-              Object.entries(
-                (e as RouterError).data.zodError?.fieldErrors ?? []
-              ).forEach(([key, value]) =>
-                setError(key as "root", { message: value?.[0] ?? "" })
-              );
-            }
-          })}
+                reset();
+                setShowNewTeamDialog(false);
+              } catch (e) {
+                Object.entries(
+                  (e as RouterError).data.zodError?.fieldErrors ?? []
+                ).forEach(([key, value]) =>
+                  setError(key as "root", { message: value?.[0] ?? "" })
+                );
+              }
+            })
+          }
         >
           <div>
             <div className="space-y-4 py-2 pb-4">

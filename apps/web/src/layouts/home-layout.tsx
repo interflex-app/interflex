@@ -16,7 +16,7 @@ const HomeLayout: React.FC<
     if (status === "unauthenticated" && authProtected) {
       void router.push("/");
     }
-  }, [status, router]);
+  }, [status, router, authProtected]);
 
   return (
     <div>

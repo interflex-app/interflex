@@ -15,7 +15,7 @@ const AppLayout: React.FC<PropsWithChildren<{ authProtected?: boolean }>> = ({
     if (status === "unauthenticated" && authProtected) {
       void router.push("/");
     }
-  }, [status, router]);
+  }, [status, router, authProtected]);
 
   return (
     <div>
