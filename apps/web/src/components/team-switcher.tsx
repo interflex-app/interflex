@@ -28,7 +28,12 @@ import {
 } from "@interflex-app/ui";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { RouterOutputs, api } from "../utils/api";
+import { RouterInputs, RouterOutputs, api } from "../utils/api";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+export const createTeamSchema = z.object({ name: z.string().min(1) });
 
 type Team = RouterOutputs["team"]["getAllTeams"]["personal"];
 
@@ -37,21 +42,35 @@ const TeamSwitcher: React.FC<
 > = ({ className }) => {
   const [open, setOpen] = useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = useState(false);
-
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
   const { data: sesh } = useSession();
 
   const {
+    register,
+    handleSubmit,
+    formState: { errors: createTeamFormError },
+    clearErrors,
+  } = useForm<RouterInputs["team"]["createTeam"]>({
+    resolver: zodResolver(createTeamSchema),
+  });
+
+  const {
+    mutateAsync: createTeam,
+    error: createTeamApiError,
+    isLoading: createTeamLoading,
+  } = api.team.createTeam.useMutation();
+
+  const {
     data: teamsData,
     isLoading: teamsLoading,
     isError: teamsError,
+    refetch: refetchTeams,
   } = api.team.getAllTeams.useQuery(undefined, {
     enabled: !!sesh,
-    onSuccess: (t) => setSelectedTeam(t.personal),
   });
 
-  if (!sesh || !teamsData || teamsLoading || teamsError || !selectedTeam) {
+  if (!sesh || !teamsData || teamsLoading || teamsError) {
     return (
       <div className="flex w-[200px] items-center justify-between px-4">
         <Skeleton className="mr-2 h-5 w-5 rounded-full" />
@@ -75,17 +94,20 @@ const TeamSwitcher: React.FC<
             <Avatar className="mr-2 h-5 w-5">
               <AvatarImage
                 src={
-                  selectedTeam.id === teamsData.personal.id
+                  (selectedTeam ?? teamsData.personal).id ===
+                  teamsData.personal.id
                     ? sesh.user.image ?? "__NON_EXISTENT_IMAGE__"
-                    : `https://avatar.vercel.sh/interflex-team-${selectedTeam.id}.png`
+                    : `https://avatar.vercel.sh/interflex-team-${
+                        (selectedTeam ?? teamsData.personal).id
+                      }.png`
                 }
-                alt={selectedTeam.name}
+                alt={(selectedTeam ?? teamsData.personal).name}
               />
               <AvatarFallback>
                 <User />
               </AvatarFallback>
             </Avatar>
-            {selectedTeam.name}
+            {(selectedTeam ?? teamsData.personal).name}
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -111,11 +133,12 @@ const TeamSwitcher: React.FC<
                       <User />
                     </AvatarFallback>
                   </Avatar>
-                  {sesh.user.name ?? "My account"}
+                  {teamsData.personal.name}
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      selectedTeam.id === teamsData.personal.id
+                      (selectedTeam ?? teamsData.personal).id ===
+                        teamsData.personal.id
                         ? "opacity-100"
                         : "opacity-0"
                     )}
@@ -145,7 +168,7 @@ const TeamSwitcher: React.FC<
                     <Check
                       className={cn(
                         "ml-auto h-4 w-4",
-                        selectedTeam.id === team.id
+                        (selectedTeam ?? teamsData.personal).id === team.id
                           ? "opacity-100"
                           : "opacity-0"
                       )}
@@ -180,20 +203,51 @@ const TeamSwitcher: React.FC<
             Add a new team to manage your projects.
           </DialogDescription>
         </DialogHeader>
-        <div>
-          <div className="space-y-4 py-2 pb-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc." />
+
+        <form
+          onSubmit={handleSubmit(async (formData) => {
+            try {
+              await createTeam(formData);
+              await refetchTeams();
+              setShowNewTeamDialog(false);
+            } catch (e) {}
+          })}
+        >
+          <div>
+            <div className="space-y-4 py-2 pb-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Team name</Label>
+                <Input
+                  id="name"
+                  {...register("name")}
+                  placeholder="Enter team name..."
+                />
+                {(createTeamFormError.name?.message ||
+                  createTeamApiError?.data?.zodError?.fieldErrors
+                    .name?.[0]) && (
+                  <div className="mt-2 text-xs text-red-500">
+                    {createTeamFormError.name?.message ||
+                      createTeamApiError?.data?.zodError?.fieldErrors.name?.[0]}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setShowNewTeamDialog(false)}>
-            Cancel
-          </Button>
-          <Button type="submit">Continue</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowNewTeamDialog(false);
+                clearErrors();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" loading={createTeamLoading}>
+              Continue
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

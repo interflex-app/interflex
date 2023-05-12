@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTeamSchema } from "../../../components/team-switcher";
 
 export const teamRouter = createTRPCRouter({
   getAllTeams: protectedProcedure.query(async ({ ctx }) => {
@@ -19,7 +19,7 @@ export const teamRouter = createTRPCRouter({
     };
   }),
   createTeam: protectedProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(createTeamSchema)
     .mutation(async ({ ctx, input }) => {
       const team = await ctx.prisma.team.create({
         data: {
