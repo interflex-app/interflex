@@ -28,7 +28,7 @@ import {
 } from "@interflex-app/ui";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { RouterInputs, RouterOutputs, api } from "../utils/api";
+import { RouterError, RouterInputs, RouterOutputs, api } from "../utils/api";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,17 +49,15 @@ const TeamSwitcher: React.FC<
   const {
     register,
     handleSubmit,
-    formState: { errors: createTeamFormError },
+    formState: { errors: createTeamError },
     clearErrors,
+    setError,
   } = useForm<RouterInputs["team"]["createTeam"]>({
     resolver: zodResolver(createTeamSchema),
   });
 
-  const {
-    mutateAsync: createTeam,
-    error: createTeamApiError,
-    isLoading: createTeamLoading,
-  } = api.team.createTeam.useMutation();
+  const { mutateAsync: createTeam, isLoading: createTeamLoading } =
+    api.team.createTeam.useMutation();
 
   const {
     data: teamsData,
@@ -210,7 +208,13 @@ const TeamSwitcher: React.FC<
               await createTeam(formData);
               await refetchTeams();
               setShowNewTeamDialog(false);
-            } catch (e) {}
+            } catch (e) {
+              Object.entries(
+                (e as RouterError).data.zodError?.fieldErrors ?? []
+              ).forEach(([key, value]) =>
+                setError(key as "root", { message: value?.[0] ?? "" })
+              );
+            }
           })}
         >
           <div>
@@ -222,12 +226,9 @@ const TeamSwitcher: React.FC<
                   {...register("name")}
                   placeholder="Enter team name..."
                 />
-                {(createTeamFormError.name?.message ||
-                  createTeamApiError?.data?.zodError?.fieldErrors
-                    .name?.[0]) && (
+                {createTeamError.name?.message && (
                   <div className="mt-2 text-xs text-red-500">
-                    {createTeamFormError.name?.message ||
-                      createTeamApiError?.data?.zodError?.fieldErrors.name?.[0]}
+                    {createTeamError.name?.message}
                   </div>
                 )}
               </div>
