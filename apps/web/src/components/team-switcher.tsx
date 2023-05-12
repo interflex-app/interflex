@@ -50,7 +50,7 @@ const TeamSwitcher: React.FC<
     register,
     handleSubmit,
     formState: { errors: createTeamError },
-    clearErrors,
+    reset,
     setError,
   } = useForm<RouterInputs["team"]["createTeam"]>({
     resolver: zodResolver(createTeamSchema),
@@ -144,35 +144,39 @@ const TeamSwitcher: React.FC<
                 </CommandItem>
               </CommandGroup>
               <CommandGroup heading="Your teams">
-                {teamsData.shared.map((team) => (
-                  <CommandItem
-                    key={team.id}
-                    onSelect={() => {
-                      setSelectedTeam(team);
-                      setOpen(false);
-                    }}
-                    className="text-sm"
-                  >
-                    <Avatar className="mr-2 h-5 w-5">
-                      <AvatarImage
-                        src={`https://avatar.vercel.sh/interflex-team-${team.id}.png`}
-                        alt={team.name}
+                {teamsData.shared.length > 0 ? (
+                  teamsData.shared.map((team) => (
+                    <CommandItem
+                      key={team.id}
+                      onSelect={() => {
+                        setSelectedTeam(team);
+                        setOpen(false);
+                      }}
+                      className="text-sm"
+                    >
+                      <Avatar className="mr-2 h-5 w-5">
+                        <AvatarImage
+                          src={`https://avatar.vercel.sh/interflex-team-${team.id}.png`}
+                          alt={team.name}
+                        />
+                        <AvatarFallback>
+                          <User />
+                        </AvatarFallback>
+                      </Avatar>
+                      {team.name}
+                      <Check
+                        className={cn(
+                          "ml-auto h-4 w-4",
+                          (selectedTeam ?? teamsData.personal).id === team.id
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
                       />
-                      <AvatarFallback>
-                        <User />
-                      </AvatarFallback>
-                    </Avatar>
-                    {team.name}
-                    <Check
-                      className={cn(
-                        "ml-auto h-4 w-4",
-                        (selectedTeam ?? teamsData.personal).id === team.id
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
-                    />
-                  </CommandItem>
-                ))}
+                    </CommandItem>
+                  ))
+                ) : (
+                  <div className="p-2 text-xs">You don't have any teams!</div>
+                )}
               </CommandGroup>
             </CommandList>
             <CommandSeparator />
@@ -207,6 +211,8 @@ const TeamSwitcher: React.FC<
             try {
               await createTeam(formData);
               await refetchTeams();
+
+              reset();
               setShowNewTeamDialog(false);
             } catch (e) {
               Object.entries(
@@ -236,16 +242,17 @@ const TeamSwitcher: React.FC<
           </div>
           <DialogFooter>
             <Button
+              type="button"
               variant="outline"
               onClick={() => {
                 setShowNewTeamDialog(false);
-                clearErrors();
+                reset();
               }}
             >
               Cancel
             </Button>
             <Button type="submit" loading={createTeamLoading}>
-              Continue
+              Create team
             </Button>
           </DialogFooter>
         </form>
