@@ -39,7 +39,8 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-8">
-        {isApp && <TeamSwitcher />}
+        <div className="hidden md:block">{isApp && <TeamSwitcher />}</div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -67,6 +68,12 @@ const Navbar: React.FC = () => {
                     </p>
                   </div>
                 </DropdownMenuLabel>
+
+                <div className="block md:hidden">
+                  <DropdownMenuSeparator />
+
+                  <TeamSwitcher className="w-full border-gray-200 px-2 hover:bg-white" />
+                </div>
 
                 <DropdownMenuSeparator />
               </>
