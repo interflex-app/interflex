@@ -1,7 +1,7 @@
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import {
-  inferRouterError,
+  type inferRouterError,
   type inferRouterInputs,
   type inferRouterOutputs,
 } from "@trpc/server";
