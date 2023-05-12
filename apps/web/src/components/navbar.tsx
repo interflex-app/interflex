@@ -69,11 +69,13 @@ const Navbar: React.FC = () => {
                   </div>
                 </DropdownMenuLabel>
 
-                <div className="block md:hidden">
-                  <DropdownMenuSeparator />
+                {isApp && (
+                  <div className="block md:hidden">
+                    <DropdownMenuSeparator />
 
-                  <TeamSwitcher className="w-full border-gray-200 px-2 hover:bg-white" />
-                </div>
+                    <TeamSwitcher className="w-full border-gray-200 px-2 hover:bg-transparent" />
+                  </div>
+                )}
 
                 <DropdownMenuSeparator />
               </>
