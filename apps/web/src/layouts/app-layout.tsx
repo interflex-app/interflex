@@ -1,7 +1,6 @@
 import { type PropsWithChildren, useEffect } from "react";
 import Navbar from "../components/navbar";
 import { useSession } from "next-auth/react";
-import { Skeleton } from "@interflex-app/ui";
 import { useRouter } from "next/router";
 
 const AppLayout: React.FC<PropsWithChildren<{ authProtected?: boolean }>> = ({

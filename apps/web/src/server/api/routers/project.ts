@@ -4,6 +4,7 @@ import {
   protectedProcedure,
   protectedTeamProcedure,
 } from "../trpc";
+import { createProjectSchema } from "../../../pages/app";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
@@ -25,7 +26,7 @@ export const projectRouter = createTRPCRouter({
       return projects;
     }),
   createProject: protectedTeamProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(createProjectSchema)
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.project.create({
         data: {
