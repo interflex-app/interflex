@@ -1,6 +1,6 @@
 import { Skeleton } from "@interflex-app/ui";
 
-const ProjectSkeleton: React.FC = () => {
+const DashboardSkeleton: React.FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="h-8 w-[70vw]" />
@@ -10,4 +10,4 @@ const ProjectSkeleton: React.FC = () => {
   );
 };
 
-export default ProjectSkeleton;
+export default DashboardSkeleton;

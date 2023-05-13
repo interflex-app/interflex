@@ -2,14 +2,14 @@ import DashboardHeader from "../../../components/dashboard-header";
 import { useProject } from "../../../hooks/use-project";
 import AppLayout from "../../../layouts/app-layout";
 import { NextPageWithLayout } from "../../_app";
-import ProjectSkeleton from "../../../components/dashboard-skeleton";
+import DashboardSkeleton from "../../../components/dashboard-skeleton";
 import Head from "next/head";
 import { truncate } from "../../../utils/truncate";
 
 const Index: NextPageWithLayout = () => {
   const { project, isLoading } = useProject();
 
-  if (!project || isLoading) return <ProjectSkeleton />;
+  if (!project || isLoading) return <DashboardSkeleton />;
 
   return (
     <div>

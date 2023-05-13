@@ -99,7 +99,7 @@ const Navbar: React.FC = () => {
             <DropdownMenuGroup>
               {data ? (
                 <>
-                  <Link href={"/profile"}>
+                  <Link href={"/app/profile"}>
                     <DropdownMenuItem>
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
