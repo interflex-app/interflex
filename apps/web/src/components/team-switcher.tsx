@@ -240,8 +240,10 @@ const TeamSwitcher: React.FC<
         <form
           onSubmit={handleSubmit(async (formData) => {
             try {
-              await createTeam(formData);
+              const newTeam = await createTeam(formData);
               await refetchTeams();
+
+              changeTeam(newTeam);
 
               reset();
               setShowNewTeamDialog(false);
