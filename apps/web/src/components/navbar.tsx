@@ -17,12 +17,14 @@ import { LayoutDashboard, LogIn, LogOut, User } from "lucide-react";
 import dynamic from "next/dynamic";
 import TeamSwitcher from "./team-switcher";
 import { useIsApp } from "../hooks/use-is-app";
+import { useTeam } from "../providers/team-provider";
 
 const Logo = dynamic(() => import("./logo"), { ssr: false });
 
 const Navbar: React.FC = () => {
   const { data } = useSession();
 
+  const { clearTeam } = useTeam();
   const isApp = useIsApp();
 
   return (
@@ -105,7 +107,12 @@ const Navbar: React.FC = () => {
                       <span>Profile</span>
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuItem onClick={() => void signOut()}>
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      clearTeam();
+                      await signOut();
+                    }}
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign out</span>
                   </DropdownMenuItem>
