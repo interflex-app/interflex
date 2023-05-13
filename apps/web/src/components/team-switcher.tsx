@@ -34,6 +34,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTeam } from "../providers/team-provider";
 import { getTeamColor } from "../utils/get-team-color";
+import { truncate } from "../utils/truncate";
 
 export const createTeamSchema = z.object({ name: z.string().min(1) });
 
@@ -131,7 +132,7 @@ const TeamSwitcher: React.FC<
                 </AvatarFallback>
               </Avatar>
             )}
-            {(getSelectedTeam() ?? teamsData.personal).name}
+            {truncate((getSelectedTeam() ?? teamsData.personal).name)}
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -190,7 +191,7 @@ const TeamSwitcher: React.FC<
                       >
                         {team.name.charAt(0)}
                       </div>
-                      {team.name}
+                      {truncate(team.name)}
                       <Check
                         className={cn(
                           "ml-auto h-4 w-4",

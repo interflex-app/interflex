@@ -140,7 +140,7 @@ const Index: NextPageWithLayout = () => {
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
                 {data.map((project) => (
                   <Link href={`/app/${project.id}`} key={project.id}>
-                    <div className="flex h-64 w-full items-center rounded-md border border-gray-200 bg-gray-100 p-8 dark:border-gray-800 dark:bg-gray-900">
+                    <div className="flex h-64 w-full items-center rounded-md border border-gray-200 bg-gray-100 p-8 dark:border-gray-700 dark:bg-gray-900">
                       <div>
                         <span className="flex items-center gap-2">
                           {project.active ? (
@@ -186,6 +186,6 @@ const Index: NextPageWithLayout = () => {
   );
 };
 
-Index.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+Index.getLayout = (page) => <AppLayout teamLayout>{page}</AppLayout>;
 
 export default Index;

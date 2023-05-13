@@ -1,4 +1,8 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedTeamProcedure,
+} from "../trpc";
 import { createTeamSchema } from "../../../components/team-switcher";
 
 export const teamRouter = createTRPCRouter({
@@ -17,6 +21,9 @@ export const teamRouter = createTRPCRouter({
       personal: teams.find((team) => team.personal)!,
       shared: teams.filter((team) => !team.personal),
     };
+  }),
+  getTeam: protectedTeamProcedure.query(async ({ ctx }) => {
+    return ctx.team;
   }),
   createTeam: protectedProcedure
     .input(createTeamSchema)
