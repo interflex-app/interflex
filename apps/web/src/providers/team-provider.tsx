@@ -7,6 +7,7 @@ import {
 } from "react";
 import { type RouterOutputs } from "../utils/api";
 import { getCookie, setCookie } from "cookies-next";
+import { useRouter } from "next/router";
 
 export type Team = RouterOutputs["team"]["getAllTeams"]["personal"];
 
@@ -20,6 +21,8 @@ const TeamContext = createContext({} as TeamInterface);
 const TEAM_COOKIE_KEY = "__TEAM_INTERFLEX__";
 
 export const TeamProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  const router = useRouter();
+
   const [team, setTeam] = useState<Team["id"] | null>(null);
 
   useEffect(() => {
@@ -32,6 +35,8 @@ export const TeamProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const changeTeam = (team: Team) => {
     setCookie(TEAM_COOKIE_KEY, team.id);
     setTeam(team.id);
+
+    void router.push("/app");
   };
 
   return (

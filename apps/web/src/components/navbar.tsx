@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   return (
     <div className="flex items-center justify-between px-8 py-12 md:px-14 md:py-16">
       <div className="flex items-center gap-12">
-        <Link href={"/"}>
+        <Link href={isApp ? "/app" : "/"}>
           <div className="block md:hidden">
             <Logo type="small" />
           </div>

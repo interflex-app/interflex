@@ -5,6 +5,7 @@ import {
   protectedTeamProcedure,
 } from "../trpc";
 import { createProjectSchema } from "../../../pages/app";
+import { ApiError } from "../errors/api-error";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
@@ -24,6 +25,21 @@ export const projectRouter = createTRPCRouter({
       });
 
       return projects;
+    }),
+  getProject: protectedTeamProcedure
+    .input(z.object({ projectId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.prisma.project.findUnique({
+        where: {
+          id: input.projectId,
+        },
+      });
+
+      if (!project) {
+        throw new ApiError("Project not found!", "projectId");
+      }
+
+      return project;
     }),
   createProject: protectedTeamProcedure
     .input(createProjectSchema)
