@@ -37,19 +37,19 @@ import {
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTeam } from "../providers/team-provider";
 
 export const createTeamSchema = z.object({ name: z.string().min(1) });
-
-type Team = RouterOutputs["team"]["getAllTeams"]["personal"];
 
 const TeamSwitcher: React.FC<
   React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 > = ({ className }) => {
   const [open, setOpen] = useState(false);
   const [showNewTeamDialog, setShowNewTeamDialog] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
   const { data: sesh } = useSession();
+
+  const { team, changeTeam } = useTeam();
 
   const {
     register,
@@ -71,7 +71,18 @@ const TeamSwitcher: React.FC<
     refetch: refetchTeams,
   } = api.team.getAllTeams.useQuery(undefined, {
     enabled: !!sesh,
+    onSuccess: (data) => {
+      if (!team) {
+        changeTeam(data.personal);
+      }
+    },
   });
+
+  const getSelectedTeam = () => {
+    if (!teamsData || !team) return null;
+    if (team === teamsData.personal.id) return teamsData.personal;
+    return teamsData.shared.find((t) => t.id === team) ?? null;
+  };
 
   if (!sesh || !teamsData || teamsLoading || teamsError) {
     return (
@@ -97,20 +108,20 @@ const TeamSwitcher: React.FC<
             <Avatar className="mr-2 h-5 w-5">
               <AvatarImage
                 src={
-                  (selectedTeam ?? teamsData.personal).id ===
+                  (getSelectedTeam() ?? teamsData.personal).id ===
                   teamsData.personal.id
                     ? sesh.user.image ?? "__NON_EXISTENT_IMAGE__"
                     : `https://avatar.vercel.sh/interflex-team-${
-                        (selectedTeam ?? teamsData.personal).id
+                        (getSelectedTeam() ?? teamsData.personal).id
                       }.png`
                 }
-                alt={(selectedTeam ?? teamsData.personal).name}
+                alt={(getSelectedTeam() ?? teamsData.personal).name}
               />
               <AvatarFallback>
                 <User />
               </AvatarFallback>
             </Avatar>
-            {(selectedTeam ?? teamsData.personal).name}
+            {(getSelectedTeam() ?? teamsData.personal).name}
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -122,7 +133,7 @@ const TeamSwitcher: React.FC<
               <CommandGroup heading="Personal Account">
                 <CommandItem
                   onSelect={() => {
-                    setSelectedTeam(teamsData.personal);
+                    changeTeam(teamsData.personal);
                     setOpen(false);
                   }}
                   className="text-sm"
@@ -140,7 +151,7 @@ const TeamSwitcher: React.FC<
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      (selectedTeam ?? teamsData.personal).id ===
+                      (getSelectedTeam() ?? teamsData.personal).id ===
                         teamsData.personal.id
                         ? "opacity-100"
                         : "opacity-0"
@@ -154,7 +165,7 @@ const TeamSwitcher: React.FC<
                     <CommandItem
                       key={team.id}
                       onSelect={() => {
-                        setSelectedTeam(team);
+                        changeTeam(team);
                         setOpen(false);
                       }}
                       className="text-sm"
@@ -172,7 +183,8 @@ const TeamSwitcher: React.FC<
                       <Check
                         className={cn(
                           "ml-auto h-4 w-4",
-                          (selectedTeam ?? teamsData.personal).id === team.id
+                          (getSelectedTeam() ?? teamsData.personal).id ===
+                            team.id
                             ? "opacity-100"
                             : "opacity-0"
                         )}

@@ -9,6 +9,7 @@ import Head from "next/head";
 import { type NextPage } from "next";
 import { type ReactElement, type ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
+import { TeamProvider } from "../providers/team-provider";
 
 const font = FontSans({
   variable: "--font-sans",
@@ -51,11 +52,13 @@ const App = ({
 
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProvider session={session}>
-          <div
-            className={`${font.className} ${font.variable} min-h-screen bg-pattern dark:bg-pattern-light`}
-          >
-            {getLayout(<Component {...pageProps} />)}
-          </div>
+          <TeamProvider>
+            <div
+              className={`${font.className} ${font.variable} min-h-screen bg-pattern dark:bg-pattern-light`}
+            >
+              {getLayout(<Component {...pageProps} />)}
+            </div>
+          </TeamProvider>
         </SessionProvider>
       </ThemeProvider>
     </>
