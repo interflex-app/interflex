@@ -130,7 +130,7 @@ const TeamSwitcher: React.FC<
             <CommandList>
               <CommandInput placeholder="Search team..." />
               <CommandEmpty>No team found.</CommandEmpty>
-              <CommandGroup heading="Personal Account">
+              <CommandGroup heading="Personal account">
                 <CommandItem
                   onSelect={() => {
                     changeTeam(teamsData.personal);
@@ -209,7 +209,7 @@ const TeamSwitcher: React.FC<
                     }}
                   >
                     <PlusCircle className="mr-2 h-5 w-5" />
-                    Create Team
+                    Create team
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>
