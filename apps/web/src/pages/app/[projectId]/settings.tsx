@@ -5,7 +5,7 @@ import { NextPageWithLayout } from "../../_app";
 import ProjectSkeleton from "../../../components/project-skeleton";
 import Head from "next/head";
 
-const Translations: NextPageWithLayout = () => {
+const Settings: NextPageWithLayout = () => {
   const { project, isLoading } = useProject();
 
   if (!project || isLoading) return <ProjectSkeleton />;
@@ -13,14 +13,14 @@ const Translations: NextPageWithLayout = () => {
   return (
     <div>
       <Head>
-        <title>Interflex | {project.name} | Translations</title>
+        <title>Interflex | {project.name} | Settings</title>
       </Head>
 
-      <DashboardHeader title={`${project.name} - Translations`} />
+      <DashboardHeader title={`${project.name} - Settings`} />
     </div>
   );
 };
 
-Translations.getLayout = (page) => <AppLayout projectLayout>{page}</AppLayout>;
+Settings.getLayout = (page) => <AppLayout projectLayout>{page}</AppLayout>;
 
-export default Translations;
+export default Settings;

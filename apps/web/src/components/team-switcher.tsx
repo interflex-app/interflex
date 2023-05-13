@@ -33,6 +33,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTeam } from "../providers/team-provider";
+import { getTeamColor } from "../utils/get-team-color";
 
 export const createTeamSchema = z.object({ name: z.string().min(1) });
 
@@ -100,22 +101,36 @@ const TeamSwitcher: React.FC<
             aria-label="Select a team"
             className={cn("w-[200px] justify-between", className)}
           >
-            <Avatar className="mr-2 h-5 w-5">
-              <AvatarImage
-                src={
-                  (getSelectedTeam() ?? teamsData.personal).id ===
-                  teamsData.personal.id
-                    ? sesh.user.image ?? "__NON_EXISTENT_IMAGE__"
-                    : `https://avatar.vercel.sh/interflex-team-${
-                        (getSelectedTeam() ?? teamsData.personal).id
-                      }.png`
-                }
-                alt={(getSelectedTeam() ?? teamsData.personal).name}
-              />
-              <AvatarFallback>
-                <User />
-              </AvatarFallback>
-            </Avatar>
+            {(getSelectedTeam() ?? teamsData.personal).id !==
+            teamsData.personal.id ? (
+              <div
+                className="mr-2 flex h-5 w-5 items-center justify-center rounded-full text-black"
+                style={{
+                  backgroundColor: `hsl(${getTeamColor(
+                    (getSelectedTeam() ?? teamsData.personal).id
+                  )}, 100%, 85%)`,
+                }}
+              >
+                {(getSelectedTeam() ?? teamsData.personal).name.charAt(0)}
+              </div>
+            ) : (
+              <Avatar className="mr-2 h-5 w-5">
+                <AvatarImage
+                  src={
+                    (getSelectedTeam() ?? teamsData.personal).id ===
+                    teamsData.personal.id
+                      ? sesh.user.image ?? "__NON_EXISTENT_IMAGE__"
+                      : `https://avatar.vercel.sh/interflex-team-${
+                          (getSelectedTeam() ?? teamsData.personal).id
+                        }.png`
+                  }
+                  alt={(getSelectedTeam() ?? teamsData.personal).name}
+                />
+                <AvatarFallback>
+                  <User />
+                </AvatarFallback>
+              </Avatar>
+            )}
             {(getSelectedTeam() ?? teamsData.personal).name}
             <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -165,15 +180,16 @@ const TeamSwitcher: React.FC<
                       }}
                       className="text-sm"
                     >
-                      <Avatar className="mr-2 h-5 w-5">
-                        <AvatarImage
-                          src={`https://avatar.vercel.sh/interflex-team-${team.id}.png`}
-                          alt={team.name}
-                        />
-                        <AvatarFallback>
-                          <User />
-                        </AvatarFallback>
-                      </Avatar>
+                      <div
+                        className="mr-2 flex h-5 w-5 items-center justify-center rounded-full text-black"
+                        style={{
+                          backgroundColor: `hsl(${getTeamColor(
+                            team.id
+                          )}, 100%, 85%)`,
+                        }}
+                      >
+                        {team.name.charAt(0)}
+                      </div>
                       {team.name}
                       <Check
                         className={cn(
