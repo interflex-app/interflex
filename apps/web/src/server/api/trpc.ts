@@ -27,7 +27,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
+import { ApiError } from "./errors/api-error";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -59,3 +60,33 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 });
 
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+export const protectedTeamProcedure = protectedProcedure
+  .input(z.object({ teamId: z.string().min(1) }))
+  .use(
+    t.middleware(async ({ ctx, input, next }) => {
+      const team = await ctx.prisma.team.findUnique({
+        where: {
+          id: (input as { teamId: string }).teamId,
+        },
+        include: {
+          members: { select: { id: true } },
+        },
+      });
+
+      if (!team) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      if (!team.members.some((member) => member.id === ctx.session?.user.id)) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      return next({
+        ctx: {
+          ...ctx,
+          team,
+        },
+      });
+    })
+  );
