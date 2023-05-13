@@ -22,12 +22,13 @@ import DangerZone from "../../components/danger-zone";
 import { useState } from "react";
 import { api } from "../../utils/api";
 import { useRouter } from "next/router";
+import { useTeam } from "../../providers/team-provider";
 
 const Profile: NextPageWithLayout = () => {
   const [showRemoveAccountDialog, setShowRemoveAccountDialog] = useState(false);
 
   const router = useRouter();
-
+  const { clearTeam } = useTeam();
   const { data } = useSession();
 
   const { mutateAsync: removeAccount, isLoading: removeAccountLoading } =
@@ -105,6 +106,8 @@ const Profile: NextPageWithLayout = () => {
                       try {
                         await removeAccount();
                         await signOut();
+
+                        clearTeam();
 
                         await router.push("/");
 
