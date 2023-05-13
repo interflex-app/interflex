@@ -1,7 +1,7 @@
 import Head from "next/head";
 import DashboardHeader from "../../components/dashboard-header";
 import AppLayout from "../../layouts/app-layout";
-import { NextPageWithLayout } from "../_app";
+import { type NextPageWithLayout } from "../_app";
 import {
   Avatar,
   AvatarFallback,
@@ -84,8 +84,8 @@ const Profile: NextPageWithLayout = () => {
                 </DialogHeader>
 
                 <p>
-                  Are you sure? You won't be able to manage your projects and
-                  teams anymore.
+                  Are you sure? You won&apos;t be able to manage your projects
+                  and teams anymore.
                 </p>
 
                 <p className="text-xs">

@@ -1,7 +1,7 @@
 import DashboardHeader from "../../../components/dashboard-header";
 import { useProject } from "../../../hooks/use-project";
 import AppLayout from "../../../layouts/app-layout";
-import { NextPageWithLayout } from "../../_app";
+import { type NextPageWithLayout } from "../../_app";
 import DashboardSkeleton from "../../../components/dashboard-skeleton";
 import Head from "next/head";
 import { truncate } from "../../../utils/truncate";

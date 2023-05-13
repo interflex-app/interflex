@@ -22,7 +22,7 @@ export const teamRouter = createTRPCRouter({
       shared: teams.filter((team) => !team.personal),
     };
   }),
-  getTeam: protectedTeamProcedure.query(async ({ ctx }) => {
+  getTeam: protectedTeamProcedure.query(({ ctx }) => {
     return ctx.team;
   }),
   createTeam: protectedProcedure

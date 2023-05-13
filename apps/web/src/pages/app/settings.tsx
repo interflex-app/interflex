@@ -1,7 +1,7 @@
 import Head from "next/head";
 import DashboardHeader from "../../components/dashboard-header";
 import AppLayout from "../../layouts/app-layout";
-import { NextPageWithLayout } from "../_app";
+import { type NextPageWithLayout } from "../_app";
 import { useTeam } from "../../providers/team-provider";
 import DashboardSkeleton from "../../components/dashboard-skeleton";
 import { api } from "../../utils/api";
