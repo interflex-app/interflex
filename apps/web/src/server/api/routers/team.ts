@@ -6,6 +6,7 @@ import {
 import { createTeamSchema } from "../../../components/team-switcher";
 import { updateTeamNameSchema } from "../../../pages/app/settings";
 import { ApiError } from "../errors/api-error";
+import { z } from "zod";
 
 export const teamRouter = createTRPCRouter({
   getAllTeams: protectedProcedure.query(async ({ ctx }) => {
@@ -67,6 +68,60 @@ export const teamRouter = createTRPCRouter({
         },
         data: {
           name: input.name,
+        },
+      });
+    }),
+  kickTeamMember: protectedTeamProcedure
+    .input(z.object({ userId: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.session!.user.id) {
+        throw new ApiError("Cannot kick yourself from the team");
+      }
+
+      await ctx.prisma.team.update({
+        where: {
+          id: ctx.team.id,
+        },
+        data: {
+          members: {
+            disconnect: {
+              id: input.userId,
+            },
+          },
+        },
+      });
+    }),
+  inviteTeamMember: protectedTeamProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      if (input.email === ctx.session!.user.email) {
+        throw new ApiError("Cannot invite yourself to the team", "email");
+      }
+
+      if (ctx.team.members.find((member) => member.email === input.email)) {
+        throw new ApiError("User is already a member of the team", "email");
+      }
+
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          email: input.email,
+        },
+      });
+
+      if (!user) {
+        throw new ApiError("This user does not exist", "email");
+      }
+
+      await ctx.prisma.team.update({
+        where: {
+          id: ctx.team.id,
+        },
+        data: {
+          members: {
+            connect: {
+              id: user.id,
+            },
+          },
         },
       });
     }),

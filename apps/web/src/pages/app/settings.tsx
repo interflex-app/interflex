@@ -5,10 +5,14 @@ import { type NextPageWithLayout } from "../_app";
 import { useTeam } from "../../providers/team-provider";
 import DashboardSkeleton from "../../components/dashboard-skeleton";
 import { RouterError, api } from "../../utils/api";
-import { PropsWithChildren, useState } from "react";
+import { useState } from "react";
 import DangerZone from "../../components/danger-zone";
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
+  DataTable,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -16,6 +20,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
   Input,
   Label,
   useToast,
@@ -24,21 +33,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/router";
-
-const SettingCard: React.FC<
-  PropsWithChildren<{ title: string; description: string }>
-> = ({ children, title, description }) => {
-  return (
-    <div className="w-full rounded-md border border-gray-800 bg-gray-900 p-6">
-      <h1 className="text-2xl">{title}</h1>
-      <p className="mt-2 w-full text-sm text-gray-400 md:w-[80%]">
-        {description}
-      </p>
-
-      <div className="mt-8 w-full">{children}</div>
-    </div>
-  );
-};
+import SettingCard from "../../components/setting-card";
+import { MoreHorizontal, User } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export const updateTeamNameSchema = z.object({ name: z.string().min(1) });
 
@@ -46,12 +43,19 @@ const Settings: NextPageWithLayout = () => {
   const { toast } = useToast();
   const router = useRouter();
 
+  const { data: sesh } = useSession();
+
   const [showDeleteTeamDialog, setShowDeleteTeamDialog] = useState(false);
+  const [showDeleteTeamMemberDialog, setShowDeleteTeamMemberDialog] =
+    useState(false);
 
   const { team, clearTeam } = useTeam();
 
   const { mutateAsync: updateTeamName, isLoading: updateTeamNameLoading } =
     api.team.updateTeamName.useMutation();
+
+  const { mutateAsync: kickTeamMember, isLoading: kickTeamMemberLoading } =
+    api.team.kickTeamMember.useMutation();
 
   const { mutateAsync: deleteTeam, isLoading: deleteTeamLoading } =
     api.team.deleteTeam.useMutation();
@@ -67,7 +71,8 @@ const Settings: NextPageWithLayout = () => {
 
   const utils = api.useContext();
 
-  if (!team || !data || isLoading || isError) return <DashboardSkeleton />;
+  if (!team || !data || isLoading || isError || !sesh)
+    return <DashboardSkeleton />;
 
   return (
     <div>
@@ -106,8 +111,8 @@ const Settings: NextPageWithLayout = () => {
               }
             })}
           >
-            <div className="flex w-full items-end gap-4">
-              <div className="w-full space-y-2 md:w-[40%] xl:w-[25%]">
+            <div className="flex w-full items-end gap-4 xl:w-[40%]">
+              <div className="w-full space-y-2">
                 <Label htmlFor="name">Team name</Label>
                 <Input
                   id="name"
@@ -139,7 +144,98 @@ const Settings: NextPageWithLayout = () => {
           title="Team Members"
           description="Manage members of your team. Each member will be able to access and modify all the projects of this team."
         >
-          Input here
+          <div className="w-full xl:w-[40%]">
+            <DataTable
+              data={data.members}
+              columns={[
+                {
+                  accessorKey: "image",
+                  header: "Avatar",
+                  cell: ({ getValue }) => (
+                    <Avatar>
+                      <AvatarImage
+                        src={(getValue() as string) ?? "__NON_EXISTENT_IMAGE__"}
+                      />
+                      <AvatarFallback>
+                        <User />
+                      </AvatarFallback>
+                    </Avatar>
+                  ),
+                },
+                { accessorKey: "name", header: "Name" },
+                { accessorKey: "email", header: "Email" },
+                {
+                  id: "actions",
+                  cell: ({ row }) => (
+                    <Dialog
+                      open={showDeleteTeamMemberDialog}
+                      onOpenChange={setShowDeleteTeamMemberDialog}
+                    >
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            disabled={row.original.id === sesh.user.id}
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                          >
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DialogTrigger asChild>
+                            <DropdownMenuItem>
+                              Remove from team
+                            </DropdownMenuItem>
+                          </DialogTrigger>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Remove from team</DialogTitle>
+                          <DialogDescription>
+                            Are you sure you want to remove {row.original.name}{" "}
+                            from the team?
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <p>
+                          They will no longer be able to access the team's
+                          projects.
+                        </p>
+
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowDeleteTeamMemberDialog(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            loading={kickTeamMemberLoading}
+                            onClick={async () => {
+                              try {
+                                await kickTeamMember({
+                                  teamId: team,
+                                  userId: row.original.id,
+                                });
+                                await refetch();
+
+                                setShowDeleteTeamMemberDialog(false);
+                              } catch (e) {}
+                            }}
+                          >
+                            Kick user
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  ),
+                },
+              ]}
+            />
+          </div>
         </SettingCard>
 
         <DangerZone>
