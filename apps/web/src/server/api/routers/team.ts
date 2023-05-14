@@ -97,6 +97,13 @@ export const teamRouter = createTRPCRouter({
   inviteTeamMember: protectedTeamProcedure
     .input(inviteTeamMemberSchema)
     .mutation(async ({ ctx, input }) => {
+      if (ctx.team.personal) {
+        throw new ApiError(
+          "You cannot add anyone to the personal team",
+          "email"
+        );
+      }
+
       if (input.email === ctx.session!.user.email) {
         throw new ApiError("Cannot invite yourself to the team", "email");
       }

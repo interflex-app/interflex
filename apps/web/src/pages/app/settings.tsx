@@ -151,151 +151,157 @@ const Settings: NextPageWithLayout = () => {
           </form>
         </SettingCard>
 
-        <SettingCard
-          title="Team Members"
-          description="Manage members of your team. Each member will be able to access and modify all the projects of this team."
-        >
-          <form
-            className="w-full"
-            onSubmit={inviteTeamMemberForm.handleSubmit(async (formData) => {
-              try {
-                await inviteTeamMember({ teamId: team, ...formData });
-                await refetch();
-
-                toast({
-                  title: "Team member has been added",
-                  description: "Your team has been updated successfully.",
-                });
-              } catch (e) {
-                Object.entries(
-                  (e as RouterError).data.zodError?.fieldErrors ?? []
-                ).forEach(([key, value]) =>
-                  inviteTeamMemberForm.setError(key as "root", {
-                    message: value?.[0] ?? "",
-                  })
-                );
-              }
-            })}
+        {!data.personal && (
+          <SettingCard
+            title="Team Members"
+            description="Manage members of your team. Each member will be able to access and modify all the projects of this team."
           >
-            <div className="flex w-full items-end gap-4 xl:w-[40%]">
-              <div className="w-full space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  placeholder="Enter email..."
-                  {...inviteTeamMemberForm.register("email")}
-                />
+            <form
+              className="w-full"
+              onSubmit={inviteTeamMemberForm.handleSubmit(async (formData) => {
+                try {
+                  await inviteTeamMember({ teamId: team, ...formData });
+                  await refetch();
+
+                  toast({
+                    title: "Team member has been added",
+                    description: "Your team has been updated successfully.",
+                  });
+                } catch (e) {
+                  Object.entries(
+                    (e as RouterError).data.zodError?.fieldErrors ?? []
+                  ).forEach(([key, value]) =>
+                    inviteTeamMemberForm.setError(key as "root", {
+                      message: value?.[0] ?? "",
+                    })
+                  );
+                }
+              })}
+            >
+              <div className="flex w-full items-end gap-4 xl:w-[40%]">
+                <div className="w-full space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    placeholder="Enter email..."
+                    {...inviteTeamMemberForm.register("email")}
+                  />
+                </div>
+
+                <Button type="submit" loading={inviteTeamMemberLoading}>
+                  Invite
+                </Button>
               </div>
 
-              <Button type="submit" loading={inviteTeamMemberLoading}>
-                Invite
-              </Button>
+              <div
+                className={cn(
+                  "mt-2 h-3 text-sm text-red-600 opacity-0",
+                  !!inviteTeamMemberForm.formState.errors.email?.message &&
+                    "opacity-100"
+                )}
+              >
+                {inviteTeamMemberForm.formState.errors.email?.message}
+              </div>
+            </form>
+
+            <div className="mt-4 w-full xl:w-[40%]">
+              <DataTable
+                data={data.members}
+                columns={[
+                  {
+                    accessorKey: "image",
+                    header: "Avatar",
+                    cell: ({ getValue }) => (
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={
+                            (getValue() as string) ?? "__NON_EXISTENT_IMAGE__"
+                          }
+                        />
+                        <AvatarFallback>
+                          <User />
+                        </AvatarFallback>
+                      </Avatar>
+                    ),
+                  },
+                  { accessorKey: "name", header: "Name" },
+                  { accessorKey: "email", header: "Email" },
+                  {
+                    id: "actions",
+                    cell: ({ row }) => (
+                      <Dialog
+                        open={showDeleteTeamMemberDialog}
+                        onOpenChange={setShowDeleteTeamMemberDialog}
+                      >
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              disabled={row.original.id === sesh.user.id}
+                              variant="ghost"
+                              className="h-8 w-8 p-0"
+                            >
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DialogTrigger asChild>
+                              <DropdownMenuItem>
+                                Remove from team
+                              </DropdownMenuItem>
+                            </DialogTrigger>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Remove from team</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to remove{" "}
+                              {row.original.name} from the team?
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          <p>
+                            They will no longer be able to access the team
+                            projects.
+                          </p>
+
+                          <DialogFooter>
+                            <Button
+                              variant="outline"
+                              onClick={() =>
+                                setShowDeleteTeamMemberDialog(false)
+                              }
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              loading={kickTeamMemberLoading}
+                              onClick={async () => {
+                                try {
+                                  await kickTeamMember({
+                                    teamId: team,
+                                    userId: row.original.id,
+                                  });
+                                  await refetch();
+
+                                  setShowDeleteTeamMemberDialog(false);
+                                } catch (e) {}
+                              }}
+                            >
+                              Kick user
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    ),
+                  },
+                ]}
+              />
             </div>
-
-            <div
-              className={cn(
-                "mt-2 h-3 text-sm text-red-600 opacity-0",
-                !!inviteTeamMemberForm.formState.errors.email?.message &&
-                  "opacity-100"
-              )}
-            >
-              {inviteTeamMemberForm.formState.errors.email?.message}
-            </div>
-          </form>
-
-          <div className="mt-4 w-full xl:w-[40%]">
-            <DataTable
-              data={data.members}
-              columns={[
-                {
-                  accessorKey: "image",
-                  header: "Avatar",
-                  cell: ({ getValue }) => (
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={(getValue() as string) ?? "__NON_EXISTENT_IMAGE__"}
-                      />
-                      <AvatarFallback>
-                        <User />
-                      </AvatarFallback>
-                    </Avatar>
-                  ),
-                },
-                { accessorKey: "name", header: "Name" },
-                { accessorKey: "email", header: "Email" },
-                {
-                  id: "actions",
-                  cell: ({ row }) => (
-                    <Dialog
-                      open={showDeleteTeamMemberDialog}
-                      onOpenChange={setShowDeleteTeamMemberDialog}
-                    >
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            disabled={row.original.id === sesh.user.id}
-                            variant="ghost"
-                            className="h-8 w-8 p-0"
-                          >
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DialogTrigger asChild>
-                            <DropdownMenuItem>
-                              Remove from team
-                            </DropdownMenuItem>
-                          </DialogTrigger>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Remove from team</DialogTitle>
-                          <DialogDescription>
-                            Are you sure you want to remove {row.original.name}{" "}
-                            from the team?
-                          </DialogDescription>
-                        </DialogHeader>
-
-                        <p>
-                          They will no longer be able to access the team
-                          projects.
-                        </p>
-
-                        <DialogFooter>
-                          <Button
-                            variant="outline"
-                            onClick={() => setShowDeleteTeamMemberDialog(false)}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            loading={kickTeamMemberLoading}
-                            onClick={async () => {
-                              try {
-                                await kickTeamMember({
-                                  teamId: team,
-                                  userId: row.original.id,
-                                });
-                                await refetch();
-
-                                setShowDeleteTeamMemberDialog(false);
-                              } catch (e) {}
-                            }}
-                          >
-                            Kick user
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  ),
-                },
-              ]}
-            />
-          </div>
-        </SettingCard>
+          </SettingCard>
+        )}
 
         <DangerZone>
           <Dialog
