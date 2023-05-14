@@ -338,6 +338,11 @@ const Settings: NextPageWithLayout = () => {
                       clearTeam();
                       await utils.team.getAllTeams.invalidate();
 
+                      toast({
+                        title: "Team has been deleted",
+                        description: "Your team has been removed.",
+                      });
+
                       await router.push("/app");
 
                       setShowDeleteTeamDialog(false);

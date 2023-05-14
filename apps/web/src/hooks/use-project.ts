@@ -30,5 +30,6 @@ export const useProject = () => {
     isLoading,
     isError,
     refetch,
+    teamId: team,
   };
 };

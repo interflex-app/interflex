@@ -2,10 +2,10 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
+  protectedProjectProcedure,
   protectedTeamProcedure,
 } from "../trpc";
 import { createProjectSchema } from "../../../pages/app";
-import { ApiError } from "../errors/api-error";
 import { updateProjectNameSchema } from "../../../pages/app/[projectId]/settings";
 
 export const projectRouter = createTRPCRouter({
@@ -27,21 +27,9 @@ export const projectRouter = createTRPCRouter({
 
       return projects;
     }),
-  getProject: protectedTeamProcedure
-    .input(z.object({ projectId: z.string().min(1) }))
-    .query(async ({ ctx, input }) => {
-      const project = await ctx.prisma.project.findUnique({
-        where: {
-          id: input.projectId,
-        },
-      });
-
-      if (!project) {
-        throw new ApiError("Project not found!", "projectId");
-      }
-
-      return project;
-    }),
+  getProject: protectedProjectProcedure.query(({ ctx }) => {
+    return ctx.project;
+  }),
   createProject: protectedTeamProcedure
     .input(createProjectSchema)
     .mutation(async ({ ctx, input }) => {
@@ -56,8 +44,8 @@ export const projectRouter = createTRPCRouter({
         },
       });
     }),
-  updateProjectName: protectedTeamProcedure
-    .input(updateProjectNameSchema.extend({ projectId: z.string().min(1) }))
+  updateProjectName: protectedProjectProcedure
+    .input(updateProjectNameSchema)
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.project.update({
         where: {
@@ -68,4 +56,11 @@ export const projectRouter = createTRPCRouter({
         },
       });
     }),
+  deleteProject: protectedProjectProcedure.mutation(async ({ ctx, input }) => {
+    await ctx.prisma.project.delete({
+      where: {
+        id: input.projectId,
+      },
+    });
+  }),
 });

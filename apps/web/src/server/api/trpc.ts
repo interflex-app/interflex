@@ -89,3 +89,45 @@ export const protectedTeamProcedure = protectedProcedure
       });
     })
   );
+
+export const protectedProjectProcedure = protectedProcedure
+  .input(z.object({ teamId: z.string().min(1), projectId: z.string().min(1) }))
+  .use(
+    t.middleware(async ({ ctx, input, next }) => {
+      const team = await ctx.prisma.team.findUnique({
+        where: {
+          id: (input as { teamId: string }).teamId,
+        },
+        include: {
+          members: true,
+        },
+      });
+
+      if (!team) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      if (!team.members.some((member) => member.id === ctx.session?.user.id)) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const project = await ctx.prisma.project.findFirst({
+        where: {
+          id: (input as { projectId: string }).projectId,
+          teamId: team.id,
+        },
+      });
+
+      if (!project) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return next({
+        ctx: {
+          ...ctx,
+          team,
+          project,
+        },
+      });
+    })
+  );
