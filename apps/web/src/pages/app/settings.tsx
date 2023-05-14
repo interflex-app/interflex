@@ -229,7 +229,7 @@ const Settings: NextPageWithLayout = () => {
                     accessorKey: "name",
                     header: "Name",
                     cell: ({ row }) => (
-                      <div className="space-x-4">
+                      <div className="flex space-x-3">
                         <span>{row.original.name}</span>
                         {row.original.id === sesh.user.id && (
                           <Badge variant="outline">You</Badge>
