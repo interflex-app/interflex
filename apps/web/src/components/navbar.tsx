@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
   const isApp = useIsApp();
 
   return (
-    <div className="flex items-center justify-between px-8 py-12 md:px-14 md:py-16">
+    <nav className="sticky top-0 flex items-center justify-between bg-background px-8 py-12 md:px-14 md:py-16">
       <div className="flex items-center gap-12">
         <Link href={isApp ? "/app" : "/"}>
           <div className="block md:hidden">
@@ -127,7 +127,7 @@ const Navbar: React.FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
+    </nav>
   );
 };
 
