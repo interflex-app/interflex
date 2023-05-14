@@ -6,6 +6,7 @@ import {
 } from "../trpc";
 import { createProjectSchema } from "../../../pages/app";
 import { ApiError } from "../errors/api-error";
+import { updateProjectNameSchema } from "../../../pages/app/[projectId]/settings";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
@@ -52,6 +53,18 @@ export const projectRouter = createTRPCRouter({
               id: input.teamId,
             },
           },
+        },
+      });
+    }),
+  updateProjectName: protectedTeamProcedure
+    .input(updateProjectNameSchema.extend({ projectId: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.project.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          name: input.name,
         },
       });
     }),

@@ -38,7 +38,9 @@ import SettingCard from "../../components/setting-card";
 import { MoreHorizontal, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-export const updateTeamNameSchema = z.object({ name: z.string().min(1) });
+export const updateTeamNameSchema = z.object({
+  name: z.string().min(1).max(50),
+});
 export const inviteTeamMemberSchema = z.object({ email: z.string().email() });
 
 const Settings: NextPageWithLayout = () => {

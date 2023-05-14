@@ -36,7 +36,7 @@ import { useTeam } from "../providers/team-provider";
 import { getTeamColor } from "../utils/get-team-color";
 import { truncate } from "../utils/truncate";
 
-export const createTeamSchema = z.object({ name: z.string().min(1) });
+export const createTeamSchema = z.object({ name: z.string().min(1).max(50) });
 
 const TeamSwitcher: React.FC<
   React.ComponentPropsWithoutRef<typeof PopoverTrigger>

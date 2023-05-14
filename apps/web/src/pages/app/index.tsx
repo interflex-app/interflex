@@ -24,7 +24,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Head from "next/head";
 
-export const createProjectSchema = z.object({ name: z.string().min(1) });
+export const createProjectSchema = z.object({
+  name: z.string().min(1).max(50),
+});
 
 const Index: NextPageWithLayout = () => {
   const [showNewProjectDialog, setShowNewProjectDialog] = useState(false);
