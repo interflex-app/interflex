@@ -79,7 +79,7 @@ const AppLayout: React.FC<
         </div>
       )}
 
-      <div className="mt-6 w-full px-8 md:mt-12 md:px-14">
+      <div className="my-6 w-full px-8 md:mt-12 md:px-14">
         {!!data || !authProtected ? children : null}
       </div>
     </div>

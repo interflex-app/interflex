@@ -4,6 +4,8 @@ import {
   protectedTeamProcedure,
 } from "../trpc";
 import { createTeamSchema } from "../../../components/team-switcher";
+import { updateTeamNameSchema } from "../../../pages/app/settings";
+import { ApiError } from "../errors/api-error";
 
 export const teamRouter = createTRPCRouter({
   getAllTeams: protectedProcedure.query(async ({ ctx }) => {
@@ -40,5 +42,32 @@ export const teamRouter = createTRPCRouter({
       });
 
       return team;
+    }),
+  deleteTeam: protectedTeamProcedure.mutation(async ({ ctx, input }) => {
+    if (ctx.team.personal) {
+      throw new ApiError("Cannot delete personal team");
+    }
+
+    await ctx.prisma.team.delete({
+      where: {
+        id: input.teamId,
+      },
+    });
+  }),
+  updateTeamName: protectedTeamProcedure
+    .input(updateTeamNameSchema)
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.team.personal) {
+        throw new ApiError("Cannot edit personal team");
+      }
+
+      await ctx.prisma.team.update({
+        where: {
+          id: input.teamId,
+        },
+        data: {
+          name: input.name,
+        },
+      });
     }),
 });

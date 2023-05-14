@@ -69,7 +69,7 @@ export const protectedTeamProcedure = protectedProcedure
           id: (input as { teamId: string }).teamId,
         },
         include: {
-          members: { select: { id: true } },
+          members: true,
         },
       });
 
