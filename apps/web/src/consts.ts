@@ -11,3 +11,7 @@ export const SUPPORTED_LANGUAGES = [
   { label: "🇳🇴 Norsk", value: SupportedLanguage.Norwegian },
   { label: "🇺🇦 Українська", value: SupportedLanguage.Ukrainian },
 ];
+
+export const SUPPORTED_LANGUAGE_CODES = SUPPORTED_LANGUAGES.map(
+  (lang) => lang.value
+);
