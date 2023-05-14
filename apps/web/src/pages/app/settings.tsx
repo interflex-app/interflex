@@ -18,6 +18,7 @@ import {
   DialogTrigger,
   Input,
   Label,
+  useToast,
 } from "@interflex-app/ui";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,7 +43,9 @@ const SettingCard: React.FC<
 export const updateTeamNameSchema = z.object({ name: z.string().min(1) });
 
 const Settings: NextPageWithLayout = () => {
+  const { toast } = useToast();
   const router = useRouter();
+
   const [showDeleteTeamDialog, setShowDeleteTeamDialog] = useState(false);
 
   const { team, clearTeam } = useTeam();
@@ -87,6 +90,11 @@ const Settings: NextPageWithLayout = () => {
                 await updateTeamName({ teamId: team, ...formData });
                 await refetch();
                 await utils.team.getAllTeams.invalidate();
+
+                toast({
+                  title: "Team name updated",
+                  description: "Your team name has been updated successfully.",
+                });
               } catch (e) {
                 Object.entries(
                   (e as RouterError).data.zodError?.fieldErrors ?? []

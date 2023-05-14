@@ -10,6 +10,7 @@ import { type NextPage } from "next";
 import { type ReactElement, type ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 import { TeamProvider } from "../providers/team-provider";
+import { Toaster } from "@interflex-app/ui";
 
 const font = FontSans({
   variable: "--font-sans",
@@ -57,6 +58,7 @@ const App = ({
               className={`${font.className} ${font.variable} min-h-screen bg-pattern dark:bg-pattern-light`}
             >
               {getLayout(<Component {...pageProps} />)}
+              <Toaster />
             </div>
           </TeamProvider>
         </SessionProvider>
