@@ -11,3 +11,4 @@ export * from "./select";
 export * from "./toast";
 export * from "./table";
 export * from "./data-table";
+export * from "./badge";

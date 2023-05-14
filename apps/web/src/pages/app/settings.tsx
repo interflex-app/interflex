@@ -11,6 +11,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
+  Badge,
   Button,
   DataTable,
   Dialog,
@@ -224,7 +225,18 @@ const Settings: NextPageWithLayout = () => {
                       </Avatar>
                     ),
                   },
-                  { accessorKey: "name", header: "Name" },
+                  {
+                    accessorKey: "name",
+                    header: "Name",
+                    cell: ({ row }) => (
+                      <div className="space-x-4">
+                        <span>{row.original.name}</span>
+                        {row.original.id === sesh.user.id && (
+                          <Badge variant="outline">You</Badge>
+                        )}
+                      </div>
+                    ),
+                  },
                   { accessorKey: "email", header: "Email" },
                   {
                     id: "actions",
