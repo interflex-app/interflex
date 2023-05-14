@@ -8,7 +8,7 @@ import { truncate } from "../../../utils/truncate";
 import { z } from "zod";
 import SettingCard from "../../../components/setting-card";
 import DangerZone from "../../../components/danger-zone";
-import { RouterError, api } from "../../../utils/api";
+import { type RouterError, api } from "../../../utils/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
