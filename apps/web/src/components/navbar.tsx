@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
             <Logo type="small" />
           </div>
           <div className="hidden md:block">
-            <Logo type="large" />
+            <Logo size={0.8} type="large" />
           </div>
         </Link>
       </div>
