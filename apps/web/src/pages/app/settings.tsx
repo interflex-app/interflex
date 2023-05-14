@@ -209,7 +209,7 @@ const Settings: NextPageWithLayout = () => {
                   accessorKey: "image",
                   header: "Avatar",
                   cell: ({ getValue }) => (
-                    <Avatar>
+                    <Avatar className="h-8 w-8">
                       <AvatarImage
                         src={(getValue() as string) ?? "__NON_EXISTENT_IMAGE__"}
                       />
