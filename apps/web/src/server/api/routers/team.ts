@@ -4,7 +4,10 @@ import {
   protectedTeamProcedure,
 } from "../trpc";
 import { createTeamSchema } from "../../../components/team-switcher";
-import { updateTeamNameSchema } from "../../../pages/app/settings";
+import {
+  inviteTeamMemberSchema,
+  updateTeamNameSchema,
+} from "../../../pages/app/settings";
 import { ApiError } from "../errors/api-error";
 import { z } from "zod";
 
@@ -92,7 +95,7 @@ export const teamRouter = createTRPCRouter({
       });
     }),
   inviteTeamMember: protectedTeamProcedure
-    .input(z.object({ email: z.string().email() }))
+    .input(inviteTeamMemberSchema)
     .mutation(async ({ ctx, input }) => {
       if (input.email === ctx.session!.user.email) {
         throw new ApiError("Cannot invite yourself to the team", "email");

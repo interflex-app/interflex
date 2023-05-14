@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
   Input,
   Label,
+  cn,
   useToast,
 } from "@interflex-app/ui";
 import { useForm } from "react-hook-form";
@@ -38,6 +39,7 @@ import { MoreHorizontal, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 export const updateTeamNameSchema = z.object({ name: z.string().min(1) });
+export const inviteTeamMemberSchema = z.object({ email: z.string().email() });
 
 const Settings: NextPageWithLayout = () => {
   const { toast } = useToast();
@@ -54,6 +56,9 @@ const Settings: NextPageWithLayout = () => {
   const { mutateAsync: updateTeamName, isLoading: updateTeamNameLoading } =
     api.team.updateTeamName.useMutation();
 
+  const { mutateAsync: inviteTeamMember, isLoading: inviteTeamMemberLoading } =
+    api.team.inviteTeamMember.useMutation();
+
   const { mutateAsync: kickTeamMember, isLoading: kickTeamMemberLoading } =
     api.team.kickTeamMember.useMutation();
 
@@ -62,6 +67,10 @@ const Settings: NextPageWithLayout = () => {
 
   const updateTeamNameForm = useForm<z.infer<typeof updateTeamNameSchema>>({
     resolver: zodResolver(updateTeamNameSchema),
+  });
+
+  const inviteTeamMemberForm = useForm<z.infer<typeof inviteTeamMemberSchema>>({
+    resolver: zodResolver(inviteTeamMemberSchema),
   });
 
   const { data, isLoading, isError, refetch } = api.team.getTeam.useQuery(
@@ -144,7 +153,55 @@ const Settings: NextPageWithLayout = () => {
           title="Team Members"
           description="Manage members of your team. Each member will be able to access and modify all the projects of this team."
         >
-          <div className="w-full xl:w-[40%]">
+          <form
+            className="w-full"
+            onSubmit={inviteTeamMemberForm.handleSubmit(async (formData) => {
+              try {
+                await inviteTeamMember({ teamId: team, ...formData });
+                await refetch();
+
+                toast({
+                  title: "Team member has been added",
+                  description: "Your team has been updated successfully.",
+                });
+              } catch (e) {
+                Object.entries(
+                  (e as RouterError).data.zodError?.fieldErrors ?? []
+                ).forEach(([key, value]) =>
+                  inviteTeamMemberForm.setError(key as "root", {
+                    message: value?.[0] ?? "",
+                  })
+                );
+              }
+            })}
+          >
+            <div className="flex w-full items-end gap-4 xl:w-[40%]">
+              <div className="w-full space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  placeholder="Enter email..."
+                  {...inviteTeamMemberForm.register("email")}
+                />
+              </div>
+
+              <Button type="submit" loading={inviteTeamMemberLoading}>
+                Invite
+              </Button>
+            </div>
+
+            <div
+              className={cn(
+                "mt-2 h-3 text-sm text-red-600 opacity-0",
+                !!inviteTeamMemberForm.formState.errors.email?.message &&
+                  "opacity-100"
+              )}
+            >
+              {inviteTeamMemberForm.formState.errors.email?.message}
+            </div>
+          </form>
+
+          <div className="mt-4 w-full xl:w-[40%]">
             <DataTable
               data={data.members}
               columns={[
