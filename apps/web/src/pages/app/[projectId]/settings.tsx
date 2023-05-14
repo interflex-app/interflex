@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Button,
+  Combobox,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -26,6 +27,7 @@ import {
 } from "@interflex-app/ui";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { SUPPORTED_LANGUAGES, SupportedLanguage } from "../../../consts";
 
 export const updateProjectNameSchema = z.object({
   name: z.string().min(1).max(50),
@@ -33,6 +35,9 @@ export const updateProjectNameSchema = z.object({
 
 const Settings: NextPageWithLayout = () => {
   const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState(false);
+  const [newLanguage, setNewLanguage] = useState<SupportedLanguage | null>(
+    null
+  );
 
   const router = useRouter();
 
@@ -65,6 +70,19 @@ const Settings: NextPageWithLayout = () => {
       <DashboardHeader title={`${truncate(project.name, 20)} - Settings`} />
 
       <div className="flex flex-col gap-4">
+        <SettingCard
+          title="Project Languages"
+          description="Those are the languages that will be available in your application."
+        >
+          <Combobox<SupportedLanguage>
+            value={newLanguage}
+            onChange={setNewLanguage}
+            options={SUPPORTED_LANGUAGES}
+            placeholder="Select language..."
+          />
+          {newLanguage}
+        </SettingCard>
+
         <SettingCard
           title="Project Name"
           description="This is your project's name. It will be visible to all the members of
