@@ -6,8 +6,6 @@ export const useProject = () => {
   const router = useRouter();
   const { projectId } = router.query;
 
-  const { team } = useTeam();
-
   const {
     data: project,
     isLoading,
@@ -16,10 +14,9 @@ export const useProject = () => {
   } = api.project.getProject.useQuery(
     {
       projectId: projectId?.toString() ?? "",
-      teamId: team ?? "",
     },
     {
-      enabled: !!projectId && !!team,
+      enabled: !!projectId,
       onError: () => router.push("/app"),
       retry: false,
     }
@@ -30,6 +27,5 @@ export const useProject = () => {
     isLoading,
     isError,
     refetch,
-    teamId: team,
   };
 };

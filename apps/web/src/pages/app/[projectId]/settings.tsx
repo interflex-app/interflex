@@ -28,9 +28,16 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { SUPPORTED_LANGUAGES, SupportedLanguage } from "../../../consts";
+import { projectLanguages } from "../../../utils/project-languages";
+import { Trash2 } from "lucide-react";
+import { createZodEnum } from "../../../utils/create-zod-enum";
 
 export const updateProjectNameSchema = z.object({
   name: z.string().min(1).max(50),
+});
+
+export const addLanguageToProjectSchema = z.object({
+  language: z.enum(createZodEnum(SupportedLanguage)),
 });
 
 const Settings: NextPageWithLayout = () => {
@@ -43,7 +50,7 @@ const Settings: NextPageWithLayout = () => {
 
   const { toast } = useToast();
 
-  const { project, teamId, isLoading, refetch } = useProject();
+  const { project, isLoading, refetch } = useProject();
 
   const {
     mutateAsync: updateProjectName,
@@ -69,18 +76,42 @@ const Settings: NextPageWithLayout = () => {
 
       <DashboardHeader title={`${truncate(project.name, 20)} - Settings`} />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex w-full flex-col gap-4 xl:w-[40%]">
         <SettingCard
           title="Project Languages"
           description="Those are the languages that will be available in your application."
         >
-          <Combobox<SupportedLanguage>
-            value={newLanguage}
-            onChange={setNewLanguage}
-            options={SUPPORTED_LANGUAGES}
-            placeholder="Select language..."
-          />
-          {newLanguage}
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="language">Add a new language</Label>
+
+            <div className="flex items-center gap-4">
+              <Combobox<SupportedLanguage>
+                className="w-full"
+                value={newLanguage}
+                onChange={setNewLanguage}
+                options={SUPPORTED_LANGUAGES.filter(
+                  (supportedLanguage) =>
+                    !projectLanguages(project.languages).includes(
+                      supportedLanguage
+                    )
+                )}
+                placeholder="Select language..."
+              />
+
+              <Button>Add</Button>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-4">
+            {projectLanguages(project.languages).map((lang) => (
+              <div className="flex w-full items-center justify-between rounded-md border border-gray-200 pl-4 dark:border-gray-800">
+                <span>{lang.label}</span>
+                <Button variant={"ghost"}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
         </SettingCard>
 
         <SettingCard
@@ -93,7 +124,6 @@ const Settings: NextPageWithLayout = () => {
             onSubmit={updateProjectNameForm.handleSubmit(async (formData) => {
               try {
                 await updateProjectName({
-                  teamId: teamId || "",
                   projectId: project.id,
                   name: formData.name,
                 });
@@ -115,7 +145,7 @@ const Settings: NextPageWithLayout = () => {
               }
             })}
           >
-            <div className="flex w-full items-end gap-4 xl:w-[40%]">
+            <div className="flex w-full items-end gap-4">
               <div className="w-full space-y-2">
                 <Label htmlFor="name">Project name</Label>
                 <Input
@@ -174,11 +204,10 @@ const Settings: NextPageWithLayout = () => {
                   onClick={async () => {
                     try {
                       await deleteProject({
-                        teamId: teamId || "",
                         projectId: project.id,
                       });
 
-                      await router.push(`/app/${teamId || ""}`);
+                      await router.push(`/app/${project.teamId || ""}`);
 
                       toast({
                         title: "Project has been deleted",

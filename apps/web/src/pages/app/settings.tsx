@@ -94,7 +94,7 @@ const Settings: NextPageWithLayout = () => {
 
       <DashboardHeader title="Settings" />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex w-full flex-col gap-4 xl:w-[40%]">
         <SettingCard
           title="Team Name"
           description="This is your team's name. It will be visible to all the members of
@@ -123,7 +123,7 @@ const Settings: NextPageWithLayout = () => {
               }
             })}
           >
-            <div className="flex w-full items-end gap-4 xl:w-[40%]">
+            <div className="flex w-full items-end gap-4">
               <div className="w-full space-y-2">
                 <Label htmlFor="name">Team name</Label>
                 <Input
@@ -179,7 +179,7 @@ const Settings: NextPageWithLayout = () => {
                 }
               })}
             >
-              <div className="flex w-full items-end gap-4 xl:w-[40%]">
+              <div className="flex w-full items-end gap-4">
                 <div className="w-full space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -205,7 +205,7 @@ const Settings: NextPageWithLayout = () => {
               </div>
             </form>
 
-            <div className="mt-4 w-full xl:w-[40%]">
+            <div className="mt-4 w-full">
               <DataTable
                 data={data.members}
                 columns={[

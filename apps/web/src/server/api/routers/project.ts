@@ -6,7 +6,13 @@ import {
   protectedTeamProcedure,
 } from "../trpc";
 import { createProjectSchema } from "../../../pages/app";
-import { updateProjectNameSchema } from "../../../pages/app/[projectId]/settings";
+import {
+  addLanguageToProjectSchema as linkLanguageToOrFromProjectSchema,
+  updateProjectNameSchema,
+} from "../../../pages/app/[projectId]/settings";
+import { projectLanguages } from "../../../utils/project-languages";
+import { Prisma } from "@prisma/client";
+import { ApiError } from "../errors/api-error";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
@@ -63,4 +69,62 @@ export const projectRouter = createTRPCRouter({
       },
     });
   }),
+  addLanguageToProject: protectedProjectProcedure
+    .input(linkLanguageToOrFromProjectSchema)
+    .mutation(async ({ ctx, input }) => {
+      const currentLanguages = projectLanguages(ctx.project.languages);
+
+      if (currentLanguages.map((l) => l.value).includes(input.language)) {
+        throw new ApiError(
+          "This language has already been added to the project.",
+          "language"
+        );
+      }
+
+      const newLanguages = [
+        ...currentLanguages.map((l) => l.value),
+        input.language,
+      ] as Prisma.JsonArray;
+
+      await ctx.prisma.project.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          languages: newLanguages,
+        },
+      });
+    }),
+  removeLanguageFromProject: protectedProjectProcedure
+    .input(linkLanguageToOrFromProjectSchema)
+    .mutation(async ({ ctx, input }) => {
+      const currentLanguages = projectLanguages(ctx.project.languages);
+
+      if (currentLanguages.length === 1) {
+        throw new ApiError(
+          "You cannot remove the last language from a project.",
+          "language"
+        );
+      }
+
+      if (!currentLanguages.map((l) => l.value).includes(input.language)) {
+        throw new ApiError(
+          "This language has not been added to the project.",
+          "language"
+        );
+      }
+
+      const newLanguages = currentLanguages
+        .map((l) => l.value)
+        .filter((l) => l !== input.language) as Prisma.JsonArray;
+
+      await ctx.prisma.project.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          languages: newLanguages,
+        },
+      });
+    }),
 });

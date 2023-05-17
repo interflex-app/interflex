@@ -19,6 +19,7 @@ type Props<T> = {
   value: T | null;
   onChange: (value: T) => void;
   placeholder: string;
+  className?: string;
 };
 
 const Combobox = <T extends string>({
@@ -26,6 +27,7 @@ const Combobox = <T extends string>({
   value,
   onChange,
   placeholder,
+  className,
 }: Props<T>) => {
   const [open, setOpen] = React.useState(false);
 
@@ -36,7 +38,7 @@ const Combobox = <T extends string>({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className={cn("w-[200px] justify-between", className)}
         >
           {value
             ? options.find((option) => option.value === value)?.label
@@ -44,7 +46,7 @@ const Combobox = <T extends string>({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandEmpty>Nothing found.</CommandEmpty>
