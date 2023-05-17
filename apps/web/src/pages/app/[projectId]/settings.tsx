@@ -45,7 +45,11 @@ const Settings: NextPageWithLayout = () => {
   const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState(false);
   const [showRemoveLanguageDialog, setShowRemoveLanguageDialog] =
     useState(false);
+
   const [newLanguage, setNewLanguage] = useState<SupportedLanguage | null>(
+    null
+  );
+  const [langToRemove, setLangToRemove] = useState<SupportedLanguage | null>(
     null
   );
 
@@ -172,7 +176,13 @@ const Settings: NextPageWithLayout = () => {
                     onOpenChange={setShowRemoveLanguageDialog}
                   >
                     <DialogTrigger asChild>
-                      <Button variant="ghost">
+                      <Button
+                        onClick={() => {
+                          setLangToRemove(lang.value);
+                          setShowRemoveLanguageDialog(true);
+                        }}
+                        variant="ghost"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -180,8 +190,7 @@ const Settings: NextPageWithLayout = () => {
                       <DialogHeader>
                         <DialogTitle>Delete language</DialogTitle>
                         <DialogDescription>
-                          Are you sure you want to delete this language? (
-                          {lang.value})
+                          Are you sure you want to delete this language?
                         </DialogDescription>
                       </DialogHeader>
 
@@ -198,7 +207,7 @@ const Settings: NextPageWithLayout = () => {
                             try {
                               await removeLanguageFromProject({
                                 projectId: project.id,
-                                language: lang.value,
+                                language: langToRemove!,
                               });
 
                               await refetch();
