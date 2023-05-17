@@ -7,7 +7,7 @@ import {
 } from "../trpc";
 import { createProjectSchema } from "../../../pages/app";
 import {
-  addLanguageToProjectSchema as linkLanguageToOrFromProjectSchema,
+  linkLanguageToOrFromProjectSchema,
   updateProjectNameSchema,
 } from "../../../pages/app/[projectId]/settings";
 import { projectLanguages } from "../../../utils/project-languages";

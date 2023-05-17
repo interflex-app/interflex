@@ -23,6 +23,7 @@ import {
   DialogTrigger,
   Input,
   Label,
+  cn,
   useToast,
 } from "@interflex-app/ui";
 import { useState } from "react";
@@ -36,12 +37,14 @@ export const updateProjectNameSchema = z.object({
   name: z.string().min(1).max(50),
 });
 
-export const addLanguageToProjectSchema = z.object({
+export const linkLanguageToOrFromProjectSchema = z.object({
   language: z.enum(createZodEnum(SupportedLanguage)),
 });
 
 const Settings: NextPageWithLayout = () => {
   const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState(false);
+  const [showRemoveLanguageDialog, setShowRemoveLanguageDialog] =
+    useState(false);
   const [newLanguage, setNewLanguage] = useState<SupportedLanguage | null>(
     null
   );
@@ -53,12 +56,25 @@ const Settings: NextPageWithLayout = () => {
   const { project, isLoading, refetch } = useProject();
 
   const {
+    mutateAsync: addLanguageToProject,
+    isLoading: addLanguageToProjectLoading,
+  } = api.project.addLanguageToProject.useMutation();
+
+  const {
+    mutateAsync: removeLanguageFromProject,
+    isLoading: removeLanguageFromProjectLoading,
+  } = api.project.removeLanguageFromProject.useMutation();
+
+  const {
     mutateAsync: updateProjectName,
     isLoading: updateProjectNameLoading,
   } = api.project.updateProjectName.useMutation();
 
   const { mutateAsync: deleteProject, isLoading: deleteProjectLoading } =
     api.project.deleteProject.useMutation();
+
+  const addLanguageToProjectForm =
+    useForm<z.infer<typeof linkLanguageToOrFromProjectSchema>>();
 
   const updateProjectNameForm = useForm<
     z.infer<typeof updateProjectNameSchema>
@@ -81,36 +97,130 @@ const Settings: NextPageWithLayout = () => {
           title="Project Languages"
           description="Those are the languages that will be available in your application."
         >
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="language">Add a new language</Label>
+          <form
+            className="w-full"
+            onSubmit={addLanguageToProjectForm.handleSubmit(async () => {
+              try {
+                await addLanguageToProject({
+                  language: newLanguage!,
+                  projectId: project.id,
+                });
+                await refetch();
 
-            <div className="flex items-center gap-4">
-              <Combobox<SupportedLanguage>
-                className="w-full"
-                value={newLanguage}
-                onChange={setNewLanguage}
-                options={SUPPORTED_LANGUAGES.filter(
-                  (supportedLanguage) =>
-                    !projectLanguages(project.languages).includes(
-                      supportedLanguage
-                    )
-                )}
-                placeholder="Select language..."
-              />
+                setNewLanguage(null);
 
-              <Button>Add</Button>
-            </div>
-          </div>
-
-          <div className="mt-4 flex flex-col gap-4">
-            {projectLanguages(project.languages).map((lang) => (
-              <div className="flex w-full items-center justify-between rounded-md border border-gray-200 pl-4 dark:border-gray-800">
-                <span>{lang.label}</span>
-                <Button variant={"ghost"}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                toast({
+                  title: "Language has been added",
+                  description: "Your project has been updated successfully.",
+                });
+              } catch (e) {
+                Object.entries(
+                  (e as RouterError).data.zodError?.fieldErrors ?? []
+                ).forEach(([key, value]) =>
+                  addLanguageToProjectForm.setError(key as "root", {
+                    message: value?.[0] ?? "",
+                  })
+                );
+              }
+            })}
+          >
+            <div className="flex w-full items-end gap-4">
+              <div className="w-full space-y-2">
+                <Label>Language to add</Label>
+                <Combobox<SupportedLanguage>
+                  className="w-full"
+                  value={newLanguage}
+                  onChange={setNewLanguage}
+                  options={SUPPORTED_LANGUAGES.filter(
+                    (supportedLanguage) =>
+                      !projectLanguages(project.languages).includes(
+                        supportedLanguage
+                      )
+                  )}
+                  placeholder="Select language..."
+                />
               </div>
-            ))}
+
+              <Button type="submit" loading={addLanguageToProjectLoading}>
+                Add
+              </Button>
+            </div>
+
+            <div
+              className={cn(
+                "mt-2 h-3 text-sm text-red-600 opacity-0",
+                !!addLanguageToProjectForm.formState.errors.language?.message &&
+                  "opacity-100"
+              )}
+            >
+              {addLanguageToProjectForm.formState.errors.language?.message}
+            </div>
+          </form>
+
+          <div className="mt-4">
+            <Label>Languages in the project</Label>
+
+            <div className="mt-2 flex flex-col gap-2">
+              {projectLanguages(project.languages).map((lang) => (
+                <div
+                  key={lang.value}
+                  className="flex w-full items-center justify-between rounded-md border border-gray-200 pl-4 dark:border-gray-800"
+                >
+                  <span>{lang.label}</span>
+                  <Dialog
+                    open={showRemoveLanguageDialog}
+                    onOpenChange={setShowRemoveLanguageDialog}
+                  >
+                    <DialogTrigger asChild>
+                      <Button variant="ghost">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Delete language</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to delete this language? (
+                          {lang.value})
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowRemoveLanguageDialog(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          loading={removeLanguageFromProjectLoading}
+                          onClick={async () => {
+                            try {
+                              await removeLanguageFromProject({
+                                projectId: project.id,
+                                language: lang.value,
+                              });
+
+                              await refetch();
+
+                              toast({
+                                title: "Language has been removed",
+                                description:
+                                  "Your project has been updated successfully.",
+                              });
+
+                              setShowRemoveLanguageDialog(false);
+                            } catch (e) {}
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              ))}
+            </div>
           </div>
         </SettingCard>
 
