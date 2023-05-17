@@ -13,6 +13,8 @@ import {
 import { projectLanguages } from "../../../utils/project-languages";
 import { Prisma } from "@prisma/client";
 import { ApiError } from "../errors/api-error";
+import { createZodEnum } from "../../../utils/create-zod-enum";
+import { SupportedLanguage } from "../../../consts";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
@@ -127,4 +129,98 @@ export const projectRouter = createTRPCRouter({
         },
       });
     }),
+  syncTranslations: protectedProjectProcedure
+    .input(
+      z.object({
+        translations: z.array(
+          z.object({
+            id: z.string().optional(),
+            key: z.string().min(1),
+            values: z.array(
+              z.object({
+                language: z.enum(createZodEnum(SupportedLanguage)),
+                value: z.string().min(1),
+              })
+            ),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const currentTranslations = await ctx.prisma.translation.findMany({
+        where: {
+          projectId: ctx.project.id,
+        },
+      });
+
+      const newTranslations = input.translations.map((t) => {
+        const languages = t.values.map((v) => v.language);
+        const uniqueLanguages = [...new Set(languages)];
+
+        if (languages.length !== uniqueLanguages.length) {
+          throw new ApiError(
+            "Each language can only be used once per translation.",
+            "translations"
+          );
+        }
+
+        const existingTranslation = currentTranslations.find(
+          (ct) => ct.id === t.id
+        );
+
+        if (existingTranslation) {
+          const value = t.values.reduce((acc, curr) => {
+            (acc as Record<SupportedLanguage, string>)[curr.language] =
+              curr.value;
+            return acc;
+          }, {});
+
+          return {
+            ...existingTranslation,
+            value,
+            key: t.key,
+            projectId: ctx.project.id,
+          };
+        }
+
+        const duplicateKey = currentTranslations.find((ct) => ct.key === t.key);
+
+        if (duplicateKey) {
+          throw new ApiError(
+            `The key "${t.key}" already exists.`,
+            "translations"
+          );
+        }
+
+        const value = t.values.reduce((acc, curr) => {
+          (acc as Record<SupportedLanguage, string>)[curr.language] =
+            curr.value;
+          return acc;
+        }, {});
+
+        return {
+          value,
+          key: t.key,
+          projectId: ctx.project.id,
+        };
+      });
+
+      await ctx.prisma.$transaction([
+        ctx.prisma.translation.deleteMany({
+          where: {
+            projectId: ctx.project.id,
+          },
+        }),
+        ctx.prisma.translation.createMany({
+          data: newTranslations,
+        }),
+      ]);
+    }),
+  getTranslations: protectedProjectProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.translation.findMany({
+      where: {
+        projectId: ctx.project.id,
+      },
+    });
+  }),
 });

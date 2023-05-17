@@ -14,31 +14,50 @@ import {
   TableHeader,
   TableRow,
 } from "@interflex-app/ui";
-import { SUPPORTED_LANGUAGES } from "../consts";
+import { SUPPORTED_LANGUAGES, SupportedLanguage } from "../consts";
 import { useMemo } from "react";
 
-interface TranslationTableProps<TData, TValue> {
-  data: TData[];
+type Translation = {
+  id?: string;
+  key: string;
+  values: {
+    language: SupportedLanguage;
+    value: string;
+  }[];
+};
+
+interface TranslationTableProps {
+  data: Translation[];
   languages: typeof SUPPORTED_LANGUAGES;
 }
 
-export function TranslationTable<TData, TValue>({
-  data,
-  languages,
-}: TranslationTableProps<TData, TValue>) {
+export function TranslationTable({ data, languages }: TranslationTableProps) {
   const columns = useMemo(() => {
     return [
       {
-        id: "Key",
+        id: "key",
         header: "Key",
-        cell: () => <Input placeholder="Key..." />,
+        cell: ({ row }) => (
+          <Input placeholder="Key..." value={row.original.key} />
+        ),
       },
-      ...languages.map((lang) => ({
-        id: `lang-${lang.value}`,
-        header: lang.label,
-        cell: () => <Input placeholder="Value..." />,
-      })),
-    ] as ColumnDef<TData, TValue>[];
+      ...languages.map(
+        (lang) =>
+          ({
+            id: `lang-${lang.value}`,
+            header: lang.label,
+            cell: ({ row }) => (
+              <Input
+                placeholder="Value..."
+                value={
+                  row.original.values.find((v) => v.language === lang.value)
+                    ?.value
+                }
+              />
+            ),
+          } as ColumnDef<Translation>)
+      ),
+    ] as ColumnDef<Translation>[];
   }, [languages]);
 
   const table = useReactTable({
