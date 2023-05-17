@@ -6,7 +6,6 @@ import DashboardSkeleton from "../../../components/dashboard-skeleton";
 import Head from "next/head";
 import { truncate } from "../../../utils/truncate";
 import { TranslationTable } from "../../../components/translation-table";
-import { Input } from "@interflex-app/ui";
 import { projectLanguages } from "../../../utils/project-languages";
 
 const Translations: NextPageWithLayout = () => {
@@ -23,19 +22,8 @@ const Translations: NextPageWithLayout = () => {
       <DashboardHeader title={`${truncate(project.name, 20)} - Translations`} />
 
       <TranslationTable
+        languages={projectLanguages(project.languages)}
         data={[]}
-        columns={[
-          {
-            id: "Key",
-            header: "Key",
-            cell: () => <Input placeholder="Key..." />,
-          },
-          ...projectLanguages(project.languages).map((lang) => ({
-            id: `lang-${lang.value}`,
-            header: lang.label,
-            cell: () => <Input placeholder="Value..." />,
-          })),
-        ]}
       />
     </div>
   );

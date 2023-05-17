@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-table";
 
 import {
+  Input,
   Table,
   TableBody,
   TableCell,
@@ -13,16 +14,33 @@ import {
   TableHeader,
   TableRow,
 } from "@interflex-app/ui";
+import { SUPPORTED_LANGUAGES } from "../consts";
+import { useMemo } from "react";
 
 interface TranslationTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  languages: typeof SUPPORTED_LANGUAGES;
 }
 
 export function TranslationTable<TData, TValue>({
-  columns,
   data,
+  languages,
 }: TranslationTableProps<TData, TValue>) {
+  const columns = useMemo(() => {
+    return [
+      {
+        id: "Key",
+        header: "Key",
+        cell: () => <Input placeholder="Key..." />,
+      },
+      ...languages.map((lang) => ({
+        id: `lang-${lang.value}`,
+        header: lang.label,
+        cell: () => <Input placeholder="Value..." />,
+      })),
+    ] as ColumnDef<TData, TValue>[];
+  }, [languages]);
+
   const table = useReactTable({
     data,
     columns,
@@ -63,6 +81,18 @@ export function TranslationTable<TData, TValue>({
               ))}
             </TableRow>
           ))}
+
+          <TableRow>
+            <TableCell>
+              <Input placeholder="Key..." />
+            </TableCell>
+
+            {languages.map((lang) => (
+              <TableCell key={lang.value}>
+                <Input placeholder="Value..." />
+              </TableCell>
+            ))}
+          </TableRow>
         </TableBody>
       </Table>
     </div>
