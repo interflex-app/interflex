@@ -14,6 +14,7 @@ import { api } from "../../../utils/api";
 import { Button, useToast } from "@interflex-app/ui";
 import { extractTranslations } from "../../../utils/extract-translations";
 import { useRef } from "react";
+import { ModifierKey, useKeyPress } from "../../../hooks/use-key-press";
 
 const Translations: NextPageWithLayout = () => {
   const { toast } = useToast();
@@ -37,6 +38,26 @@ const Translations: NextPageWithLayout = () => {
     { enabled: !!project?.id }
   );
 
+  const save = async () => {
+    if (!project) return;
+
+    const actions = translationTable.current!.getActions();
+
+    try {
+      await syncTranslations({
+        projectId: project.id,
+        translations: actions,
+      });
+
+      toast({
+        title: "Translations synced",
+        description: "Your translations have been saved.",
+      });
+    } catch (e) {}
+  };
+
+  useKeyPress("s", save, { modifierKey: ModifierKey.Control });
+
   if (
     !project ||
     isLoading ||
@@ -58,21 +79,7 @@ const Translations: NextPageWithLayout = () => {
           <>
             <Button
               loading={syncTranslationsLoading}
-              onClick={async () => {
-                const actions = translationTable.current!.getActions();
-
-                try {
-                  await syncTranslations({
-                    projectId: project.id,
-                    translations: actions,
-                  });
-
-                  toast({
-                    title: "Translations synced",
-                    description: "Your translations have been saved.",
-                  });
-                } catch (e) {}
-              }}
+              onClick={async () => await save()}
             >
               Save
             </Button>
