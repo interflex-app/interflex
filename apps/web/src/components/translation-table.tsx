@@ -83,6 +83,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
           cell: ({ row }) => (
             <>
               <Input
+                className="min-w-[200px]"
                 placeholder="Key..."
                 value={row.original.key}
                 onChange={(e) => updateKey(row.original.id, e.target.value)}
@@ -103,6 +104,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
               header: lang.label,
               cell: ({ row }) => (
                 <Input
+                  className="min-w-[300px]"
                   placeholder="Value..."
                   value={
                     row.original.values.find((v) => v.language === lang.value)
@@ -184,7 +186,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell className="min-w-[300px]" key={cell.id}>
+                  <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
