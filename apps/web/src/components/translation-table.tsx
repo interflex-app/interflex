@@ -110,26 +110,6 @@ export function TranslationTable({
               ))}
             </TableRow>
           ))}
-
-          <TableRow>
-            <TableCell className="min-w-[300px]">
-              <Input
-                placeholder="Key..."
-                onChange={(e) => updateKey(null, e.target.value)}
-              />
-            </TableCell>
-
-            {languages.map((lang) => (
-              <TableCell className="min-w-[300px]" key={lang.value}>
-                <Input
-                  placeholder="Value..."
-                  onChange={(e) =>
-                    updateValue(null, lang.value, e.target.value)
-                  }
-                />
-              </TableCell>
-            ))}
-          </TableRow>
         </TableBody>
       </Table>
     </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RouterInputs } from "../utils/api";
 import { SupportedLanguage, TranslationAction } from "../consts";
 
@@ -7,7 +7,7 @@ const NEW_ID_PREFIX = "new-";
 export type TranslationStateRow = Omit<
   CreateTranslationActionEntry | UpdateTranslationActionEntry,
   "action"
-> & { id: string | null };
+> & { id: string };
 
 export type TranslationActionEntry =
   RouterInputs["project"]["syncTranslations"]["translations"][number];
@@ -30,6 +30,8 @@ export type DeleteTranslationActionEntry = Extract<
 enum RowState {
   Created,
   Updated,
+  Deleted,
+  Placeholder,
 }
 
 type InternalStateRow = {
@@ -40,11 +42,66 @@ const getNewId = () =>
   `${NEW_ID_PREFIX}${(Math.random() * 100_000).toString().slice(0, 5)}`;
 
 export const useTranslationState = (initialState: TranslationStateRow[]) => {
-  const [data, setData] =
-    useState<(TranslationStateRow & InternalStateRow)[]>(initialState);
+  const [data, setData] = useState<(TranslationStateRow & InternalStateRow)[]>([
+    ...initialState,
+    {
+      id: getNewId(),
+      key: "",
+      values: [],
+      state: RowState.Placeholder,
+    },
+  ]);
 
-  const updateKey = (id: string | null, newKey: string) => {
-    if (id && !id.includes(NEW_ID_PREFIX)) {
+  useEffect(() => {
+    if (!data.find((row) => row.state === RowState.Placeholder)) {
+      setData((prev) => [
+        ...prev,
+        {
+          id: getNewId(),
+          key: "",
+          values: [],
+          state: RowState.Placeholder,
+        },
+      ]);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const emptyCreatedRowIds = data
+      .filter(
+        (row) =>
+          row.key === "" &&
+          row.values.length === 0 &&
+          row.state === RowState.Created
+      )
+      .map((row) => row.id);
+
+    const emptyUpdatedRowIds = data
+      .filter(
+        (row) =>
+          row.key === "" &&
+          row.values.length === 0 &&
+          row.state === RowState.Updated
+      )
+      .map((row) => row.id);
+
+    if (emptyCreatedRowIds.length > 0 || emptyUpdatedRowIds.length > 0) {
+      setData((prev) =>
+        prev
+          .filter((row) => !emptyCreatedRowIds.includes(row.id))
+          .map((row) => {
+            if (emptyUpdatedRowIds.includes(row.id)) {
+              return { ...row, state: RowState.Deleted };
+            } else {
+              return row;
+            }
+          })
+      );
+    }
+  }, [data]);
+
+  const updateKey = (id: string, newKey: string) => {
+    if (!id.includes(NEW_ID_PREFIX)) {
       const initialStateKey = initialState.find((row) => row.id === id)?.key;
 
       setData((prev) =>
@@ -60,7 +117,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
           }
         })
       );
-    } else if (id && id.includes(NEW_ID_PREFIX)) {
+    } else {
       setData((prev) =>
         prev.map((row) => {
           if (row.id === id) {
@@ -70,20 +127,15 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
           }
         })
       );
-    } else if (!id) {
-      setData((prev) => [
-        ...prev,
-        { id: getNewId(), key: newKey, values: [], state: RowState.Created },
-      ]);
     }
   };
 
   const updateValue = (
-    id: string | null,
+    id: string,
     language: SupportedLanguage,
     newValue: string
   ) => {
-    if (id && !id.includes(NEW_ID_PREFIX)) {
+    if (!id.includes(NEW_ID_PREFIX)) {
       const initialStateValues = initialState.find(
         (row) => row.id === id
       )?.values;
@@ -91,15 +143,20 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
       setData((prev) =>
         prev.map((row) => {
           if (row.id === id) {
+            const newValues =
+              newValue === ""
+                ? row.values.filter((val) => val.language !== language)
+                : row.values.map((val) => {
+                    if (val.language === language) {
+                      return { ...val, value: newValue };
+                    } else {
+                      return val;
+                    }
+                  });
+
             return {
               ...row,
-              values: row.values.map((val) => {
-                if (val.language === language) {
-                  return { ...val, value: newValue };
-                } else {
-                  return val;
-                }
-              }),
+              values: newValues,
               state:
                 JSON.stringify(initialStateValues) ===
                 JSON.stringify(row.values)
@@ -111,19 +168,26 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
           }
         })
       );
-    } else if (id && id.includes(NEW_ID_PREFIX)) {
+    } else {
       setData((prev) =>
         prev.map((row) => {
           if (row.id === id) {
+            const newValues =
+              newValue === ""
+                ? row.values.filter((val) => val.language !== language)
+                : row.values.find((val) => val.language === language)
+                ? row.values.map((val) => {
+                    if (val.language === language) {
+                      return { ...val, value: newValue };
+                    } else {
+                      return val;
+                    }
+                  })
+                : [...row.values, { language, value: newValue }];
+
             return {
               ...row,
-              values: row.values.map((val) => {
-                if (val.language === language) {
-                  return { ...val, value: newValue };
-                } else {
-                  return val;
-                }
-              }),
+              values: newValues,
               state: RowState.Created,
             };
           } else {
@@ -131,26 +195,20 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
           }
         })
       );
-    } else if (!id) {
-      setData((prev) => [
-        ...prev,
-        {
-          id: getNewId(),
-          key: "",
-          values: [{ language, value: newValue }],
-          state: RowState.Created,
-        },
-      ]);
     }
   };
 
   const getActions = (): TranslationActionEntry[] => {
     return data
-      .filter((row) => row.state !== undefined)
+      .filter(
+        (row) => row.state !== undefined && row.state !== RowState.Placeholder
+      )
       .map(({ state, id, ...row }) =>
         state === RowState.Created
           ? { ...row, action: TranslationAction.Create }
-          : { ...row, action: TranslationAction.Update, id: id || "" }
+          : state === RowState.Updated
+          ? { ...row, action: TranslationAction.Update, id: id || "" }
+          : { action: TranslationAction.Delete, id: id || "" }
       );
   };
 
