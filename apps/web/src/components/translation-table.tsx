@@ -14,20 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from "@interflex-app/ui";
-import { SUPPORTED_LANGUAGES, SupportedLanguage } from "../consts";
+import { SUPPORTED_LANGUAGES } from "../consts";
 import { useMemo } from "react";
-import {
-  CreateTranslationActionEntry,
-  UpdateTranslationActionEntry,
-} from "../pages/app/[projectId]/translations";
-
-type Translation = Omit<
-  CreateTranslationActionEntry | UpdateTranslationActionEntry,
-  "action"
->;
+import { TranslationStateRow } from "../hooks/use-translation-state";
 
 interface TranslationTableProps {
-  initialData: Translation[];
+  initialData: TranslationStateRow[];
   languages: typeof SUPPORTED_LANGUAGES;
 }
 
@@ -58,9 +50,9 @@ export function TranslationTable({
                 }
               />
             ),
-          } as ColumnDef<Translation>)
+          } as ColumnDef<TranslationStateRow>)
       ),
-    ] as ColumnDef<Translation>[];
+    ] as ColumnDef<TranslationStateRow>[];
   }, [languages]);
 
   const table = useReactTable({

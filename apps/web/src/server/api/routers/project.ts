@@ -19,7 +19,7 @@ import {
   CreateTranslationActionEntry,
   DeleteTranslationActionEntry,
   UpdateTranslationActionEntry,
-} from "../../../pages/app/[projectId]/translations";
+} from "../../../hooks/use-translation-state";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure

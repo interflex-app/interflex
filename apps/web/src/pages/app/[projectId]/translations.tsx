@@ -11,24 +11,7 @@ import { RouterInputs, api } from "../../../utils/api";
 import { Button } from "@interflex-app/ui";
 import { SupportedLanguage, TranslationAction } from "../../../consts";
 import { extractTranslations } from "../../../utils/extract-translations";
-
-export type TranslationActionEntry =
-  RouterInputs["project"]["syncTranslations"]["translations"][number];
-
-export type CreateTranslationActionEntry = Extract<
-  TranslationActionEntry,
-  { action: TranslationAction.Create }
->;
-
-export type UpdateTranslationActionEntry = Extract<
-  TranslationActionEntry,
-  { action: TranslationAction.Update }
->;
-
-export type DeleteTranslationActionEntry = Extract<
-  TranslationActionEntry,
-  { action: TranslationAction.Delete }
->;
+import { TranslationActionEntry } from "../../../hooks/use-translation-state";
 
 const Translations: NextPageWithLayout = () => {
   const { project, isLoading } = useProject();
