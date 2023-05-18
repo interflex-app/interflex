@@ -34,15 +34,17 @@ interface TranslationTableProps {
 
 export type TranslationTableRef = {
   getActions: ReturnType<typeof useTranslationState>["getActions"];
+  resetWithState: ReturnType<typeof useTranslationState>["resetWithState"];
 };
 
 const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
   ({ initialData, languages, error }, ref) => {
-    const { data, getActions, updateKey, updateValue } =
+    const { data, getActions, updateKey, updateValue, resetWithState } =
       useTranslationState(initialData);
 
     useImperativeHandle(ref, () => ({
       getActions,
+      resetWithState,
     }));
 
     const getError = (rowId: string, rowKey: string) => {

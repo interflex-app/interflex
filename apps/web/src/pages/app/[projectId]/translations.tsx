@@ -33,6 +33,7 @@ const Translations: NextPageWithLayout = () => {
     data: initialTranslations,
     isLoading: translationsLoading,
     isError: translationsError,
+    refetch,
   } = api.project.getTranslations.useQuery(
     { projectId: project?.id ?? "" },
     { enabled: !!project?.id }
@@ -48,6 +49,17 @@ const Translations: NextPageWithLayout = () => {
         projectId: project.id,
         translations: actions,
       });
+
+      const newState = await refetch();
+
+      if (!newState.data) return;
+      translationTable.current!.resetWithState(
+        newState.data.map((t) => ({
+          key: t.key,
+          values: extractTranslations(t.value),
+          id: t.id,
+        }))
+      );
 
       toast({
         title: "Translations synced",

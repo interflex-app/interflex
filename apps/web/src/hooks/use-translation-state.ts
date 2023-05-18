@@ -96,6 +96,18 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     }
   }, [data]);
 
+  const resetWithState = (newData: TranslationStateRow[]) => {
+    setData([
+      ...newData,
+      {
+        id: getNewId(),
+        key: "",
+        values: [],
+        state: TranslationRowState.Placeholder,
+      },
+    ]);
+  };
+
   const updateKey = (id: string, newKey: string) => {
     if (!id.includes(NEW_ID_PREFIX)) {
       const initialStateKey = initialState.find((row) => row.id === id)?.key;
@@ -223,5 +235,5 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
       );
   };
 
-  return { data, getActions, updateKey, updateValue };
+  return { data, getActions, updateKey, updateValue, resetWithState };
 };
