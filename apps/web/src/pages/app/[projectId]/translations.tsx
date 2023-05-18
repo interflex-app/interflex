@@ -57,6 +57,7 @@ const Translations: NextPageWithLayout = () => {
   };
 
   useKeyPress("s", save, { modifierKey: ModifierKey.Control });
+  useKeyPress("s", save, { modifierKey: ModifierKey.Meta });
 
   if (
     !project ||

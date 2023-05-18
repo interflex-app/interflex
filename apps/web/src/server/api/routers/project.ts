@@ -141,7 +141,10 @@ export const projectRouter = createTRPCRouter({
           z.union([
             z.object({
               action: z.enum([TranslationAction.Create]),
-              key: z.string().min(1),
+              key: z
+                .string()
+                .regex(/^[A-Za-z0-9._]+$/g)
+                .min(1),
               values: z.array(
                 z.object({
                   language: z.enum(createZodEnum(SupportedLanguage)),
@@ -152,7 +155,10 @@ export const projectRouter = createTRPCRouter({
             z.object({
               action: z.enum([TranslationAction.Update]),
               id: z.string().min(1),
-              key: z.string().min(1),
+              key: z
+                .string()
+                .regex(/^[A-Za-z0-9._]+$/g)
+                .min(1),
               values: z.array(
                 z.object({
                   language: z.enum(createZodEnum(SupportedLanguage)),

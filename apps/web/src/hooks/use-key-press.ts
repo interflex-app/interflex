@@ -25,26 +25,19 @@ export const useKeyPress = (
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key !== key) return;
+      const modifierAndKeyPressed =
+        options.modifierKey !== undefined &&
+        event.key === key &&
+        ((options.modifierKey === ModifierKey.Control && event.ctrlKey) ||
+          (options.modifierKey === ModifierKey.Alt && event.altKey) ||
+          (options.modifierKey === ModifierKey.Shift && event.shiftKey) ||
+          (options.modifierKey === ModifierKey.Meta && event.metaKey));
 
-      event.preventDefault();
-
-      if (options.modifierKey) {
-        switch (options.modifierKey as ModifierKey) {
-          case ModifierKey.Control:
-            if (!event.ctrlKey) return;
-            break;
-          case ModifierKey.Alt:
-            if (!event.altKey) return;
-            break;
-          case ModifierKey.Shift:
-            if (!event.shiftKey) return;
-            break;
-          case ModifierKey.Meta:
-            if (!event.metaKey) return;
-            break;
-        }
+      if (modifierAndKeyPressed) {
+        event.preventDefault();
       }
+
+      if (!modifierAndKeyPressed) return;
 
       callbackRef.current(event);
     },
