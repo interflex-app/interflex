@@ -27,11 +27,14 @@ type Translation = {
 };
 
 interface TranslationTableProps {
-  data: Translation[];
+  initialData: Translation[];
   languages: typeof SUPPORTED_LANGUAGES;
 }
 
-export function TranslationTable({ data, languages }: TranslationTableProps) {
+export function TranslationTable({
+  initialData,
+  languages,
+}: TranslationTableProps) {
   const columns = useMemo(() => {
     return [
       {
@@ -61,7 +64,7 @@ export function TranslationTable({ data, languages }: TranslationTableProps) {
   }, [languages]);
 
   const table = useReactTable({
-    data,
+    data: initialData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });

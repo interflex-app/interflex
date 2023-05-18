@@ -41,7 +41,7 @@ const Translations: NextPageWithLayout = () => {
     isLoading: translationsLoading,
     isError: translationsError,
   } = api.project.getTranslations.useQuery(
-    { projectId: project?.id ?? "__PROJECT_ID__" },
+    { projectId: project?.id ?? "" },
     { enabled: !!project?.id }
   );
 
@@ -60,27 +60,87 @@ const Translations: NextPageWithLayout = () => {
         <title>Interflex | {project.name} | Translations</title>
       </Head>
 
-      <DashboardHeader title={`${truncate(project.name, 20)} - Translations`} />
-
-      <Button
-        loading={syncTranslationsLoading}
-        onClick={async () => {
-          try {
-            await syncTranslations({
-              projectId: project.id,
-              translations: [],
-            });
-          } catch (e) {
-            console.log(e);
-          }
-        }}
-      >
-        Test
-      </Button>
+      <DashboardHeader
+        title={`${truncate(project.name, 20)} - Translations`}
+        actions={
+          <>
+            <Button
+              loading={syncTranslationsLoading}
+              onClick={async () => {
+                try {
+                  await syncTranslations({
+                    projectId: project.id,
+                    translations: [
+                      {
+                        action: TranslationAction.Create,
+                        key: "test.key_1",
+                        values: [
+                          {
+                            language: SupportedLanguage.English,
+                            value: "Test value 1",
+                          },
+                          {
+                            language: SupportedLanguage.Polish,
+                            value: "Testowa wartość 1",
+                          },
+                          {
+                            language: SupportedLanguage.Norwegian,
+                            value: "Testverdi 1",
+                          },
+                        ],
+                      },
+                      {
+                        action: TranslationAction.Create,
+                        key: "test.key_2",
+                        values: [
+                          {
+                            language: SupportedLanguage.English,
+                            value: "Test value 2",
+                          },
+                          {
+                            language: SupportedLanguage.Polish,
+                            value: "Testowa wartość 2",
+                          },
+                          {
+                            language: SupportedLanguage.Norwegian,
+                            value: "Testverdi 2",
+                          },
+                        ],
+                      },
+                      {
+                        action: TranslationAction.Create,
+                        key: "test.key_3",
+                        values: [
+                          {
+                            language: SupportedLanguage.English,
+                            value: "Test value 3",
+                          },
+                          {
+                            language: SupportedLanguage.Polish,
+                            value: "Testowa wartość 3",
+                          },
+                          {
+                            language: SupportedLanguage.Norwegian,
+                            value: "Testverdi 3",
+                          },
+                        ],
+                      },
+                    ],
+                  });
+                } catch (e) {
+                  console.log(e);
+                }
+              }}
+            >
+              Save
+            </Button>
+          </>
+        }
+      />
 
       <TranslationTable
         languages={projectLanguages(project.languages)}
-        data={initialTranslations.map((t) => ({
+        initialData={initialTranslations.map((t) => ({
           key: t.key,
           values: extractTranslations(t.value),
           id: t.id,
