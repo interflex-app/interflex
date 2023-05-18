@@ -235,7 +235,11 @@ export const projectRouter = createTRPCRouter({
           const entry = t as UpdateTranslationActionEntry;
           const idx = i as number;
 
-          if (currentTranslations.map((t) => t.key).includes(entry.key)) {
+          const withSameKey = currentTranslations.find(
+            (t) => t.key === entry.key
+          );
+
+          if (withSameKey && withSameKey.id !== entry.id) {
             throw new ApiError(`The "${entry.key}" key is already in use.`, [
               "translations",
               idx,

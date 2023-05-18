@@ -13,10 +13,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  cn,
 } from "@interflex-app/ui";
 import { SUPPORTED_LANGUAGES } from "../consts";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import {
+  TranslationRowState,
   TranslationStateRow,
   useTranslationState,
 } from "../hooks/use-translation-state";
@@ -131,6 +133,10 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
           <TableBody>
             {table.getRowModel().rows.map((row) => (
               <TableRow
+                className={cn(
+                  row.original.state === TranslationRowState.Deleted &&
+                    "opacity-50"
+                )}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
