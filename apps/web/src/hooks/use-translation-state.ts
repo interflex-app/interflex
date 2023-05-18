@@ -146,13 +146,15 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
             const newValues =
               newValue === ""
                 ? row.values.filter((val) => val.language !== language)
-                : row.values.map((val) => {
+                : row.values.find((val) => val.language === language)
+                ? row.values.map((val) => {
                     if (val.language === language) {
                       return { ...val, value: newValue };
                     } else {
                       return val;
                     }
-                  });
+                  })
+                : [...row.values, { language, value: newValue }];
 
             return {
               ...row,
