@@ -121,29 +121,34 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
         {
           id: "actions",
           header: "Actions",
-          cell: ({ row }) => (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          cell: ({ row }) =>
+            row.original.state !== TranslationRowState.Placeholder && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                {row.original.state !== TranslationRowState.Deleted ? (
-                  <DropdownMenuItem onClick={() => deleteRow(row.original.id)}>
-                    Remove translation
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem onClick={() => revertRow(row.original.id)}>
-                    Undo removal
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ),
+                  {row.original.state !== TranslationRowState.Deleted ? (
+                    <DropdownMenuItem
+                      onClick={() => deleteRow(row.original.id)}
+                    >
+                      Remove translation
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={() => revertRow(row.original.id)}
+                    >
+                      Undo removal
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ),
         },
       ] as ColumnDef<TranslationStateRow>[];
     }, [languages, error]);
