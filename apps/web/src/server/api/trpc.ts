@@ -50,8 +50,12 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
                 const inputFromPath = issue.path
                   .slice(0, issue.path.length - 1)
                   .reduce(
-                    (acc, curr) => acc[curr],
-                    input as Record<string, any>
+                    (acc, curr) =>
+                      acc[curr] as unknown as Record<
+                        string,
+                        Record<string, string>
+                      >,
+                    input as Record<string, Record<string, string>>
                   );
 
                 return {
