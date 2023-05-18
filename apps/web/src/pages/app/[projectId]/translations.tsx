@@ -13,10 +13,13 @@ import { projectLanguages } from "../../../utils/project-languages";
 import { api } from "../../../utils/api";
 import { Button, useToast } from "@interflex-app/ui";
 import { extractTranslations } from "../../../utils/extract-translations";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ModifierKey, useKeyPress } from "../../../hooks/use-key-press";
+import { TranslationActionEntry } from "../../../hooks/use-translation-state";
 
 const Translations: NextPageWithLayout = () => {
+  const [actions, setActions] = useState<TranslationActionEntry[]>([]);
+
   const { toast } = useToast();
 
   const { project, isLoading } = useProject();
@@ -41,8 +44,6 @@ const Translations: NextPageWithLayout = () => {
 
   const save = async () => {
     if (!project) return;
-
-    const actions = translationTable.current!.getActions();
 
     try {
       await syncTranslations({
@@ -91,6 +92,7 @@ const Translations: NextPageWithLayout = () => {
         actions={
           <>
             <Button
+              disabled={syncTranslationsLoading || actions.length === 0}
               loading={syncTranslationsLoading}
               onClick={async () => await save()}
             >
@@ -101,6 +103,7 @@ const Translations: NextPageWithLayout = () => {
       />
 
       <TranslationTable
+        onActionsChange={setActions}
         ref={translationTable}
         error={error}
         languages={projectLanguages(project.languages)}

@@ -22,8 +22,9 @@ import {
   cn,
 } from "@interflex-app/ui";
 import { SUPPORTED_LANGUAGES } from "../consts";
-import { forwardRef, useImperativeHandle, useMemo } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
 import {
+  TranslationActionEntry,
   TranslationRowState,
   TranslationStateRow,
   useTranslationState,
@@ -39,18 +40,18 @@ interface TranslationTableProps {
         data?: RouterError["data"] | null;
       })
     | null;
+  onActionsChange: (actions: TranslationActionEntry[]) => void;
 }
 
 export type TranslationTableRef = {
-  getActions: ReturnType<typeof useTranslationState>["getActions"];
   resetWithState: ReturnType<typeof useTranslationState>["resetWithState"];
 };
 
 const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
-  ({ initialData, languages, error }, ref) => {
+  ({ initialData, languages, error, onActionsChange }, ref) => {
     const {
       data,
-      getActions,
+      actions,
       updateKey,
       updateValue,
       resetWithState,
@@ -58,10 +59,17 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
       revertRow,
     } = useTranslationState(initialData);
 
-    useImperativeHandle(ref, () => ({
-      getActions,
-      resetWithState,
-    }));
+    useImperativeHandle(
+      ref,
+      () => ({
+        resetWithState,
+      }),
+      [data]
+    );
+
+    useEffect(() => {
+      onActionsChange(actions);
+    }, [actions]);
 
     const getError = (rowId: string, rowKey: string) => {
       const issue = error?.data?.zodErrorIssues?.find(
