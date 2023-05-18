@@ -55,6 +55,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
       updateValue,
       resetWithState,
       deleteRow,
+      revertRow,
     } = useTranslationState(initialData);
 
     useImperativeHandle(ref, () => ({
@@ -121,20 +122,23 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
           cell: ({ row }) => (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  disabled={row.original.locked}
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                >
+                <Button variant="ghost" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => deleteRow(row.original.id)}>
-                  Remove translation
-                </DropdownMenuItem>
+
+                {row.original.state !== TranslationRowState.Deleted ? (
+                  <DropdownMenuItem onClick={() => deleteRow(row.original.id)}>
+                    Remove translation
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem onClick={() => revertRow(row.original.id)}>
+                    Undo removal
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           ),

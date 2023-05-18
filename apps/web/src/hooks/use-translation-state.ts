@@ -219,8 +219,6 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     }
   };
 
-  console.log(data);
-
   const deleteRow = (id: string) => {
     if (!id.includes(NEW_ID_PREFIX)) {
       setData((prev) =>
@@ -235,6 +233,32 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     } else {
       setData((prev) => prev.filter((row) => row.id !== id));
     }
+  };
+
+  const revertRow = (id: string) => {
+    const initialStateKey = initialState.find((row) => row.id === id)?.key;
+
+    const initialStateValues = initialState.find(
+      (row) => row.id === id
+    )?.values;
+
+    setData((prev) =>
+      prev.map((row) => {
+        if (row.id === id) {
+          return {
+            ...row,
+            state:
+              initialStateKey === row.key &&
+              JSON.stringify(initialStateValues) === JSON.stringify(row.values)
+                ? undefined
+                : TranslationRowState.Updated,
+            locked: false,
+          };
+        } else {
+          return row;
+        }
+      })
+    );
   };
 
   const getActions = (): TranslationActionEntry[] => {
@@ -260,5 +284,6 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     updateValue,
     resetWithState,
     deleteRow,
+    revertRow,
   };
 };
