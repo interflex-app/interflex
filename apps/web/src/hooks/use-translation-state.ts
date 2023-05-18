@@ -216,7 +216,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
       )
       .map(({ state, id, ...row }) =>
         state === TranslationRowState.Created
-          ? { ...row, action: TranslationAction.Create }
+          ? { ...row, action: TranslationAction.Create, id: id || "" }
           : state === TranslationRowState.Updated
           ? { ...row, action: TranslationAction.Update, id: id || "" }
           : { action: TranslationAction.Delete, id: id || "" }

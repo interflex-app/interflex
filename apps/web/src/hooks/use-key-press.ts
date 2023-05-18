@@ -35,11 +35,8 @@ export const useKeyPress = (
 
       if (modifierAndKeyPressed) {
         event.preventDefault();
+        callbackRef.current(event);
       }
-
-      if (!modifierAndKeyPressed) return;
-
-      callbackRef.current(event);
     },
     [key]
   );

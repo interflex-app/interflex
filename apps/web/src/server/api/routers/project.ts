@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { number, z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -141,6 +141,7 @@ export const projectRouter = createTRPCRouter({
           z.union([
             z.object({
               action: z.enum([TranslationAction.Create]),
+              id: z.string().min(1),
               key: z
                 .string()
                 .regex(/^[A-Za-z0-9._]+$/g)
@@ -198,15 +199,22 @@ export const projectRouter = createTRPCRouter({
 
       const toCreate: Prisma.TranslationCreateManyArgs["data"] =
         input.translations
-          .filter((t) => t.action === TranslationAction.Create)
-          .map((t) => {
+          .map((t, i) => [t, i])
+          .filter(
+            ([t]) =>
+              (t as CreateTranslationActionEntry).action ===
+              TranslationAction.Create
+          )
+          .map(([t, i]) => {
             const entry = t as CreateTranslationActionEntry;
+            const idx = i as number;
 
             if (currentTranslations.map((t) => t.key).includes(entry.key)) {
-              throw new ApiError(
-                `The "${entry.key}" key is already in use.`,
-                "translations"
-              );
+              throw new ApiError(`The "${entry.key}" key is already in use.`, [
+                "translations",
+                idx,
+                "key",
+              ]);
             }
 
             return {
@@ -217,9 +225,23 @@ export const projectRouter = createTRPCRouter({
           });
 
       const toUpdate: Prisma.TranslationUpdateArgs[] = input.translations
-        .filter((t) => t.action === TranslationAction.Update)
-        .map((t) => {
+        .map((t, i) => [t, i])
+        .filter(
+          ([t]) =>
+            (t as UpdateTranslationActionEntry).action ===
+            TranslationAction.Update
+        )
+        .map(([t, i]) => {
           const entry = t as UpdateTranslationActionEntry;
+          const idx = i as number;
+
+          if (currentTranslations.map((t) => t.key).includes(entry.key)) {
+            throw new ApiError(`The "${entry.key}" key is already in use.`, [
+              "translations",
+              idx,
+              "key",
+            ]);
+          }
 
           return {
             where: {
