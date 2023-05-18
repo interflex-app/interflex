@@ -1,13 +1,13 @@
 {
   "name": "interflex",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/interflex-app/interflex.git"
   },
-  "homepage": "https://interflex.vercel.app/",
+  "homepage": "https://interflex.dev/",
   "types": "dist/lib",
   "exports": {
     ".": {
