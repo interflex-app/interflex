@@ -16,15 +16,15 @@ import {
 } from "@interflex-app/ui";
 import { SUPPORTED_LANGUAGES, SupportedLanguage } from "../consts";
 import { useMemo } from "react";
+import {
+  CreateTranslationActionEntry,
+  UpdateTranslationActionEntry,
+} from "../pages/app/[projectId]/translations";
 
-type Translation = {
-  id?: string;
-  key: string;
-  values: {
-    language: SupportedLanguage;
-    value: string;
-  }[];
-};
+type Translation = Omit<
+  CreateTranslationActionEntry | UpdateTranslationActionEntry,
+  "action"
+>;
 
 interface TranslationTableProps {
   initialData: Translation[];
@@ -97,7 +97,7 @@ export function TranslationTable({
               data-state={row.getIsSelected() && "selected"}
             >
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
+                <TableCell className="min-w-[300px]" key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
@@ -105,12 +105,12 @@ export function TranslationTable({
           ))}
 
           <TableRow>
-            <TableCell>
+            <TableCell className="min-w-[300px]">
               <Input placeholder="Key..." />
             </TableCell>
 
             {languages.map((lang) => (
-              <TableCell key={lang.value}>
+              <TableCell className="min-w-[300px]" key={lang.value}>
                 <Input placeholder="Value..." />
               </TableCell>
             ))}
