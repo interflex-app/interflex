@@ -7,47 +7,28 @@ import Head from "next/head";
 import { truncate } from "../../../utils/truncate";
 import { TranslationTable } from "../../../components/translation-table";
 import { projectLanguages } from "../../../utils/project-languages";
-import { api } from "../../../utils/api";
+import { RouterInputs, api } from "../../../utils/api";
 import { Button } from "@interflex-app/ui";
-import { SupportedLanguage } from "../../../consts";
+import { SupportedLanguage, TranslationAction } from "../../../consts";
 import { extractTranslations } from "../../../utils/extract-translations";
 
-const TEST_TRANSLATIONS = [
-  {
-    key: "im.a.key",
-    values: [
-      {
-        language: SupportedLanguage.English,
-        value: "I'm a key!",
-      },
-      {
-        language: SupportedLanguage.Polish,
-        value: "Jestem kluczem!",
-      },
-      {
-        language: SupportedLanguage.Norwegian,
-        value: "Jeg er en nøkkel!",
-      },
-    ],
-  },
-  {
-    key: "im.a.second_key",
-    values: [
-      {
-        language: SupportedLanguage.English,
-        value: "I'm a second key!",
-      },
-      {
-        language: SupportedLanguage.Polish,
-        value: "Jestem drugim kluczem!",
-      },
-      {
-        language: SupportedLanguage.Norwegian,
-        value: "Jeg er en andre nøkkel!",
-      },
-    ],
-  },
-];
+export type TranslationActionEntry =
+  RouterInputs["project"]["syncTranslations"]["translations"][number];
+
+export type CreateTranslationActionEntry = Extract<
+  TranslationActionEntry,
+  { action: TranslationAction.Create }
+>;
+
+export type UpdateTranslationActionEntry = Extract<
+  TranslationActionEntry,
+  { action: TranslationAction.Update }
+>;
+
+export type DeleteTranslationActionEntry = Extract<
+  TranslationActionEntry,
+  { action: TranslationAction.Delete }
+>;
 
 const Translations: NextPageWithLayout = () => {
   const { project, isLoading } = useProject();
@@ -87,7 +68,7 @@ const Translations: NextPageWithLayout = () => {
           try {
             await syncTranslations({
               projectId: project.id,
-              translations: TEST_TRANSLATIONS,
+              translations: [],
             });
           } catch (e) {
             console.log(e);

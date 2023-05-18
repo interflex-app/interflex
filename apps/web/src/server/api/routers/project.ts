@@ -14,7 +14,12 @@ import { projectLanguages } from "../../../utils/project-languages";
 import { Prisma } from "@prisma/client";
 import { ApiError } from "../errors/api-error";
 import { createZodEnum } from "../../../utils/create-zod-enum";
-import { SupportedLanguage } from "../../../consts";
+import { SupportedLanguage, TranslationAction } from "../../../consts";
+import {
+  CreateTranslationActionEntry,
+  DeleteTranslationActionEntry,
+  UpdateTranslationActionEntry,
+} from "../../../pages/app/[projectId]/translations";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
@@ -133,16 +138,33 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         translations: z.array(
-          z.object({
-            id: z.string().optional(),
-            key: z.string().min(1),
-            values: z.array(
-              z.object({
-                language: z.enum(createZodEnum(SupportedLanguage)),
-                value: z.string().min(1),
-              })
-            ),
-          })
+          z.union([
+            z.object({
+              action: z.enum([TranslationAction.Create]),
+              key: z.string().min(1),
+              values: z.array(
+                z.object({
+                  language: z.enum(createZodEnum(SupportedLanguage)),
+                  value: z.string().min(1),
+                })
+              ),
+            }),
+            z.object({
+              action: z.enum([TranslationAction.Update]),
+              id: z.string().min(1),
+              key: z.string().min(1),
+              values: z.array(
+                z.object({
+                  language: z.enum(createZodEnum(SupportedLanguage)),
+                  value: z.string().min(1),
+                })
+              ),
+            }),
+            z.object({
+              action: z.enum([TranslationAction.Delete]),
+              id: z.string().min(1),
+            }),
+          ])
         ),
       })
     )
@@ -153,67 +175,69 @@ export const projectRouter = createTRPCRouter({
         },
       });
 
-      const newTranslations = input.translations.map((t) => {
-        const languages = t.values.map((v) => v.language);
-        const uniqueLanguages = [...new Set(languages)];
+      const valuesToObject = (
+        values: {
+          language: SupportedLanguage;
+          value: string;
+        }[]
+      ): Prisma.JsonObject =>
+        values.reduce((acc, curr) => {
+          acc[curr.language] = curr.value;
+          return acc;
+        }, {} as Record<SupportedLanguage, string>);
 
-        if (languages.length !== uniqueLanguages.length) {
-          throw new ApiError(
-            "Each language can only be used once per translation.",
-            "translations"
-          );
-        }
+      const toDelete = input.translations
+        .filter((t) => t.action === TranslationAction.Delete)
+        .map((t) => (t as DeleteTranslationActionEntry).id);
 
-        const existingTranslation = currentTranslations.find(
-          (ct) => ct.id === t.id
-        );
+      const toCreate: Prisma.TranslationCreateManyArgs["data"] =
+        input.translations
+          .filter((t) => t.action === TranslationAction.Create)
+          .map((t) => {
+            const entry = t as CreateTranslationActionEntry;
 
-        if (existingTranslation) {
-          const value = t.values.reduce((acc, curr) => {
-            (acc as Record<SupportedLanguage, string>)[curr.language] =
-              curr.value;
-            return acc;
-          }, {});
+            if (currentTranslations.map((t) => t.key).includes(entry.key)) {
+              throw new ApiError(
+                `The "${entry.key}" key is already in use.`,
+                "translations"
+              );
+            }
+
+            return {
+              key: entry.key,
+              projectId: ctx.project.id,
+              value: valuesToObject(entry.values),
+            };
+          });
+
+      const toUpdate: Prisma.TranslationUpdateArgs[] = input.translations
+        .filter((t) => t.action === TranslationAction.Update)
+        .map((t) => {
+          const entry = t as UpdateTranslationActionEntry;
 
           return {
-            ...existingTranslation,
-            value,
-            key: t.key,
-            projectId: ctx.project.id,
+            where: {
+              id: entry.id,
+            },
+            data: {
+              key: entry.key,
+              value: valuesToObject(entry.values),
+            },
           };
-        }
-
-        const duplicateKey = currentTranslations.find((ct) => ct.key === t.key);
-
-        if (duplicateKey) {
-          throw new ApiError(
-            `The key "${t.key}" already exists.`,
-            "translations"
-          );
-        }
-
-        const value = t.values.reduce((acc, curr) => {
-          (acc as Record<SupportedLanguage, string>)[curr.language] =
-            curr.value;
-          return acc;
-        }, {});
-
-        return {
-          value,
-          key: t.key,
-          projectId: ctx.project.id,
-        };
-      });
+        });
 
       await ctx.prisma.$transaction([
         ctx.prisma.translation.deleteMany({
           where: {
-            projectId: ctx.project.id,
+            id: {
+              in: toDelete,
+            },
           },
         }),
         ctx.prisma.translation.createMany({
-          data: newTranslations,
+          data: toCreate,
         }),
+        ...toUpdate.map((args) => ctx.prisma.translation.update(args)),
       ]);
     }),
   getTranslations: protectedProjectProcedure.query(async ({ ctx }) => {

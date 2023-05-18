@@ -1,3 +1,9 @@
+export enum TranslationAction {
+  Create = "create",
+  Update = "update",
+  Delete = "delete",
+}
+
 export enum SupportedLanguage {
   Polish = "pl",
   English = "en",
