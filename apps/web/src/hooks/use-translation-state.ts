@@ -7,7 +7,7 @@ const NEW_ID_PREFIX = "new-";
 export type TranslationStateRow = Omit<
   CreateTranslationActionEntry | UpdateTranslationActionEntry,
   "action"
-> & { id: string; state?: TranslationRowState };
+> & { id: string; state?: TranslationRowState; locked?: boolean };
 
 export type TranslationActionEntry =
   RouterInputs["project"]["syncTranslations"]["translations"][number];
@@ -219,6 +219,24 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     }
   };
 
+  console.log(data);
+
+  const deleteRow = (id: string) => {
+    if (!id.includes(NEW_ID_PREFIX)) {
+      setData((prev) =>
+        prev.map((row) => {
+          if (row.id === id) {
+            return { ...row, state: TranslationRowState.Deleted, locked: true };
+          } else {
+            return row;
+          }
+        })
+      );
+    } else {
+      setData((prev) => prev.filter((row) => row.id !== id));
+    }
+  };
+
   const getActions = (): TranslationActionEntry[] => {
     return data
       .filter(
@@ -235,5 +253,12 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
       );
   };
 
-  return { data, getActions, updateKey, updateValue, resetWithState };
+  return {
+    data,
+    getActions,
+    updateKey,
+    updateValue,
+    resetWithState,
+    deleteRow,
+  };
 };

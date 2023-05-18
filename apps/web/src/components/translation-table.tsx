@@ -6,6 +6,12 @@ import {
 } from "@tanstack/react-table";
 
 import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
   Input,
   Table,
   TableBody,
@@ -23,6 +29,7 @@ import {
   useTranslationState,
 } from "../hooks/use-translation-state";
 import { RouterError } from "../utils/api";
+import { MoreHorizontal } from "lucide-react";
 
 interface TranslationTableProps {
   initialData: TranslationStateRow[];
@@ -41,8 +48,14 @@ export type TranslationTableRef = {
 
 const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
   ({ initialData, languages, error }, ref) => {
-    const { data, getActions, updateKey, updateValue, resetWithState } =
-      useTranslationState(initialData);
+    const {
+      data,
+      getActions,
+      updateKey,
+      updateValue,
+      resetWithState,
+      deleteRow,
+    } = useTranslationState(initialData);
 
     useImperativeHandle(ref, () => ({
       getActions,
@@ -72,6 +85,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
                 placeholder="Key..."
                 value={row.original.key}
                 onChange={(e) => updateKey(row.original.id, e.target.value)}
+                disabled={row.original.locked}
               />
               {getError(row.original.id, "key") && (
                 <div className="mt-2 text-red-700 dark:text-red-300">
@@ -89,17 +103,42 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
               cell: ({ row }) => (
                 <Input
                   placeholder="Value..."
-                  defaultValue={
+                  value={
                     row.original.values.find((v) => v.language === lang.value)
-                      ?.value
+                      ?.value ?? ""
                   }
                   onChange={(e) =>
                     updateValue(row.original.id, lang.value, e.target.value)
                   }
+                  disabled={row.original.locked}
                 />
               ),
             } as ColumnDef<TranslationStateRow>)
         ),
+        {
+          id: "actions",
+          header: "Actions",
+          cell: ({ row }) => (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  disabled={row.original.locked}
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                >
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => deleteRow(row.original.id)}>
+                  Remove translation
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ),
+        },
       ] as ColumnDef<TranslationStateRow>[];
     }, [languages, error]);
 
