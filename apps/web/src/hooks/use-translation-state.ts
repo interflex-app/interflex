@@ -38,8 +38,6 @@ const getNewId = () =>
   `${NEW_ID_PREFIX}${(Math.random() * 100_000).toString().slice(0, 5)}`;
 
 export const useTranslationState = (initialState: TranslationStateRow[]) => {
-  const [actions, setActions] = useState<TranslationActionEntry[]>([]);
-
   const [data, setData] = useState<TranslationStateRow[]>([
     ...initialState,
     {
@@ -96,24 +94,6 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
           })
       );
     }
-  }, [data]);
-
-  useEffect(() => {
-    setActions(
-      data
-        .filter(
-          (row) =>
-            row.state !== undefined &&
-            row.state !== TranslationRowState.Placeholder
-        )
-        .map(({ state, id, ...row }) =>
-          state === TranslationRowState.Created
-            ? { ...row, action: TranslationAction.Create, id: id || "" }
-            : state === TranslationRowState.Updated
-            ? { ...row, action: TranslationAction.Update, id: id || "" }
-            : { action: TranslationAction.Delete, id: id || "" }
-        )
-    );
   }, [data]);
 
   const resetWithState = (newData: TranslationStateRow[]) => {
@@ -281,9 +261,25 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     );
   };
 
+  const getActions = (): TranslationActionEntry[] => {
+    return data
+      .filter(
+        (row) =>
+          row.state !== undefined &&
+          row.state !== TranslationRowState.Placeholder
+      )
+      .map(({ state, id, ...row }) =>
+        state === TranslationRowState.Created
+          ? { ...row, action: TranslationAction.Create, id: id || "" }
+          : state === TranslationRowState.Updated
+          ? { ...row, action: TranslationAction.Update, id: id || "" }
+          : { action: TranslationAction.Delete, id: id || "" }
+      );
+  };
+
   return {
     data,
-    actions,
+    getActions,
     updateKey,
     updateValue,
     resetWithState,
