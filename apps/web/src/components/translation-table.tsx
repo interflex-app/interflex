@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@interflex-app/ui";
 import { SUPPORTED_LANGUAGES } from "../consts";
-import { useMemo } from "react";
+import { forwardRef, useImperativeHandle, useMemo } from "react";
 import {
   TranslationStateRow,
   useTranslationState,
@@ -26,12 +26,20 @@ interface TranslationTableProps {
   languages: typeof SUPPORTED_LANGUAGES;
 }
 
-export function TranslationTable({
-  initialData,
-  languages,
-}: TranslationTableProps) {
+export type TranslationTableRef = {
+  getActions: ReturnType<typeof useTranslationState>["getActions"];
+};
+
+export const TranslationTable = forwardRef<
+  TranslationTableRef,
+  TranslationTableProps
+>(({ initialData, languages }, ref) => {
   const { data, getActions, updateKey, updateValue } =
     useTranslationState(initialData);
+
+  useImperativeHandle(ref, () => ({
+    getActions,
+  }));
 
   const columns = useMemo(() => {
     return [
@@ -74,8 +82,6 @@ export function TranslationTable({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  console.log(data, getActions());
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -114,4 +120,4 @@ export function TranslationTable({
       </Table>
     </div>
   );
-}
+});

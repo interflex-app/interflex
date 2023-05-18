@@ -5,16 +5,21 @@ import { type NextPageWithLayout } from "../../_app";
 import DashboardSkeleton from "../../../components/dashboard-skeleton";
 import Head from "next/head";
 import { truncate } from "../../../utils/truncate";
-import { TranslationTable } from "../../../components/translation-table";
+import {
+  TranslationTable,
+  TranslationTableRef,
+} from "../../../components/translation-table";
 import { projectLanguages } from "../../../utils/project-languages";
-import { RouterInputs, api } from "../../../utils/api";
+import { api } from "../../../utils/api";
 import { Button } from "@interflex-app/ui";
 import { SupportedLanguage, TranslationAction } from "../../../consts";
 import { extractTranslations } from "../../../utils/extract-translations";
-import { TranslationActionEntry } from "../../../hooks/use-translation-state";
+import { useRef } from "react";
 
 const Translations: NextPageWithLayout = () => {
   const { project, isLoading } = useProject();
+
+  const translationTable = useRef<TranslationTableRef>(null);
 
   const { mutateAsync: syncTranslations, isLoading: syncTranslationsLoading } =
     api.project.syncTranslations.useMutation();
@@ -50,69 +55,8 @@ const Translations: NextPageWithLayout = () => {
             <Button
               loading={syncTranslationsLoading}
               onClick={async () => {
-                try {
-                  await syncTranslations({
-                    projectId: project.id,
-                    translations: [
-                      {
-                        action: TranslationAction.Create,
-                        key: "test.key_1",
-                        values: [
-                          {
-                            language: SupportedLanguage.English,
-                            value: "Test value 1",
-                          },
-                          {
-                            language: SupportedLanguage.Polish,
-                            value: "Testowa wartość 1",
-                          },
-                          {
-                            language: SupportedLanguage.Norwegian,
-                            value: "Testverdi 1",
-                          },
-                        ],
-                      },
-                      {
-                        action: TranslationAction.Create,
-                        key: "test.key_2",
-                        values: [
-                          {
-                            language: SupportedLanguage.English,
-                            value: "Test value 2",
-                          },
-                          {
-                            language: SupportedLanguage.Polish,
-                            value: "Testowa wartość 2",
-                          },
-                          {
-                            language: SupportedLanguage.Norwegian,
-                            value: "Testverdi 2",
-                          },
-                        ],
-                      },
-                      {
-                        action: TranslationAction.Create,
-                        key: "test.key_3",
-                        values: [
-                          {
-                            language: SupportedLanguage.English,
-                            value: "Test value 3",
-                          },
-                          {
-                            language: SupportedLanguage.Polish,
-                            value: "Testowa wartość 3",
-                          },
-                          {
-                            language: SupportedLanguage.Norwegian,
-                            value: "Testverdi 3",
-                          },
-                        ],
-                      },
-                    ],
-                  });
-                } catch (e) {
-                  console.log(e);
-                }
+                const actions = translationTable.current!.getActions();
+                console.log(actions);
               }}
             >
               Save
@@ -122,6 +66,7 @@ const Translations: NextPageWithLayout = () => {
       />
 
       <TranslationTable
+        ref={translationTable}
         languages={projectLanguages(project.languages)}
         initialData={initialTranslations.map((t) => ({
           key: t.key,
