@@ -16,7 +16,10 @@ import {
 } from "@interflex-app/ui";
 import { SUPPORTED_LANGUAGES } from "../consts";
 import { useMemo } from "react";
-import { TranslationStateRow } from "../hooks/use-translation-state";
+import {
+  TranslationStateRow,
+  useTranslationState,
+} from "../hooks/use-translation-state";
 
 interface TranslationTableProps {
   initialData: TranslationStateRow[];
@@ -27,13 +30,20 @@ export function TranslationTable({
   initialData,
   languages,
 }: TranslationTableProps) {
+  const { data, getActions, updateKey, updateValue } =
+    useTranslationState(initialData);
+
   const columns = useMemo(() => {
     return [
       {
         id: "key",
         header: "Key",
         cell: ({ row }) => (
-          <Input placeholder="Key..." value={row.original.key} />
+          <Input
+            placeholder="Key..."
+            value={row.original.key}
+            onChange={(e) => updateKey(row.original.id, e.target.value)}
+          />
         ),
       },
       ...languages.map(
@@ -44,9 +54,12 @@ export function TranslationTable({
             cell: ({ row }) => (
               <Input
                 placeholder="Value..."
-                value={
+                defaultValue={
                   row.original.values.find((v) => v.language === lang.value)
                     ?.value
+                }
+                onChange={(e) =>
+                  updateValue(row.original.id, lang.value, e.target.value)
                 }
               />
             ),
@@ -56,10 +69,12 @@ export function TranslationTable({
   }, [languages]);
 
   const table = useReactTable({
-    data: initialData,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  console.log(data, getActions());
 
   return (
     <div className="rounded-md border">
@@ -98,12 +113,20 @@ export function TranslationTable({
 
           <TableRow>
             <TableCell className="min-w-[300px]">
-              <Input placeholder="Key..." />
+              <Input
+                placeholder="Key..."
+                onChange={(e) => updateKey(null, e.target.value)}
+              />
             </TableCell>
 
             {languages.map((lang) => (
               <TableCell className="min-w-[300px]" key={lang.value}>
-                <Input placeholder="Value..." />
+                <Input
+                  placeholder="Value..."
+                  onChange={(e) =>
+                    updateValue(null, lang.value, e.target.value)
+                  }
+                />
               </TableCell>
             ))}
           </TableRow>

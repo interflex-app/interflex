@@ -45,10 +45,16 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
 
   const updateKey = (id: string | null, newKey: string) => {
     if (id && !id.includes(NEW_ID_PREFIX)) {
+      const initialStateKey = initialState.find((row) => row.id === id)?.key;
+
       setData((prev) =>
         prev.map((row) => {
           if (row.id === id) {
-            return { ...row, key: newKey, state: RowState.Updated };
+            return {
+              ...row,
+              key: newKey,
+              state: newKey === initialStateKey ? undefined : RowState.Updated,
+            };
           } else {
             return row;
           }
@@ -78,6 +84,10 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     newValue: string
   ) => {
     if (id && !id.includes(NEW_ID_PREFIX)) {
+      const initialStateValues = initialState.find(
+        (row) => row.id === id
+      )?.values;
+
       setData((prev) =>
         prev.map((row) => {
           if (row.id === id) {
@@ -90,7 +100,11 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
                   return val;
                 }
               }),
-              state: RowState.Updated,
+              state:
+                JSON.stringify(initialStateValues) ===
+                JSON.stringify(row.values)
+                  ? undefined
+                  : RowState.Updated,
             };
           } else {
             return row;
@@ -140,5 +154,5 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
       );
   };
 
-  return { data, getActions };
+  return { data, getActions, updateKey, updateValue };
 };
