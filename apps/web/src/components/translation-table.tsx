@@ -71,7 +71,11 @@ export const TranslationTable = forwardRef<
               value={row.original.key}
               onChange={(e) => updateKey(row.original.id, e.target.value)}
             />
-            <span>{getError(row.original.id, "key")}</span>
+            {getError(row.original.id, "key") && (
+              <div className="mt-2 text-red-700 dark:text-red-300">
+                {getError(row.original.id, "key")}
+              </div>
+            )}
           </>
         ),
       },
@@ -111,7 +115,7 @@ export const TranslationTable = forwardRef<
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead className="uppercase" key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
