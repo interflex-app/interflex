@@ -30,13 +30,36 @@ import { z, ZodError } from "zod";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
-  errorFormatter({ shape, error }) {
+  errorFormatter({ shape, error, input }) {
     return {
       ...shape,
       data: {
         ...shape.data,
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
+        zodErrorIssues:
+          error.cause instanceof ZodError
+            ? error.cause.issues.map((issue) => {
+                if (issue.path.length <= 1) {
+                  return {
+                    ...issue,
+                    input,
+                  };
+                }
+
+                const inputFromPath = issue.path
+                  .slice(0, issue.path.length - 1)
+                  .reduce(
+                    (acc, curr) => acc[curr],
+                    input as Record<string, any>
+                  );
+
+                return {
+                  ...issue,
+                  input: inputFromPath,
+                };
+              })
+            : null,
       },
     };
   },

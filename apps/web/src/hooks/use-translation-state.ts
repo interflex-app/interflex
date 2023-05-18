@@ -7,7 +7,7 @@ const NEW_ID_PREFIX = "new-";
 export type TranslationStateRow = Omit<
   CreateTranslationActionEntry | UpdateTranslationActionEntry,
   "action"
-> & { id: string };
+> & { id: string; state?: TranslationRowState };
 
 export type TranslationActionEntry =
   RouterInputs["project"]["syncTranslations"]["translations"][number];
@@ -27,40 +27,36 @@ export type DeleteTranslationActionEntry = Extract<
   { action: TranslationAction.Delete }
 >;
 
-enum RowState {
+export enum TranslationRowState {
   Created,
   Updated,
   Deleted,
   Placeholder,
 }
 
-type InternalStateRow = {
-  state?: RowState;
-};
-
 const getNewId = () =>
   `${NEW_ID_PREFIX}${(Math.random() * 100_000).toString().slice(0, 5)}`;
 
 export const useTranslationState = (initialState: TranslationStateRow[]) => {
-  const [data, setData] = useState<(TranslationStateRow & InternalStateRow)[]>([
+  const [data, setData] = useState<TranslationStateRow[]>([
     ...initialState,
     {
       id: getNewId(),
       key: "",
       values: [],
-      state: RowState.Placeholder,
+      state: TranslationRowState.Placeholder,
     },
   ]);
 
   useEffect(() => {
-    if (!data.find((row) => row.state === RowState.Placeholder)) {
+    if (!data.find((row) => row.state === TranslationRowState.Placeholder)) {
       setData((prev) => [
         ...prev,
         {
           id: getNewId(),
           key: "",
           values: [],
-          state: RowState.Placeholder,
+          state: TranslationRowState.Placeholder,
         },
       ]);
     }
@@ -72,7 +68,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
         (row) =>
           row.key === "" &&
           row.values.length === 0 &&
-          row.state === RowState.Created
+          row.state === TranslationRowState.Created
       )
       .map((row) => row.id);
 
@@ -81,7 +77,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
         (row) =>
           row.key === "" &&
           row.values.length === 0 &&
-          row.state === RowState.Updated
+          row.state === TranslationRowState.Updated
       )
       .map((row) => row.id);
 
@@ -91,7 +87,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
           .filter((row) => !emptyCreatedRowIds.includes(row.id))
           .map((row) => {
             if (emptyUpdatedRowIds.includes(row.id)) {
-              return { ...row, state: RowState.Deleted };
+              return { ...row, state: TranslationRowState.Deleted };
             } else {
               return row;
             }
@@ -104,13 +100,22 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     if (!id.includes(NEW_ID_PREFIX)) {
       const initialStateKey = initialState.find((row) => row.id === id)?.key;
 
+      const initialStateValues = initialState.find(
+        (row) => row.id === id
+      )?.values;
+
       setData((prev) =>
         prev.map((row) => {
           if (row.id === id) {
             return {
               ...row,
               key: newKey,
-              state: newKey === initialStateKey ? undefined : RowState.Updated,
+              state:
+                initialStateKey === newKey &&
+                JSON.stringify(initialStateValues) ===
+                  JSON.stringify(row.values)
+                  ? undefined
+                  : TranslationRowState.Updated,
             };
           } else {
             return row;
@@ -121,7 +126,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
       setData((prev) =>
         prev.map((row) => {
           if (row.id === id) {
-            return { ...row, key: newKey, state: RowState.Created };
+            return { ...row, key: newKey, state: TranslationRowState.Created };
           } else {
             return row;
           }
@@ -136,6 +141,8 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     newValue: string
   ) => {
     if (!id.includes(NEW_ID_PREFIX)) {
+      const initialStateKey = initialState.find((row) => row.id === id)?.key;
+
       const initialStateValues = initialState.find(
         (row) => row.id === id
       )?.values;
@@ -160,10 +167,10 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
               ...row,
               values: newValues,
               state:
-                JSON.stringify(initialStateValues) ===
-                JSON.stringify(row.values)
+                initialStateKey === row.key &&
+                JSON.stringify(initialStateValues) === JSON.stringify(newValues)
                   ? undefined
-                  : RowState.Updated,
+                  : TranslationRowState.Updated,
             };
           } else {
             return row;
@@ -190,7 +197,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
             return {
               ...row,
               values: newValues,
-              state: RowState.Created,
+              state: TranslationRowState.Created,
             };
           } else {
             return row;
@@ -203,12 +210,14 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
   const getActions = (): TranslationActionEntry[] => {
     return data
       .filter(
-        (row) => row.state !== undefined && row.state !== RowState.Placeholder
+        (row) =>
+          row.state !== undefined &&
+          row.state !== TranslationRowState.Placeholder
       )
       .map(({ state, id, ...row }) =>
-        state === RowState.Created
+        state === TranslationRowState.Created
           ? { ...row, action: TranslationAction.Create }
-          : state === RowState.Updated
+          : state === TranslationRowState.Updated
           ? { ...row, action: TranslationAction.Update, id: id || "" }
           : { action: TranslationAction.Delete, id: id || "" }
       );

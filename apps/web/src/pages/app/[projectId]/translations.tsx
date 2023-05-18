@@ -11,18 +11,22 @@ import {
 } from "../../../components/translation-table";
 import { projectLanguages } from "../../../utils/project-languages";
 import { api } from "../../../utils/api";
-import { Button } from "@interflex-app/ui";
-import { SupportedLanguage, TranslationAction } from "../../../consts";
+import { Button, useToast } from "@interflex-app/ui";
 import { extractTranslations } from "../../../utils/extract-translations";
 import { useRef } from "react";
 
 const Translations: NextPageWithLayout = () => {
+  const { toast } = useToast();
+
   const { project, isLoading } = useProject();
 
   const translationTable = useRef<TranslationTableRef>(null);
 
-  const { mutateAsync: syncTranslations, isLoading: syncTranslationsLoading } =
-    api.project.syncTranslations.useMutation();
+  const {
+    mutateAsync: syncTranslations,
+    isLoading: syncTranslationsLoading,
+    error,
+  } = api.project.syncTranslations.useMutation();
 
   const {
     data: initialTranslations,
@@ -56,7 +60,18 @@ const Translations: NextPageWithLayout = () => {
               loading={syncTranslationsLoading}
               onClick={async () => {
                 const actions = translationTable.current!.getActions();
-                console.log(actions);
+
+                try {
+                  await syncTranslations({
+                    projectId: project.id,
+                    translations: actions,
+                  });
+
+                  toast({
+                    title: "Translations synced",
+                    description: "Your translations have been saved.",
+                  });
+                } catch (e) {}
               }}
             >
               Save
@@ -67,6 +82,7 @@ const Translations: NextPageWithLayout = () => {
 
       <TranslationTable
         ref={translationTable}
+        error={error}
         languages={projectLanguages(project.languages)}
         initialData={initialTranslations.map((t) => ({
           key: t.key,

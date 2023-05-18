@@ -20,10 +20,16 @@ import {
   TranslationStateRow,
   useTranslationState,
 } from "../hooks/use-translation-state";
+import { RouterError } from "../utils/api";
 
 interface TranslationTableProps {
   initialData: TranslationStateRow[];
   languages: typeof SUPPORTED_LANGUAGES;
+  error:
+    | (Omit<RouterError, "code" | "data"> & {
+        data?: RouterError["data"] | null;
+      })
+    | null;
 }
 
 export type TranslationTableRef = {
@@ -33,7 +39,7 @@ export type TranslationTableRef = {
 export const TranslationTable = forwardRef<
   TranslationTableRef,
   TranslationTableProps
->(({ initialData, languages }, ref) => {
+>(({ initialData, languages, error }, ref) => {
   const { data, getActions, updateKey, updateValue } =
     useTranslationState(initialData);
 
@@ -41,17 +47,32 @@ export const TranslationTable = forwardRef<
     getActions,
   }));
 
+  const getError = (rowId: string, rowKey: string) => {
+    const issue = error?.data?.zodErrorIssues?.find(
+      (issue) =>
+        (issue.input as TranslationStateRow)["id"] === rowId &&
+        issue.path.includes(rowKey)
+    );
+
+    if (!issue) return null;
+
+    return issue.message;
+  };
+
   const columns = useMemo(() => {
     return [
       {
         id: "key",
         header: "Key",
         cell: ({ row }) => (
-          <Input
-            placeholder="Key..."
-            value={row.original.key}
-            onChange={(e) => updateKey(row.original.id, e.target.value)}
-          />
+          <>
+            <Input
+              placeholder="Key..."
+              value={row.original.key}
+              onChange={(e) => updateKey(row.original.id, e.target.value)}
+            />
+            <span>{getError(row.original.id, "key")}</span>
+          </>
         ),
       },
       ...languages.map(
@@ -74,7 +95,7 @@ export const TranslationTable = forwardRef<
           } as ColumnDef<TranslationStateRow>)
       ),
     ] as ColumnDef<TranslationStateRow>[];
-  }, [languages]);
+  }, [languages, error]);
 
   const table = useReactTable({
     data,
