@@ -9,13 +9,6 @@ datasource db {
     relationMode = "prisma"
 }
 
-enum VariableType {
-    STRING
-    NUMBER
-    BOOLEAN
-    DATE
-}
-
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -94,22 +87,9 @@ model Translation {
     value     Json
     project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
     projectId String
-    variables Variable[]
+    variables Json     @default("[]")
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@index([projectId])
-}
-
-model Variable {
-    id        String   @id @default(cuid())
-    name      String
-    type      VariableType @default(STRING)
-    formatter String?
-    translation Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
-    translationId String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([translationId])
 }

@@ -1,25 +1,21 @@
 import { useEffect, useState } from "react";
 import { RouterInputs } from "../utils/api";
 import { SupportedLanguage, TranslationAction } from "../consts";
+import { Variable } from "../utils/variables";
 
 const NEW_ID_PREFIX = "new-";
 
 export type TranslationStateRow = Omit<
-  CreateTranslationActionEntry | UpdateTranslationActionEntry,
+  CreateUpdateTranslationActionEntry,
   "action"
 > & { id: string; state?: TranslationRowState; locked?: boolean };
 
 export type TranslationActionEntry =
   RouterInputs["project"]["syncTranslations"]["translations"][number];
 
-export type CreateTranslationActionEntry = Extract<
+export type CreateUpdateTranslationActionEntry = Extract<
   TranslationActionEntry,
-  { action: TranslationAction.Create }
->;
-
-export type UpdateTranslationActionEntry = Extract<
-  TranslationActionEntry,
-  { action: TranslationAction.Update }
+  { action: TranslationAction.Create | TranslationAction.Update }
 >;
 
 export type DeleteTranslationActionEntry = Extract<
@@ -44,6 +40,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
       id: getNewId(),
       key: "",
       values: [],
+      variables: [],
       state: TranslationRowState.Placeholder,
     },
   ]);
@@ -56,6 +53,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
           id: getNewId(),
           key: "",
           values: [],
+          variables: [],
           state: TranslationRowState.Placeholder,
         },
       ]);
@@ -103,6 +101,7 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
         id: getNewId(),
         key: "",
         values: [],
+        variables: [],
         state: TranslationRowState.Placeholder,
       },
     ]);
@@ -219,6 +218,30 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     }
   };
 
+  const updateVariables = (id: string, newVariables: Variable[]) => {
+    const initialStateVariables = initialState.find(
+      (row) => row.id === id
+    )?.variables;
+
+    setData((prev) =>
+      prev.map((row) =>
+        row.id === id
+          ? {
+              ...row,
+              variables: newVariables,
+              state:
+                JSON.stringify(initialStateVariables) ===
+                JSON.stringify(newVariables)
+                  ? undefined
+                  : !id.includes(NEW_ID_PREFIX)
+                  ? TranslationRowState.Updated
+                  : TranslationRowState.Created,
+            }
+          : row
+      )
+    );
+  };
+
   const deleteRow = (id: string) => {
     if (!id.includes(NEW_ID_PREFIX)) {
       setData((prev) =>
@@ -285,5 +308,6 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     resetWithState,
     deleteRow,
     revertRow,
+    updateVariables,
   };
 };

@@ -16,10 +16,10 @@ import { ApiError } from "../errors/api-error";
 import { createZodEnum } from "../../../utils/create-zod-enum";
 import { SupportedLanguage, TranslationAction } from "../../../consts";
 import {
-  CreateTranslationActionEntry,
+  CreateUpdateTranslationActionEntry,
   DeleteTranslationActionEntry,
-  UpdateTranslationActionEntry,
 } from "../../../hooks/use-translation-state";
+import { VariableType, variablesToJson } from "../../../utils/variables";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
@@ -140,7 +140,10 @@ export const projectRouter = createTRPCRouter({
         translations: z.array(
           z.union([
             z.object({
-              action: z.enum([TranslationAction.Create]),
+              action: z.enum([
+                TranslationAction.Create,
+                TranslationAction.Update,
+              ]),
               id: z.string().min(1),
               key: z
                 .string()
@@ -152,18 +155,14 @@ export const projectRouter = createTRPCRouter({
                   value: z.string().min(1),
                 })
               ),
-            }),
-            z.object({
-              action: z.enum([TranslationAction.Update]),
-              id: z.string().min(1),
-              key: z
-                .string()
-                .regex(/^[A-Za-z0-9._]+$/g)
-                .min(1),
-              values: z.array(
+              variables: z.array(
                 z.object({
-                  language: z.enum(createZodEnum(SupportedLanguage)),
-                  value: z.string().min(1),
+                  name: z
+                    .string()
+                    .regex(/^[A-Za-z0-9_]+$/g)
+                    .min(1),
+                  type: z.enum(createZodEnum(VariableType)),
+                  options: z.any().optional(),
                 })
               ),
             }),
@@ -202,11 +201,11 @@ export const projectRouter = createTRPCRouter({
           .map((t, i) => [t, i])
           .filter(
             ([t]) =>
-              (t as CreateTranslationActionEntry).action ===
+              (t as CreateUpdateTranslationActionEntry).action ===
               TranslationAction.Create
           )
           .map(([t, i]) => {
-            const entry = t as CreateTranslationActionEntry;
+            const entry = t as CreateUpdateTranslationActionEntry;
             const idx = i as number;
 
             if (currentTranslations.map((t) => t.key).includes(entry.key)) {
@@ -221,6 +220,7 @@ export const projectRouter = createTRPCRouter({
               key: entry.key,
               projectId: ctx.project.id,
               value: valuesToObject(entry.values),
+              variables: variablesToJson(entry.variables),
             };
           });
 
@@ -228,11 +228,11 @@ export const projectRouter = createTRPCRouter({
         .map((t, i) => [t, i])
         .filter(
           ([t]) =>
-            (t as UpdateTranslationActionEntry).action ===
+            (t as CreateUpdateTranslationActionEntry).action ===
             TranslationAction.Update
         )
         .map(([t, i]) => {
-          const entry = t as UpdateTranslationActionEntry;
+          const entry = t as CreateUpdateTranslationActionEntry;
           const idx = i as number;
 
           const withSameKey = currentTranslations.find(
@@ -254,6 +254,7 @@ export const projectRouter = createTRPCRouter({
             data: {
               key: entry.key,
               value: valuesToObject(entry.values),
+              variables: variablesToJson(entry.variables),
             },
           };
         });

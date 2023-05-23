@@ -13,3 +13,4 @@ export * from "./table";
 export * from "./data-table";
 export * from "./badge";
 export * from "./combobox";
+export * from "./tooltip";

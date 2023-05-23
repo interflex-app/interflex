@@ -15,6 +15,10 @@ import { Button, useToast } from "@interflex-app/ui";
 import { extractTranslations } from "../../../utils/extract-translations";
 import { useRef } from "react";
 import { ModifierKey, useKeyPress } from "../../../hooks/use-key-press";
+import {
+  extractVariablesFromString,
+  jsonToVariables,
+} from "../../../utils/variables";
 
 const Translations: NextPageWithLayout = () => {
   const { toast } = useToast();
@@ -53,10 +57,12 @@ const Translations: NextPageWithLayout = () => {
       const newState = await refetch();
 
       if (!newState.data) return;
+
       translationTable.current!.resetWithState(
         newState.data.map((t) => ({
           key: t.key,
           values: extractTranslations(t.value),
+          variables: jsonToVariables(t.variables),
           id: t.id,
         }))
       );
@@ -107,6 +113,7 @@ const Translations: NextPageWithLayout = () => {
         initialData={initialTranslations.map((t) => ({
           key: t.key,
           values: extractTranslations(t.value),
+          variables: jsonToVariables(t.variables),
           id: t.id,
         }))}
       />
