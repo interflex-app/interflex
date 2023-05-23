@@ -239,7 +239,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
                       row.original.values.flatMap((v) =>
                         extractVariablesFromString(v.value)
                       )
-                    ).values()
+                    )
                   )}
                 />
 

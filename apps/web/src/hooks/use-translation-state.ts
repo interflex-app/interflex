@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { RouterInputs } from "../utils/api";
 import { SupportedLanguage, TranslationAction } from "../consts";
-import { Variable } from "../utils/variables";
+import {
+  Variable,
+  VariableType,
+  extractVariablesFromString,
+} from "../utils/variables";
 
 const NEW_ID_PREFIX = "new-";
 
@@ -151,6 +155,14 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     language: SupportedLanguage,
     newValue: string
   ) => {
+    const currentVariableNames =
+      data.find((row) => row.id === id)?.variables.map((v) => v.name) || [];
+    const newVariableNames = extractVariablesFromString(newValue);
+
+    const valueVariables = Array.from(
+      new Set([...currentVariableNames, ...newVariableNames])
+    );
+
     if (!id.includes(NEW_ID_PREFIX)) {
       const initialStateKey = initialState.find((row) => row.id === id)?.key;
 
@@ -174,9 +186,18 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
                   })
                 : [...row.values, { language, value: newValue }];
 
+            const newVariables = valueVariables.map(
+              (v) =>
+                row.variables.find((rv) => rv.name === v) || {
+                  name: v,
+                  type: VariableType.STRING,
+                }
+            );
+
             return {
               ...row,
               values: newValues,
+              variables: newVariables,
               state:
                 initialStateKey === row.key &&
                 JSON.stringify(initialStateValues) === JSON.stringify(newValues)
@@ -205,9 +226,18 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
                   })
                 : [...row.values, { language, value: newValue }];
 
+            const newVariables = valueVariables.map(
+              (v) =>
+                row.variables.find((rv) => rv.name === v) || {
+                  name: v,
+                  type: VariableType.STRING,
+                }
+            );
+
             return {
               ...row,
               values: newValues,
+              variables: newVariables,
               state: TranslationRowState.Created,
             };
           } else {
