@@ -1,5 +1,6 @@
 import {
   ColumnDef,
+  RowSelectionState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -219,7 +220,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
       return issue.message;
     };
 
-    const [rowSelection, setRowSelection] = useState({});
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
     const columns = useMemo(() => {
       return [
@@ -373,7 +374,14 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
           )}
         >
           <span>
-            {table.getFilteredSelectedRowModel().rows.length} row(s) selected.
+            {
+              table
+                .getFilteredSelectedRowModel()
+                .rows.filter(
+                  (r) => r.original.state !== TranslationRowState.Placeholder
+                ).length
+            }{" "}
+            row(s) selected.
           </span>
           <div className="flex items-center gap-4">
             <AlertDialog>
@@ -451,7 +459,11 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
                       "border-l-lime-500"
                   )}
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={
+                    row.getIsSelected() &&
+                    row.original.state !== TranslationRowState.Placeholder &&
+                    "selected"
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
