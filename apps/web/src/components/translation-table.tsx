@@ -234,14 +234,15 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
               aria-label="Select all"
             />
           ),
-          cell: ({ row }) => (
-            <Checkbox
-              disabled={row.original.locked}
-              checked={row.getIsSelected() && !row.original.locked}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row"
-            />
-          ),
+          cell: ({ row }) =>
+            row.original.state !== TranslationRowState.Placeholder && (
+              <Checkbox
+                disabled={row.original.locked}
+                checked={row.getIsSelected() && !row.original.locked}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+              />
+            ),
           enableSorting: false,
           enableHiding: false,
         },
@@ -348,6 +349,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
           },
         },
       ] as ColumnDef<TranslationStateRow>[];
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [languages, error]);
 
     const table = useReactTable({
@@ -372,7 +374,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
         >
           <span>
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {table.getFilteredRowModel().rows.length - 1} row(s) selected.
           </span>
           <div className="flex items-center gap-4">
             <AlertDialog>
