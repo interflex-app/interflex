@@ -39,25 +39,41 @@ import {
   cn,
 } from "@interflex-app/ui";
 import { SUPPORTED_LANGUAGES } from "../consts";
-import {
-  PropsWithChildren,
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-} from "react";
+import { forwardRef, useImperativeHandle, useMemo } from "react";
 import {
   TranslationRowState,
   TranslationStateRow,
   useTranslationState,
 } from "../hooks/use-translation-state";
 import { RouterError } from "../utils/api";
-import { MoreHorizontal, Workflow } from "lucide-react";
+import { Calendar, Hash, MoreHorizontal, Type, Workflow } from "lucide-react";
 import {
   Variable,
   VariableType,
   extractVariablesFromString,
 } from "../utils/variables";
 import { useVariablesState } from "../hooks/use-variables-state";
+
+const VARIABLE_LABELS: Record<VariableType, React.ReactNode> = {
+  [VariableType.STRING]: (
+    <span className="flex items-center gap-2">
+      <Type className="h-4 w-4 opacity-50" />
+      String
+    </span>
+  ),
+  [VariableType.NUMBER]: (
+    <span className="flex items-center gap-2">
+      <Hash className="h-4 w-4 opacity-50" />
+      Number
+    </span>
+  ),
+  [VariableType.DATE]: (
+    <span className="flex items-center gap-2">
+      <Calendar className="h-4 w-4 opacity-50" />
+      Date
+    </span>
+  ),
+};
 
 const VariableEditor: React.FC<{
   variableNames: string[];
@@ -116,7 +132,7 @@ const VariableEditor: React.FC<{
                   <SelectContent>
                     {Object.values(VariableType).map((type) => (
                       <SelectItem key={type} value={type}>
-                        {type.toLocaleLowerCase()}
+                        {VARIABLE_LABELS[type]}
                       </SelectItem>
                     ))}
                   </SelectContent>
