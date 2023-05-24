@@ -373,8 +373,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
           )}
         >
           <span>
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length - 1} row(s) selected.
+            {table.getFilteredSelectedRowModel().rows.length} row(s) selected.
           </span>
           <div className="flex items-center gap-4">
             <AlertDialog>
