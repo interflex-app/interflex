@@ -59,7 +59,7 @@ import {
 } from "../utils/variables";
 import { useVariablesState } from "../hooks/use-variables-state";
 
-const VariableEditDialog: React.FC<{
+const VariableEditor: React.FC<{
   variableNames: string[];
   variableData: Variable[];
   onSave: (data: Variable[]) => void;
@@ -75,7 +75,11 @@ const VariableEditDialog: React.FC<{
         <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button
+                disabled={variableNames.length === 0}
+                variant="ghost"
+                className="h-8 w-8 p-0"
+              >
                 <Workflow className="h-4 w-4" />
               </Button>
             </DialogTrigger>
@@ -96,7 +100,7 @@ const VariableEditDialog: React.FC<{
           {data.map((variable) => (
             <div
               key={variable.name}
-              className="flex items-center justify-between rounded-md border border-gray-800 px-4 py-2"
+              className="flex items-center justify-between rounded-md border border-gray-200 px-4 py-2 dark:border-gray-800"
             >
               <span>{variable.name}</span>
               <div>
@@ -226,21 +230,23 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
         {
           id: "actions",
           header: "Actions",
-          cell: ({ row }) =>
-            row.original.state !== TranslationRowState.Placeholder && (
+          cell: ({ row }) => {
+            const variableNames = Array.from(
+              new Set(
+                row.original.values.flatMap((v) =>
+                  extractVariablesFromString(v.value)
+                )
+              )
+            );
+
+            return row.original.state !== TranslationRowState.Placeholder ? (
               <div className="flex items-center gap-2">
-                <VariableEditDialog
+                <VariableEditor
                   onSave={(variables) =>
                     updateVariables(row.original.id, variables)
                   }
                   variableData={row.original.variables}
-                  variableNames={Array.from(
-                    new Set(
-                      row.original.values.flatMap((v) =>
-                        extractVariablesFromString(v.value)
-                      )
-                    )
-                  )}
+                  variableNames={variableNames}
                 />
 
                 <TooltipProvider delayDuration={0}>
@@ -276,7 +282,8 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
                   </DropdownMenu>
                 </TooltipProvider>
               </div>
-            ),
+            ) : null;
+          },
         },
       ] as ColumnDef<TranslationStateRow>[];
     }, [languages, error]);
