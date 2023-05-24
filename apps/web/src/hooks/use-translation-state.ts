@@ -288,6 +288,22 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     }
   };
 
+  const deleteManyRows = (ids: string[]) => {
+    setData((prev) =>
+      prev
+        .filter(
+          (row) => !(row.id.includes(NEW_ID_PREFIX) && ids.includes(row.id))
+        )
+        .map((row) => {
+          if (ids.includes(row.id)) {
+            return { ...row, state: TranslationRowState.Deleted, locked: true };
+          } else {
+            return row;
+          }
+        })
+    );
+  };
+
   const revertRow = (id: string) => {
     const initialStateKey = initialState.find((row) => row.id === id)?.key;
 
@@ -339,5 +355,6 @@ export const useTranslationState = (initialState: TranslationStateRow[]) => {
     deleteRow,
     revertRow,
     updateVariables,
+    deleteManyRows,
   };
 };

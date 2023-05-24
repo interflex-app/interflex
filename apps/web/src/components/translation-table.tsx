@@ -2,11 +2,22 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Button,
+  Checkbox,
   Dialog,
   DialogCloseElement,
   DialogContent,
@@ -39,14 +50,21 @@ import {
   cn,
 } from "@interflex-app/ui";
 import { SUPPORTED_LANGUAGES } from "../consts";
-import { forwardRef, useImperativeHandle, useMemo } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import {
   TranslationRowState,
   TranslationStateRow,
   useTranslationState,
 } from "../hooks/use-translation-state";
 import { RouterError } from "../utils/api";
-import { Calendar, Hash, MoreHorizontal, Type, Workflow } from "lucide-react";
+import {
+  Calendar,
+  Hash,
+  MoreHorizontal,
+  Trash,
+  Type,
+  Workflow,
+} from "lucide-react";
 import {
   Variable,
   VariableType,
@@ -116,7 +134,7 @@ const VariableEditor: React.FC<{
           {data.map((variable) => (
             <div
               key={variable.name}
-              className="flex items-center justify-between rounded-md border border-gray-200 px-4 py-2 dark:border-gray-800"
+              className="flex items-center justify-between rounded-md bg-gray-100 px-4 py-2 dark:bg-gray-900"
             >
               <span>{variable.name}</span>
               <div>
@@ -181,6 +199,7 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
       deleteRow,
       revertRow,
       updateVariables,
+      deleteManyRows,
     } = useTranslationState(initialData);
 
     useImperativeHandle(ref, () => ({
@@ -200,8 +219,32 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
       return issue.message;
     };
 
+    const [rowSelection, setRowSelection] = useState({});
+
     const columns = useMemo(() => {
       return [
+        {
+          id: "select",
+          header: ({ table }) => (
+            <Checkbox
+              checked={table.getIsAllPageRowsSelected()}
+              onCheckedChange={(value) =>
+                table.toggleAllPageRowsSelected(!!value)
+              }
+              aria-label="Select all"
+            />
+          ),
+          cell: ({ row }) => (
+            <Checkbox
+              disabled={row.original.locked}
+              checked={row.getIsSelected() && !row.original.locked}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          ),
+          enableSorting: false,
+          enableHiding: false,
+        },
         {
           id: "key",
           header: "Key",
@@ -283,7 +326,10 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
 
                       {row.original.state !== TranslationRowState.Deleted ? (
                         <DropdownMenuItem
-                          onClick={() => deleteRow(row.original.id)}
+                          onClick={() => {
+                            row.toggleSelected(false);
+                            deleteRow(row.original.id);
+                          }}
                         >
                           Remove translation
                         </DropdownMenuItem>
@@ -308,53 +354,117 @@ const TranslationTable = forwardRef<TranslationTableRef, TranslationTableProps>(
       data,
       columns,
       getCoreRowModel: getCoreRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      onRowSelectionChange: setRowSelection,
+      state: {
+        rowSelection,
+      },
     });
 
     return (
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead className="uppercase" key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                className={cn(
-                  "border-l-2",
-                  row.original.state === TranslationRowState.Deleted &&
-                    "border-l-red-500 opacity-50",
-                  row.original.state === TranslationRowState.Updated &&
-                    "border-l-yellow-500",
-                  row.original.state === TranslationRowState.Created &&
-                    "border-l-lime-500"
-                )}
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div>
+        <div
+          className={cn(
+            "flex w-full items-center justify-between rounded-md border px-4 py-2",
+            table.getFilteredSelectedRowModel().rows.length === 0 &&
+              "cursor-not-allowed opacity-50"
+          )}
+        >
+          <span>
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </span>
+          <div className="flex items-center gap-4">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  disabled={
+                    table.getFilteredSelectedRowModel().rows.length === 0
+                  }
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You will remove{" "}
+                    {table.getFilteredSelectedRowModel().rows.length}{" "}
+                    translation(s).
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      table.toggleAllPageRowsSelected(false);
+
+                      deleteManyRows(
+                        table
+                          .getFilteredSelectedRowModel()
+                          .rows.map((r) => r.original.id)
+                      );
+                    }}
+                  >
+                    Remove
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+        <div className="mt-4 rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead className="uppercase" key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  className={cn(
+                    "border-l-2",
+                    row.original.state === TranslationRowState.Deleted &&
+                      "border-l-red-500 opacity-50",
+                    row.original.state === TranslationRowState.Updated &&
+                      "border-l-yellow-500",
+                    row.original.state === TranslationRowState.Created &&
+                      "border-l-lime-500"
+                  )}
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     );
   }
