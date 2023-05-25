@@ -1,12 +1,11 @@
 import {
-  ColumnDef,
-  RowSelectionState,
+  type ColumnDef,
+  type RowSelectionState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,14 +49,14 @@ import {
   TooltipTrigger,
   cn,
 } from "@interflex-app/ui";
-import { SUPPORTED_LANGUAGES } from "../consts";
+import { type SUPPORTED_LANGUAGES } from "../consts";
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import {
   TranslationRowState,
-  TranslationStateRow,
+  type TranslationStateRow,
   useTranslationState,
 } from "../hooks/use-translation-state";
-import { RouterError } from "../utils/api";
+import { type RouterError } from "../utils/api";
 import {
   Calendar,
   Hash,
@@ -67,7 +66,7 @@ import {
   Workflow,
 } from "lucide-react";
 import {
-  Variable,
+  type Variable,
   VariableType,
   extractVariablesFromString,
 } from "../utils/variables";

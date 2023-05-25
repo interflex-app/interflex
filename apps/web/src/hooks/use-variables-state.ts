@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Variable, VariableType } from "../utils/variables";
+import { type Variable, VariableType } from "../utils/variables";
 
 export const useVariablesState = (
   initialState: Variable[],

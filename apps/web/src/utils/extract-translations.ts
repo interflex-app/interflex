@@ -1,5 +1,5 @@
-import { Translation } from "@prisma/client";
-import { SupportedLanguage } from "../consts";
+import { type Translation } from "@prisma/client";
+import { type SupportedLanguage } from "../consts";
 
 export const extractTranslations = (
   translationValue: Translation["value"]

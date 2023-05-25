@@ -7,7 +7,7 @@ import Head from "next/head";
 import { truncate } from "../../../utils/truncate";
 import {
   TranslationTable,
-  TranslationTableRef,
+  type TranslationTableRef,
 } from "../../../components/translation-table";
 import { projectLanguages } from "../../../utils/project-languages";
 import { api } from "../../../utils/api";
@@ -15,10 +15,7 @@ import { Button, useToast } from "@interflex-app/ui";
 import { extractTranslations } from "../../../utils/extract-translations";
 import { useRef } from "react";
 import { ModifierKey, useKeyPress } from "../../../hooks/use-key-press";
-import {
-  extractVariablesFromString,
-  jsonToVariables,
-} from "../../../utils/variables";
+import { jsonToVariables } from "../../../utils/variables";
 
 const Translations: NextPageWithLayout = () => {
   const { toast } = useToast();

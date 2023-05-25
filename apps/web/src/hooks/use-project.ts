@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
-import { useTeam } from "../providers/team-provider";
 
 export const useProject = () => {
   const router = useRouter();

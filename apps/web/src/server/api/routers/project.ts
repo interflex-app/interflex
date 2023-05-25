@@ -1,4 +1,4 @@
-import { number, z } from "zod";
+import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -11,13 +11,13 @@ import {
   updateProjectNameSchema,
 } from "../../../pages/app/[projectId]/settings";
 import { projectLanguages } from "../../../utils/project-languages";
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { ApiError } from "../errors/api-error";
 import { createZodEnum } from "../../../utils/create-zod-enum";
 import { SupportedLanguage, TranslationAction } from "../../../consts";
 import {
-  CreateUpdateTranslationActionEntry,
-  DeleteTranslationActionEntry,
+  type CreateUpdateTranslationActionEntry,
+  type DeleteTranslationActionEntry,
 } from "../../../hooks/use-translation-state";
 import { VariableType, variablesToJson } from "../../../utils/variables";
 

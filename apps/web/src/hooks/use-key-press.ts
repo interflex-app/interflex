@@ -38,7 +38,7 @@ export const useKeyPress = (
         callbackRef.current(event);
       }
     },
-    [key]
+    [key, options.modifierKey]
   );
 
   useEffect(() => {

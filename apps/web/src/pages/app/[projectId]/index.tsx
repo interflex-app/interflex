@@ -16,6 +16,7 @@ import {
 import { api } from "../../../utils/api";
 import { extractTranslations } from "../../../utils/extract-translations";
 import { projectLanguages } from "../../../utils/project-languages";
+import { useMemo } from "react";
 
 const Index: NextPageWithLayout = () => {
   const { project, isLoading: isProjectLoading } = useProject();
@@ -26,22 +27,26 @@ const Index: NextPageWithLayout = () => {
       { enabled: !!project }
     );
 
+  const percentages = useMemo(() => {
+    if (!data || !project) return [];
+
+    const translations = data.map((t) => extractTranslations(t.value));
+    const languages = projectLanguages(project.languages);
+
+    return languages.map((language) => {
+      const translated = translations.filter((t) =>
+        t.find((t) => t.language === language.value)
+      ).length;
+
+      return {
+        language,
+        percentage: Math.round((translated / translations.length) * 100),
+      };
+    });
+  }, [data, project]);
+
   if (!project || isProjectLoading || !data || isTranslationsLoading)
     return <DashboardSkeleton />;
-
-  const translations = data.map((t) => extractTranslations(t.value));
-  const languages = projectLanguages(project.languages);
-
-  const percentages = languages.map((language) => {
-    const translated = translations.filter((t) =>
-      t.find((t) => t.language === language.value)
-    ).length;
-
-    return {
-      language,
-      percentage: Math.round((translated / translations.length) * 100),
-    };
-  });
 
   return (
     <div>
@@ -62,7 +67,10 @@ const Index: NextPageWithLayout = () => {
         <CardContent>
           <div className="flex flex-col gap-8">
             {percentages.map((per) => (
-              <div className="flex w-full flex-col gap-4">
+              <div
+                key={per.language.value}
+                className="flex w-full flex-col gap-4"
+              >
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl">{per.language.label}</h2>
                   <span>{per.percentage}%</span>

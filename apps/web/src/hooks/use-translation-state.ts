@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { RouterInputs } from "../utils/api";
-import { SupportedLanguage, TranslationAction } from "../consts";
+import { type RouterInputs } from "../utils/api";
+import { type SupportedLanguage, TranslationAction } from "../consts";
 import {
-  Variable,
+  type Variable,
   VariableType,
   extractVariablesFromString,
 } from "../utils/variables";
