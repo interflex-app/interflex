@@ -41,13 +41,19 @@
   "author": "Piotr Pilszczek",
   "license": "MIT",
   "devDependencies": {
+    "@types/inquirer": "^9.0.3",
     "@types/node": "^20.1.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@inquirer/select": "^1.1.7",
+    "@napi-rs/keyring": "^1.1.1",
     "commander": "^10.0.1",
+    "inquirer": "^9.2.6",
     "jiti": "^1.18.2",
+    "open": "^9.1.0",
+    "ora": "^6.3.1",
     "sucrase": "^3.32.0",
     "zod": "^3.21.4"
   }

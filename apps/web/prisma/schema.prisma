@@ -93,3 +93,10 @@ model Translation {
 
     @@index([projectId])
 }
+
+model CliSession {
+    id        String    @id @default(cuid())
+    token     String?   @unique
+    expiresAt DateTime
+    createdAt DateTime  @default(now())
+}

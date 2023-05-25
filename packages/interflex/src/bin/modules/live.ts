@@ -1,6 +1,8 @@
-import { type InterflexConfig } from "../../shared/config.js";
 import { warning } from "../cli.js";
+import { readConfig } from "../utils.js";
 
-export const runLive = async (config: InterflexConfig) => {
+export const runLive = async () => {
+  const config = await readConfig();
+
   warning("Not implemented yet.");
 };

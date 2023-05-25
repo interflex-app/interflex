@@ -8,23 +8,22 @@ import { getCommand, readConfig } from "./utils.js";
 
 const main = async () => {
   const command = getCommand();
-  const config = await readConfig();
 
   switch (command) {
     case "live":
-      await runLive(config);
+      await runLive();
       break;
     case "sync":
-      await sync(config);
+      await sync();
       break;
     case "gen":
-      await generateTypes(config);
+      await generateTypes();
       break;
     case "login":
-      await login(config);
+      await login();
       break;
     case "link":
-      await link(config);
+      await link();
       break;
   }
 };
