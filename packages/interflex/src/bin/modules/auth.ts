@@ -1,11 +1,19 @@
 import { Entry } from "@napi-rs/keyring";
 import { warning } from "../cli.js";
-import { CLI_AUTH_URL, PROJECT_NAME, SERVICE_NAME } from "../consts.js";
+import {
+  APP_DATA_PATH,
+  CLI_AUTH_URL,
+  PROJECT_NAME,
+  SERVICE_NAME,
+} from "../consts.js";
 import { createAuthSession, getProjects, getSession } from "../api.js";
 import open from "open";
 import ora from "ora";
 import { error } from "console";
 import select, { Separator } from "@inquirer/select";
+import fs from "fs";
+import { z } from "zod";
+import { readSystemConfig, writeSystemConfig } from "../utils.js";
 
 const entry = new Entry(SERVICE_NAME, PROJECT_NAME);
 
@@ -50,16 +58,44 @@ export const link = async () => {
     return warning("You have no projects.");
   }
 
-  const projectId = await select({
+  const projectId = await select<string>({
     message: "Select a project to link:",
     choices: [
       ...teamsWithProjects.flatMap((team) => [
-        new Separator(team.name),
+        new Separator(`--- ${team.name} ---`),
         ...team.projects.map((project) => ({
           name: project.name,
           value: project.id,
         })),
       ]),
     ],
+    pageSize: 15,
   });
+
+  const cfg = readSystemConfig();
+  const workingDir = process.cwd();
+
+  if (!cfg.projects.find((project) => project.path === workingDir)) {
+    cfg.projects.push({
+      path: workingDir,
+      id: projectId,
+    });
+  } else {
+    cfg.projects = cfg.projects.map((project) => {
+      if (project.path === workingDir) {
+        return {
+          ...project,
+          id: projectId,
+        };
+      }
+
+      return project;
+    });
+  }
+
+  writeSystemConfig(cfg);
+
+  ora().succeed(
+    "Linked project. You can now use the `npx interflex sync` command to sync the translations."
+  );
 };

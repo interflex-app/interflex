@@ -6,6 +6,8 @@ import { Command } from "commander";
 import { z } from "zod";
 import { JITIOptions } from "jiti/dist/types.js";
 import { configSchema } from "../shared/config.js";
+import fs from "fs";
+import { APP_DATA_PATH } from "./consts.js";
 
 export const readModule = (filePath: string): string => {
   try {
@@ -61,4 +63,44 @@ export const getCommand = () => {
   }
 
   return commandParse.data;
+};
+
+const systemConfigSchema = z.object({
+  projects: z.array(z.object({ path: z.string(), id: z.string() })),
+});
+
+export const readSystemConfig = () => {
+  if (!fs.existsSync(APP_DATA_PATH)) {
+    fs.mkdirSync(APP_DATA_PATH, { recursive: true });
+  }
+
+  const configPath = `${APP_DATA_PATH}/config.json`;
+  const currentConfigRaw = fs.existsSync(configPath)
+    ? JSON.parse(fs.readFileSync(configPath).toString())
+    : { projects: [] };
+
+  const currentConfig = systemConfigSchema.safeParse(currentConfigRaw);
+
+  let configData: z.infer<typeof systemConfigSchema> = { projects: [] };
+
+  if (!currentConfig.success) {
+    fs.writeFileSync(configPath, JSON.stringify({ projects: [] }));
+    configData = { projects: [] };
+  } else {
+    configData = currentConfig.data;
+  }
+
+  return configData;
+};
+
+export const writeSystemConfig = (
+  config: z.infer<typeof systemConfigSchema>
+) => {
+  if (!fs.existsSync(APP_DATA_PATH)) {
+    fs.mkdirSync(APP_DATA_PATH, { recursive: true });
+  }
+
+  const configPath = `${APP_DATA_PATH}/config.json`;
+
+  fs.writeFileSync(configPath, JSON.stringify(config));
 };
