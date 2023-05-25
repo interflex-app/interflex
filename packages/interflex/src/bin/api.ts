@@ -10,6 +10,10 @@ export const createAuthSession = async () => {
     },
   });
 
+  if (!res.ok) {
+    return error("There was an error creating the auth session.");
+  }
+
   const parsed = z
     .object({
       session: z
