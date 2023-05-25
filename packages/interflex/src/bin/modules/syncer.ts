@@ -27,9 +27,8 @@ export const sync = async () => {
   }
 
   const spinner = ora("Loading translations...").start();
-
   const translations = await getTranslations(token, projectId);
-  console.log(translations);
-
   spinner.stop();
+
+  console.log(translations);
 };
