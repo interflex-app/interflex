@@ -3,6 +3,9 @@ import { warning } from "../cli.js";
 import { keyringEntry, readConfig, readSystemConfig } from "../utils.js";
 import ora from "ora";
 import { getTranslations } from "../api.js";
+import { LanguageTranslations, Translations } from "../../shared/types.js";
+import path from "path";
+import fs from "fs";
 
 export const sync = async () => {
   const token = keyringEntry.getPassword();
@@ -26,9 +29,49 @@ export const sync = async () => {
     );
   }
 
-  const spinner = ora("Loading translations...").start();
+  const spinner = ora("Generating translation files...").start();
   const translations = await getTranslations(token, projectId);
-  spinner.stop();
 
-  console.log(translations);
+  if (!translations || translations.length === 0) {
+    spinner.fail("There are no translations in your project.");
+
+    process.exit(1);
+  }
+
+  const result: Translations = {};
+
+  translations.forEach(({ key, value }) => {
+    const keys = key.split(".");
+    const languages = Object.keys(value);
+
+    languages.forEach((language) => {
+      let obj = result[language] || {};
+      let nestedObj = obj;
+
+      for (let i = 0; i < keys.length; i++) {
+        const currentKey = keys[i];
+
+        if (i === keys.length - 1) {
+          nestedObj[currentKey] = value[language];
+        } else {
+          nestedObj[currentKey] = nestedObj[currentKey] || {};
+          nestedObj = nestedObj[currentKey] as LanguageTranslations;
+        }
+      }
+
+      result[language] = obj;
+    });
+  });
+
+  const json = JSON.stringify(result, null, 2);
+
+  const i18nPath = path.join(process.cwd(), config.directory!);
+
+  if (!fs.existsSync(i18nPath)) {
+    fs.mkdirSync(i18nPath, { recursive: true });
+  }
+
+  fs.writeFileSync(path.join(i18nPath, "translations.json"), json);
+
+  spinner.succeed("Generated translation files.");
 };

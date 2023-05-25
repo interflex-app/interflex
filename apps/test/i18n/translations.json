@@ -1,0 +1,43 @@
+{
+  "en": {
+    "h": {
+      "hello": "Hi, {name}!",
+      "bye": "Bye, {name}!"
+    },
+    "test": {
+      "1": "First test",
+      "2": "Second test!"
+    },
+    "footer": {
+      "right": "All rights reserved",
+      "left": "Lmao {num}"
+    }
+  },
+  "no": {
+    "h": {
+      "hello": "Hei, {name}!"
+    },
+    "test": {
+      "1": "Første test",
+      "2": "Andre test"
+    }
+  },
+  "pl": {
+    "h": {
+      "hello": "Cześć, {name}!",
+      "bye": "Żegnaj, {name}!"
+    },
+    "test": {
+      "2": "Drugi test"
+    },
+    "footer": {
+      "right": "Wszystkie prawa zastrzeżone",
+      "left": "Lmao {num} :DDD"
+    }
+  },
+  "ua": {
+    "test": {
+      "2": "jajajjaa"
+    }
+  }
+}
