@@ -35,7 +35,9 @@ const CliAuth: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (status === "unauthenticated" && router.isReady && !!sessionId) {
-      signIn("github", { callbackUrl: `/auth/cli?sessionId=${sessionId}` });
+      void signIn("github", {
+        callbackUrl: `/auth/cli?sessionId=${sessionId}`,
+      });
     }
   }, [status, router.isReady, sessionId]);
 
