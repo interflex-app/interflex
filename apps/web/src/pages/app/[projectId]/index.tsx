@@ -79,7 +79,7 @@ const Index: NextPageWithLayout = () => {
                 <div className="relative h-0.5 rounded-md bg-secondary">
                   <div
                     className={cn("absolute left-0 top-0 h-0.5 rounded-md", {
-                      "bg-white": per.percentage === 100,
+                      "bg-black dark:bg-white": per.percentage === 100,
                       "bg-lime-500":
                         per.percentage < 100 && per.percentage >= 80,
                       "bg-yellow-500":
