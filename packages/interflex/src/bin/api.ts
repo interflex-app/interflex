@@ -109,3 +109,44 @@ export const getProjects = async (authToken: string) => {
 
   return Object.values(groupedProjects);
 };
+
+export const getTranslations = async (authToken: string, projectId: string) => {
+  const res = await fetch(
+    `${APP_URL}/api/cli/get-translations?projectId=${projectId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${authToken}`,
+      },
+    }
+  );
+
+  const parsed = z
+    .object({
+      translations: z
+        .array(
+          z.object({
+            key: z.string(),
+            value: z.any(),
+            variables: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  type: z.enum(["STRING", "NUMBER", "DATE"]),
+                })
+              )
+              .nullable(),
+          })
+        )
+        .nullable(),
+    })
+    .safeParse(await res.json());
+
+  if (!parsed.success) {
+    console.log(parsed.error);
+    return error("There was an error getting the translations.");
+  }
+
+  return parsed.data.translations;
+};

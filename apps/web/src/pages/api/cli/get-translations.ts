@@ -13,16 +13,18 @@ const handler: NextApiHandler = async (req, res) => {
     return res.status(401).json({ error: "Unauthorized." });
   }
 
-  const projects = await prisma.project.findMany({
-    where: { team: { members: { some: { id: userId } } } },
-    select: {
-      team: { select: { id: true, name: true } },
-      id: true,
-      name: true,
-    },
+  const projectId = req.query.projectId?.toString() ?? "";
+
+  if (!projectId) {
+    return res.status(400).json({ translations: null });
+  }
+
+  const translations = await prisma.translation.findMany({
+    where: { projectId },
+    select: { key: true, value: true, variables: true },
   });
 
-  return res.status(200).json({ projects });
+  return res.status(200).json({ translations });
 };
 
 export default handler;

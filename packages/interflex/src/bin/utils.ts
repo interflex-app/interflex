@@ -7,7 +7,10 @@ import { z } from "zod";
 import { JITIOptions } from "jiti/dist/types.js";
 import { configSchema } from "../shared/config.js";
 import fs from "fs";
-import { APP_DATA_PATH } from "./consts.js";
+import { APP_DATA_PATH, PROJECT_NAME, SERVICE_NAME } from "./consts.js";
+import { Entry } from "@napi-rs/keyring";
+
+export const keyringEntry = new Entry(SERVICE_NAME, PROJECT_NAME);
 
 export const readModule = (filePath: string): string => {
   try {

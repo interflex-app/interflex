@@ -4,8 +4,6 @@ import jwt from "jsonwebtoken";
 export const verifyCliJwt = (req: NextApiRequest, res: NextApiResponse) => {
   const jwtToken = req.headers.authorization?.toString().replace("Bearer ", "");
 
-  console.log(req.headers, jwtToken);
-
   if (!jwtToken) {
     return null;
   }

@@ -1,21 +1,11 @@
-import { Entry } from "@napi-rs/keyring";
 import { warning } from "../cli.js";
-import {
-  APP_DATA_PATH,
-  CLI_AUTH_URL,
-  PROJECT_NAME,
-  SERVICE_NAME,
-} from "../consts.js";
+import { CLI_AUTH_URL } from "../consts.js";
 import { createAuthSession, getProjects, getSession } from "../api.js";
 import open from "open";
 import ora from "ora";
 import { error } from "console";
 import select, { Separator } from "@inquirer/select";
-import fs from "fs";
-import { z } from "zod";
-import { readSystemConfig, writeSystemConfig } from "../utils.js";
-
-const entry = new Entry(SERVICE_NAME, PROJECT_NAME);
+import { keyringEntry, readSystemConfig, writeSystemConfig } from "../utils.js";
 
 export const login = async () => {
   const spinner = ora("Signing in...").start();
@@ -36,13 +26,13 @@ export const login = async () => {
     await new Promise((r) => setTimeout(r, 1000));
   }
 
-  entry.setPassword(token);
+  keyringEntry.setPassword(token);
 
   spinner.succeed("Signed in. You can now use the CLI.");
 };
 
 export const link = async () => {
-  const token = entry.getPassword();
+  const token = keyringEntry.getPassword();
 
   if (!token) {
     return error(
