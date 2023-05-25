@@ -5,11 +5,43 @@ import { type NextPageWithLayout } from "../../_app";
 import DashboardSkeleton from "../../../components/dashboard-skeleton";
 import Head from "next/head";
 import { truncate } from "../../../utils/truncate";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  cn,
+} from "@interflex-app/ui";
+import { api } from "../../../utils/api";
+import { extractTranslations } from "../../../utils/extract-translations";
+import { projectLanguages } from "../../../utils/project-languages";
 
 const Index: NextPageWithLayout = () => {
-  const { project, isLoading } = useProject();
+  const { project, isLoading: isProjectLoading } = useProject();
 
-  if (!project || isLoading) return <DashboardSkeleton />;
+  const { data, isLoading: isTranslationsLoading } =
+    api.project.getTranslations.useQuery(
+      { projectId: project?.id ?? "" },
+      { enabled: !!project }
+    );
+
+  if (!project || isProjectLoading || !data || isTranslationsLoading)
+    return <DashboardSkeleton />;
+
+  const translations = data.map((t) => extractTranslations(t.value));
+  const languages = projectLanguages(project.languages);
+
+  const percentages = languages.map((language) => {
+    const translated = translations.filter((t) =>
+      t.find((t) => t.language === language.value)
+    ).length;
+
+    return {
+      language,
+      percentage: Math.round((translated / translations.length) * 100),
+    };
+  });
 
   return (
     <div>
@@ -18,6 +50,42 @@ const Index: NextPageWithLayout = () => {
       </Head>
 
       <DashboardHeader title={`${truncate(project.name, 20)} - Overview`} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Languages</CardTitle>
+          <CardDescription>
+            See your progress in translating the app!
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col gap-8">
+            {percentages.map((per) => (
+              <div className="flex w-full flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl">{per.language.label}</h2>
+                  <span>{per.percentage}%</span>
+                </div>
+
+                <div className="relative h-0.5 rounded-md bg-secondary">
+                  <div
+                    className={cn("absolute left-0 top-0 h-0.5 rounded-md", {
+                      "bg-white": per.percentage === 100,
+                      "bg-lime-500":
+                        per.percentage < 100 && per.percentage >= 80,
+                      "bg-yellow-500":
+                        per.percentage < 80 && per.percentage >= 30,
+                      "bg-red-500": per.percentage < 30,
+                    })}
+                    style={{ width: `${per.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

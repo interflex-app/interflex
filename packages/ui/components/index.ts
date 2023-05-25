@@ -16,3 +16,4 @@ export * from "./combobox";
 export * from "./tooltip";
 export * from "./checkbox";
 export * from "./alert-dialog";
+export * from "./card";
