@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest } from "next";
 import jwt from "jsonwebtoken";
 
-export const verifyCliJwt = (req: NextApiRequest, res: NextApiResponse) => {
+export const verifyCliJwt = (req: NextApiRequest) => {
   const jwtToken = req.headers.authorization?.toString().replace("Bearer ", "");
 
   if (!jwtToken) {

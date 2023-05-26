@@ -1,5 +1,5 @@
+import { type SupportedLanguage } from "@interflex-app/shared";
 import { type Translation } from "@prisma/client";
-import { type SupportedLanguage } from "../consts";
 
 export const extractTranslations = (
   translationValue: Translation["value"]

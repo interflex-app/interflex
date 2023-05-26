@@ -1,5 +1,5 @@
+import { SUPPORTED_LANGUAGES, SupportedLanguage } from "@interflex-app/shared";
 import { type Prisma } from "@prisma/client";
-import { SUPPORTED_LANGUAGES, SupportedLanguage } from "../consts";
 
 export const projectLanguages = (languages: Prisma.JsonValue) =>
   (languages as SupportedLanguage[]).map(

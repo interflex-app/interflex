@@ -49,7 +49,6 @@ import {
   TooltipTrigger,
   cn,
 } from "@interflex-app/ui";
-import { type SUPPORTED_LANGUAGES } from "../consts";
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import {
   TranslationRowState,
@@ -71,6 +70,7 @@ import {
   extractVariablesFromString,
 } from "../utils/variables";
 import { useVariablesState } from "../hooks/use-variables-state";
+import { SUPPORTED_LANGUAGES } from "@interflex-app/shared";
 
 const VARIABLE_LABELS: Record<VariableType, React.ReactNode> = {
   [VariableType.STRING]: (

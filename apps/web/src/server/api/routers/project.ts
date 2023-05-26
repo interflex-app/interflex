@@ -14,12 +14,13 @@ import { projectLanguages } from "../../../utils/project-languages";
 import { type Prisma } from "@prisma/client";
 import { ApiError } from "../errors/api-error";
 import { createZodEnum } from "../../../utils/create-zod-enum";
-import { SupportedLanguage, TranslationAction } from "../../../consts";
+import { TranslationAction } from "../../../consts";
 import {
   type CreateUpdateTranslationActionEntry,
   type DeleteTranslationActionEntry,
 } from "../../../hooks/use-translation-state";
 import { VariableType, variablesToJson } from "../../../utils/variables";
+import { SupportedLanguage } from "@interflex-app/shared";
 
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure

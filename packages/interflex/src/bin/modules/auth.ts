@@ -3,7 +3,7 @@ import { CLI_AUTH_URL } from "../consts.js";
 import { createAuthSession, getProjects, getSession } from "../api.js";
 import open from "open";
 import ora from "ora";
-import { error } from "console";
+import { error } from "../cli.js";
 import select, { Separator } from "@inquirer/select";
 import {
   checkAuth,
@@ -20,15 +20,23 @@ export const login = async () => {
   await open(`${CLI_AUTH_URL}?sessionId=${session.id}`);
 
   let token = null;
+  let tries = 0;
 
-  while (!token) {
+  while (!token && tries < 60) {
     const newSession = await getSession(session.id);
 
     if (newSession?.token) {
       token = newSession.token;
     }
 
+    tries++;
+
     await new Promise((r) => setTimeout(r, 1000));
+  }
+
+  if (!token) {
+    error("Could not sign in (timeout). Please try again.");
+    throw new Error();
   }
 
   keyringEntry.setPassword(token);

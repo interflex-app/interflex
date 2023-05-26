@@ -28,10 +28,10 @@ import {
 } from "@interflex-app/ui";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { SUPPORTED_LANGUAGES, SupportedLanguage } from "../../../consts";
 import { projectLanguages } from "../../../utils/project-languages";
 import { Trash2 } from "lucide-react";
 import { createZodEnum } from "../../../utils/create-zod-enum";
+import { SUPPORTED_LANGUAGES, SupportedLanguage } from "@interflex-app/shared";
 
 export const updateProjectNameSchema = z.object({
   name: z.string().min(1).max(50),

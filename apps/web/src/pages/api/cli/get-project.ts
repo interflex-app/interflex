@@ -7,7 +7,7 @@ const handler: NextApiHandler = async (req, res) => {
     return res.status(405).json({ error: "Method not allowed." });
   }
 
-  const userId = verifyCliJwt(req, res);
+  const userId = verifyCliJwt(req);
 
   if (!userId) {
     return res.status(401).json({ error: "Unauthorized." });
