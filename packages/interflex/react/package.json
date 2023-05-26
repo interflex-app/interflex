@@ -1,0 +1,8 @@
+{
+  "name": "interflex/react",
+  "type": "module",
+  "main": "../dist/lib/react.js",
+  "module": "../dist/lib/react.js",
+  "types": "../dist/lib/react.d.ts",
+  "sideEffects": false
+}

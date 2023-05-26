@@ -320,6 +320,9 @@ importers:
       tsconfig:
         specifier: workspace:*
         version: link:../../config/tsconfig
+      tsup:
+        specifier: ^6.7.0
+        version: 6.7.0(typescript@5.0.4)
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
