@@ -13,6 +13,7 @@ import path from "path";
 import fs from "fs";
 import chalk from "chalk";
 import { SupportedLanguage } from "interflex-internal";
+import { INTERFLEX_TS_FILE } from "../consts.js";
 
 export const sync = async () => {
   const { authed, token } = checkAuth();
@@ -79,6 +80,7 @@ export const sync = async () => {
   }
 
   fs.writeFileSync(path.join(i18nPath, "translations.json"), json);
+  fs.writeFileSync(path.join(i18nPath, "interflex.ts"), INTERFLEX_TS_FILE);
 
   spinner.succeed("Generated translation files.");
 };
