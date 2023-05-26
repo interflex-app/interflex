@@ -5,7 +5,12 @@ import open from "open";
 import ora from "ora";
 import { error } from "console";
 import select, { Separator } from "@inquirer/select";
-import { keyringEntry, readSystemConfig, writeSystemConfig } from "../utils.js";
+import {
+  checkAuth,
+  keyringEntry,
+  readSystemConfig,
+  writeSystemConfig,
+} from "../utils.js";
 
 export const login = async () => {
   const spinner = ora("Signing in...").start();
@@ -32,13 +37,8 @@ export const login = async () => {
 };
 
 export const link = async () => {
-  const token = keyringEntry.getPassword();
-
-  if (!token) {
-    return error(
-      "You are not signed in. Use the `npx interflex login` command first."
-    );
-  }
+  const { authed, token } = checkAuth();
+  if (!authed) return;
 
   const spinner = ora("Loading projects...").start();
   const teamsWithProjects = await getProjects(token);

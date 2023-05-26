@@ -1,7 +1,7 @@
 {
   "name": "interflex",
   "private": false,
-  "version": "0.0.10",
+  "version": "0.0.11",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,6 +41,7 @@
   "author": "Piotr Pilszczek",
   "license": "MIT",
   "devDependencies": {
+    "@types/gradient-string": "^1.1.2",
     "@types/inquirer": "^9.0.3",
     "@types/node": "^20.1.0",
     "tsup": "^6.7.0",
@@ -49,7 +50,9 @@
   "dependencies": {
     "@inquirer/select": "^1.1.7",
     "@napi-rs/keyring": "^1.1.1",
+    "chalk": "^5.2.0",
     "commander": "^10.0.1",
+    "gradient-string": "^2.0.2",
     "inquirer": "^9.2.6",
     "jiti": "^1.18.2",
     "open": "^9.1.0",

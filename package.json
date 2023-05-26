@@ -10,10 +10,11 @@
     "docs:build": "turbo run build --filter=./apps/docs",
     "test:dev": "turbo run dev --filter=./apps/test",
     "test:build": "turbo run build --filter=./apps/test",
-    "cli:run": "export NODE_ENV=test && pnpm pkg:sync && node ./packages/interflex/dist/bin/index.js",
-    "cli:test": "export NODE_ENV=test && pnpm pkg:sync && cd apps/test && node ../../packages/interflex/dist/bin/index.js",
+    "cli:run": "export NODE_ENV=test && pnpm pkg:build && node ./packages/interflex/dist/bin/index.js",
+    "cli:test": "export NODE_ENV=test && pnpm pkg:build && cd apps/test && node ../../packages/interflex/dist/bin/index.js",
     "pkg:pub": "turbo run pub --filter=./packages/interflex",
-    "pkg:sync": "turbo run build --filter=./packages/* && pnpm install"
+    "pkg:sync": "turbo run build --filter=./packages/* && pnpm install",
+    "pkg:build": "turbo run build --filter=./packages/*"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

@@ -49,10 +49,9 @@ const Profile: NextPageWithLayout = () => {
       <div>
         <div className="flex flex-col items-center gap-8 md:flex-row md:gap-12">
           <Avatar className="h-36 w-36">
-            <AvatarImage
-              src={data.user.image ?? "__NON_EXISTENT_IMAGE__"}
-              alt={`@${data?.user.name ?? "user"}`}
-            />
+            {data.user.image && data.user.name && (
+              <AvatarImage src={data.user.image} alt={`@${data.user.name}`} />
+            )}
             <AvatarFallback>
               <User />
             </AvatarFallback>

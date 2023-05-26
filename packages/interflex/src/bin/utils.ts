@@ -7,8 +7,23 @@ import { z } from "zod";
 import { JITIOptions } from "jiti/dist/types.js";
 import { configSchema } from "../shared/config.js";
 import fs from "fs";
-import { APP_DATA_PATH, PROJECT_NAME, SERVICE_NAME } from "./consts.js";
+import {
+  APP_DATA_PATH,
+  HEADER_TITLE,
+  PROJECT_NAME,
+  SERVICE_NAME,
+} from "./consts.js";
 import { Entry } from "@napi-rs/keyring";
+import gradient from "gradient-string";
+
+const poimandresTheme = {
+  blue: "#add7ff",
+  cyan: "#89ddff",
+  green: "#5de4c7",
+  magenta: "#fae4fc",
+  red: "#d0679d",
+  yellow: "#fffac2",
+};
 
 export const keyringEntry = new Entry(SERVICE_NAME, PROJECT_NAME);
 
@@ -26,7 +41,8 @@ export const readModule = (filePath: string): string => {
 
     return jiti(filePath);
   } catch (e) {
-    return error("Could not find the config file. Make sure it exists.");
+    error("Could not find the config file. Make sure it exists.");
+    throw new Error();
   }
 };
 
@@ -36,7 +52,8 @@ export const readConfig = async () => {
 
   const configParse = configSchema.safeParse(configRaw);
   if (!configParse.success) {
-    return error("Could not parse the config file.");
+    error("Could not parse the config file.");
+    throw new Error();
   }
 
   return configParse.data;
@@ -106,4 +123,25 @@ export const writeSystemConfig = (
   const configPath = `${APP_DATA_PATH}/config.json`;
 
   fs.writeFileSync(configPath, JSON.stringify(config));
+};
+
+export const checkAuth = ():
+  | { authed: false; token: null }
+  | { authed: true; token: string } => {
+  const token = keyringEntry.getPassword();
+
+  if (!token) {
+    error(
+      "You are not signed in. Use the `npx interflex login` command first."
+    );
+
+    return { token: null, authed: false };
+  }
+
+  return { token, authed: true };
+};
+
+export const logHeader = () => {
+  const gradientMode = gradient(Object.values(poimandresTheme));
+  console.log(gradientMode.multiline(HEADER_TITLE));
 };

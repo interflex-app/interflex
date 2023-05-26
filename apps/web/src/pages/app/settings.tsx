@@ -214,11 +214,9 @@ const Settings: NextPageWithLayout = () => {
                     header: "Avatar",
                     cell: ({ getValue }) => (
                       <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={
-                            (getValue() as string) ?? "__NON_EXISTENT_IMAGE__"
-                          }
-                        />
+                        {(getValue() as string | undefined) && (
+                          <AvatarImage src={getValue() as string} />
+                        )}
                         <AvatarFallback>
                           <User />
                         </AvatarFallback>

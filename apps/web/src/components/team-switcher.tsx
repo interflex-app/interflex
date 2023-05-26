@@ -119,8 +119,8 @@ const TeamSwitcher: React.FC<
                 <AvatarImage
                   src={
                     (getSelectedTeam() ?? teamsData.personal).id ===
-                    teamsData.personal.id
-                      ? sesh.user.image ?? "__NON_EXISTENT_IMAGE__"
+                      teamsData.personal.id && sesh.user.image
+                      ? sesh.user.image
                       : `https://avatar.vercel.sh/interflex-team-${
                           (getSelectedTeam() ?? teamsData.personal).id
                         }.png`
@@ -150,10 +150,9 @@ const TeamSwitcher: React.FC<
                   className="text-sm"
                 >
                   <Avatar className="mr-2 h-5 w-5">
-                    <AvatarImage
-                      src={sesh?.user.image ?? "__NON_EXISTENT_IMAGE__"}
-                      alt={sesh?.user.name ?? undefined}
-                    />
+                    {sesh && sesh.user.image && sesh.user.name && (
+                      <AvatarImage src={sesh.user.image} alt={sesh.user.name} />
+                    )}
                     <AvatarFallback>
                       <User />
                     </AvatarFallback>

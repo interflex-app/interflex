@@ -47,10 +47,12 @@ const Navbar: React.FC = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar>
-                <AvatarImage
-                  src={data?.user.image ?? "__NON_EXISTENT_IMAGE__"}
-                  alt={`@${data?.user.name ?? "user"}`}
-                />
+                {data && data.user.image && data.user.name && (
+                  <AvatarImage
+                    src={data.user.image}
+                    alt={`@${data.user.name}`}
+                  />
+                )}
                 <AvatarFallback>
                   <User />
                 </AvatarFallback>

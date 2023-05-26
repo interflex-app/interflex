@@ -1,11 +1,13 @@
-export const error = (message: string) => {
-  console.error(`[ERROR]: ${message}`);
+import ora from "ora";
 
-  process.exit(1);
+export const error = (message: string, exit = true) => {
+  ora().fail(`[ERROR]: ${message}`);
+
+  if (exit) process.exit(1);
 };
 
-export const warning = (message: string) => {
-  console.error(`[WARN]: ${message}`);
+export const warning = (message: string, exit = true) => {
+  ora().warn(`[WARN]: ${message}`);
 
-  process.exit(1);
+  if (exit) process.exit(1);
 };

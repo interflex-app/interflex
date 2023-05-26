@@ -1,8 +1,11 @@
 import { warning } from "../cli.js";
 import { readConfig } from "../utils.js";
+import { sync } from "./syncer.js";
 
 export const generateTypes = async () => {
   const config = await readConfig();
 
-  warning("Not implemented yet.");
+  warning("Not implemented yet. Using `sync` command instead.", false);
+
+  await sync();
 };

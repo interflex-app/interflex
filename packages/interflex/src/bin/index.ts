@@ -4,9 +4,11 @@ import { link, login } from "./modules/auth.js";
 import { generateTypes } from "./modules/generator.js";
 import { sync } from "./modules/syncer.js";
 import { runLive } from "./modules/live.js";
-import { getCommand, readConfig } from "./utils.js";
+import { getCommand, logHeader } from "./utils.js";
 
 const main = async () => {
+  logHeader();
+
   const command = getCommand();
 
   switch (command) {

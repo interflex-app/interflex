@@ -1,20 +1,21 @@
 import { error } from "console";
 import { warning } from "../cli.js";
-import { keyringEntry, readConfig, readSystemConfig } from "../utils.js";
+import {
+  checkAuth,
+  keyringEntry,
+  readConfig,
+  readSystemConfig,
+} from "../utils.js";
 import ora from "ora";
-import { getTranslations } from "../api.js";
+import { getTranslationsWithProject } from "../api.js";
 import { LanguageTranslations, Translations } from "../../shared/types.js";
 import path from "path";
 import fs from "fs";
+import chalk from "chalk";
 
 export const sync = async () => {
-  const token = keyringEntry.getPassword();
-
-  if (!token) {
-    return error(
-      "You are not signed in. Use the `npx interflex login` command first."
-    );
-  }
+  const { authed, token } = checkAuth();
+  if (!authed) return;
 
   const config = await readConfig();
   const systemConfig = readSystemConfig();
@@ -30,7 +31,10 @@ export const sync = async () => {
   }
 
   const spinner = ora("Generating translation files...").start();
-  const translations = await getTranslations(token, projectId);
+  const { translations, project } = await getTranslationsWithProject(
+    token,
+    projectId
+  );
 
   if (!translations || translations.length === 0) {
     spinner.fail("There are no translations in your project.");
@@ -44,23 +48,25 @@ export const sync = async () => {
     const keys = key.split(".");
     const languages = Object.keys(value);
 
-    languages.forEach((language) => {
-      let obj = result[language] || {};
-      let nestedObj = obj;
+    languages
+      .filter((lang) => project.languages.includes(lang))
+      .forEach((language) => {
+        let obj = result[language] || {};
+        let nestedObj = obj;
 
-      for (let i = 0; i < keys.length; i++) {
-        const currentKey = keys[i];
+        for (let i = 0; i < keys.length; i++) {
+          const currentKey = keys[i];
 
-        if (i === keys.length - 1) {
-          nestedObj[currentKey] = value[language];
-        } else {
-          nestedObj[currentKey] = nestedObj[currentKey] || {};
-          nestedObj = nestedObj[currentKey] as LanguageTranslations;
+          if (i === keys.length - 1) {
+            nestedObj[currentKey] = value[language];
+          } else {
+            nestedObj[currentKey] = nestedObj[currentKey] || {};
+            nestedObj = nestedObj[currentKey] as LanguageTranslations;
+          }
         }
-      }
 
-      result[language] = obj;
-    });
+        result[language] = obj;
+      });
   });
 
   const json = JSON.stringify(result, null, 2);

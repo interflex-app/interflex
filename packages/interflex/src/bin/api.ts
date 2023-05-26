@@ -11,7 +11,8 @@ export const createAuthSession = async () => {
   });
 
   if (!res.ok) {
-    return error("There was an error creating the auth session.");
+    error("There was an error creating the auth session.");
+    throw new Error();
   }
 
   const parsed = z
@@ -26,11 +27,13 @@ export const createAuthSession = async () => {
     .safeParse(await res.json());
 
   if (!parsed.success) {
-    return error("There was an error creating the auth session.");
+    error("There was an error creating the auth session.");
+    throw new Error();
   }
 
   if (!parsed.data.session) {
-    return error("There was an error creating the auth session.");
+    error("There was an error creating the autbh session.");
+    throw new Error();
   }
 
   return parsed.data.session;
@@ -92,7 +95,8 @@ export const getProjects = async (authToken: string) => {
     .safeParse(await res.json());
 
   if (!parsed.success) {
-    return error("There was an error getting the projects.");
+    error("There was an error getting the projects.");
+    throw new Error();
   }
 
   const projects = parsed.data.projects;
@@ -109,13 +113,16 @@ export const getProjects = async (authToken: string) => {
     acc[project.team.id].projects.push(project);
 
     return acc;
-  }, {} as Record<string, { id: string; name: string; projects: any[] }>);
+  }, {} as Record<string, { id: string; name: string; projects: typeof projects }>);
 
   return Object.values(groupedProjects);
 };
 
-export const getTranslations = async (authToken: string, projectId: string) => {
-  const res = await fetch(
+export const getTranslationsWithProject = async (
+  authToken: string,
+  projectId: string
+) => {
+  const translationsRes = await fetch(
     `${APP_URL}/api/cli/get-translations?projectId=${projectId}`,
     {
       method: "GET",
@@ -126,7 +133,7 @@ export const getTranslations = async (authToken: string, projectId: string) => {
     }
   );
 
-  const parsed = z
+  const translationsParsed = z
     .object({
       translations: z
         .array(
@@ -145,12 +152,43 @@ export const getTranslations = async (authToken: string, projectId: string) => {
         )
         .nullable(),
     })
-    .safeParse(await res.json());
+    .safeParse(await translationsRes.json());
 
-  if (!parsed.success) {
-    console.log(parsed.error);
-    return error("There was an error getting the translations.");
+  if (!translationsParsed.success) {
+    error("There was an error getting the translations.");
+    throw new Error();
   }
 
-  return parsed.data.translations;
+  const projectRes = await fetch(
+    `${APP_URL}/api/cli/get-project?projectId=${projectId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${authToken}`,
+      },
+    }
+  );
+
+  const projectParsed = z
+    .object({
+      project: z
+        .object({
+          id: z.string(),
+          name: z.string(),
+          languages: z.array(z.string()),
+        })
+        .nullable(),
+    })
+    .safeParse(await projectRes.json());
+
+  if (!projectParsed.success || !projectParsed.data.project) {
+    error("There was an error getting the project info.");
+    throw new Error();
+  }
+
+  return {
+    translations: translationsParsed.data.translations,
+    project: projectParsed.data.project,
+  };
 };

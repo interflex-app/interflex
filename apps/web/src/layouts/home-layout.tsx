@@ -3,8 +3,10 @@ import Navbar from "../components/navbar";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "@interflex-app/ui";
-import Logo from "../components/logo";
 import ThemeSwitcher from "../components/theme-switcher";
+import dynamic from "next/dynamic";
+
+const Logo = dynamic(() => import("../components/logo"), { ssr: false });
 
 const HomeLayout: React.FC<
   PropsWithChildren<{ authProtected?: boolean; footer?: boolean }>
