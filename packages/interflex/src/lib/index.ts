@@ -13,3 +13,5 @@ type ExcludeTopLevelKeys<T> = T extends `${infer _}.${infer Rest}` ? Rest : T;
 export type InterflexKey<T> = ExcludeTopLevelKeys<LeafKeys<T>> extends never
   ? never
   : ExcludeTopLevelKeys<LeafKeys<T>>;
+
+export type VariableTsType = string | number | Date;

@@ -80,7 +80,7 @@ export const sync = async () => {
   }
 
   fs.writeFileSync(path.join(i18nPath, "translations.json"), json);
-  fs.writeFileSync(path.join(i18nPath, "interflex.ts"), INTERFLEX_TS_FILE);
+  fs.writeFileSync(path.join(i18nPath, "interflex.ts"), INTERFLEX_TS_FILE(""));
 
   spinner.succeed("Generated translation files.");
 };
