@@ -31,7 +31,7 @@ import { useRouter } from "next/router";
 import { projectLanguages } from "../../../utils/project-languages";
 import { Trash2 } from "lucide-react";
 import { createZodEnum } from "../../../utils/create-zod-enum";
-import { SUPPORTED_LANGUAGES, SupportedLanguage } from "@interflex-app/shared";
+import { SUPPORTED_LANGUAGES, SupportedLanguage } from "interflex-internal";
 
 export const updateProjectNameSchema = z.object({
   name: z.string().min(1).max(50),

@@ -1,6 +1,6 @@
 {
-  "name": "@interflex-app/shared",
-  "version": "0.0.0",
+  "name": "interflex-internal",
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
   "types": "dist",
@@ -9,7 +9,6 @@
     "dist"
   ],
   "scripts": {
-    "lint": "eslint \"**/*.ts*\"",
     "build": "tsup"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 {
   "name": "interflex",
   "private": false,
-  "version": "0.0.13",
+  "version": "0.0.14",
   "type": "module",
   "repository": {
     "type": "git",
@@ -52,7 +52,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@interflex-app/shared": "workspace:*",
+    "interflex-internal": "0.1.0",
     "@inquirer/select": "^1.1.7",
     "@napi-rs/keyring": "^1.1.1",
     "chalk": "^5.2.0",

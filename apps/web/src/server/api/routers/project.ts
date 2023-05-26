@@ -19,7 +19,7 @@ import {
   type CreateUpdateTranslationActionEntry,
   type DeleteTranslationActionEntry,
 } from "../../../hooks/use-translation-state";
-import { SupportedLanguage, VariableType } from "@interflex-app/shared";
+import { SupportedLanguage, VariableType } from "interflex-internal";
 import { variablesToJson } from "../../../utils/variables";
 
 export const projectRouter = createTRPCRouter({

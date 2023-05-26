@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { type RouterInputs } from "../utils/api";
 import { TranslationAction } from "../consts";
 import { extractVariablesFromString } from "../utils/variables";
-import {
-  SupportedLanguage,
-  Variable,
-  VariableType,
-} from "@interflex-app/shared";
+import { SupportedLanguage, Variable, VariableType } from "interflex-internal";
 
 const NEW_ID_PREFIX = "new-";
 

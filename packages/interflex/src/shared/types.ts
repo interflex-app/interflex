@@ -1,4 +1,4 @@
-import { SupportedLanguage } from "@interflex-app/shared";
+import { SupportedLanguage } from "interflex-internal";
 
 export type Translation = {
   [key: string]: string | Translation;

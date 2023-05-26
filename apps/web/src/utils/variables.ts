@@ -1,4 +1,4 @@
-import { Variable } from "@interflex-app/shared";
+import { Variable } from "interflex-internal";
 import { type Prisma } from "@prisma/client";
 
 export const jsonToVariables = (json: Prisma.JsonValue) => {

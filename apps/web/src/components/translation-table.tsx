@@ -70,7 +70,7 @@ import {
   SUPPORTED_LANGUAGES,
   Variable,
   VariableType,
-} from "@interflex-app/shared";
+} from "interflex-internal";
 
 const VARIABLE_LABELS: Record<VariableType, React.ReactNode> = {
   [VariableType.STRING]: (

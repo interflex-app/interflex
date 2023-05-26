@@ -12,7 +12,7 @@ import { LanguageTranslations, Translations } from "../../shared/types.js";
 import path from "path";
 import fs from "fs";
 import chalk from "chalk";
-import { SupportedLanguage } from "@interflex-app/shared";
+import { SupportedLanguage } from "interflex-internal";
 
 export const sync = async () => {
   const { authed, token } = checkAuth();

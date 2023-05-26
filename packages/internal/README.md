@@ -1,3 +1,3 @@
-# `packages/shared`
+# `packages/internal`
 
 Shared values package

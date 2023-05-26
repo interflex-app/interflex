@@ -1,4 +1,4 @@
-import { type SupportedLanguage } from "@interflex-app/shared";
+import { type SupportedLanguage } from "interflex-internal";
 import { type Translation } from "@prisma/client";
 
 export const extractTranslations = (

@@ -96,9 +96,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.1.0
         version: 3.1.0(react-hook-form@7.43.9)
-      '@interflex-app/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@interflex-app/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -138,6 +135,9 @@ importers:
       cookies-next:
         specifier: ^2.1.1
         version: 2.1.1
+      interflex-internal:
+        specifier: workspace:*
+        version: link:../../packages/internal
       jsonwebtoken:
         specifier: ^9.0.0
         version: 9.0.0
@@ -256,9 +256,6 @@ importers:
       '@inquirer/select':
         specifier: ^1.1.7
         version: 1.1.7
-      '@interflex-app/shared':
-        specifier: workspace:*
-        version: link:../shared
       '@napi-rs/keyring':
         specifier: ^1.1.1
         version: 1.1.1
@@ -274,6 +271,9 @@ importers:
       inquirer:
         specifier: ^9.2.6
         version: 9.2.6
+      interflex-internal:
+        specifier: 0.1.0
+        version: link:../internal
       jiti:
         specifier: ^1.18.2
         version: 1.18.2
@@ -306,7 +306,7 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
 
-  packages/shared:
+  packages/internal:
     devDependencies:
       '@types/node':
         specifier: ^20.1.0

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { APP_URL } from "./consts.js";
 import { error } from "./cli.js";
 import { createZodEnum } from "./utils.js";
-import { SupportedLanguage, VariableType } from "@interflex-app/shared";
+import { SupportedLanguage, VariableType } from "interflex-internal";
 
 export const createAuthSession = async () => {
   const res = await fetch(`${APP_URL}/api/cli/auth-session`, {
