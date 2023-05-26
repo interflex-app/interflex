@@ -272,7 +272,7 @@ importers:
         specifier: ^9.2.6
         version: 9.2.6
       interflex-internal:
-        specifier: 0.1.0
+        specifier: latest
         version: link:../internal
       jiti:
         specifier: ^1.18.2
