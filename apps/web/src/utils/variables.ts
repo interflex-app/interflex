@@ -1,28 +1,5 @@
+import { Variable } from "@interflex-app/shared";
 import { type Prisma } from "@prisma/client";
-
-export enum VariableType {
-  STRING = "STRING",
-  NUMBER = "NUMBER",
-  DATE = "DATE",
-}
-
-type VariableStringOptions = Record<string, never>;
-
-type VariableNumberOptions = Record<string, never>;
-
-type VariableDateOptions = Record<string, never>;
-
-type VariableOptions = {
-  STRING: VariableStringOptions;
-  NUMBER: VariableNumberOptions;
-  DATE: VariableDateOptions;
-};
-
-export type Variable<T extends VariableType = VariableType> = {
-  name: string;
-  type: T;
-  options?: VariableOptions[T];
-};
 
 export const jsonToVariables = (json: Prisma.JsonValue) => {
   return Array.from(json as Prisma.JsonArray).map((it) => it as Variable);

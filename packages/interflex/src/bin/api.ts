@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { APP_URL } from "./consts.js";
 import { error } from "./cli.js";
+import { createZodEnum } from "./utils.js";
+import { SupportedLanguage, VariableType } from "@interflex-app/shared";
 
 export const createAuthSession = async () => {
   const res = await fetch(`${APP_URL}/api/cli/auth-session`, {
@@ -144,7 +146,7 @@ export const getTranslationsWithProject = async (
               .array(
                 z.object({
                   name: z.string(),
-                  type: z.enum(["STRING", "NUMBER", "DATE"]),
+                  type: z.enum(createZodEnum(VariableType)),
                 })
               )
               .nullable(),
@@ -176,7 +178,7 @@ export const getTranslationsWithProject = async (
         .object({
           id: z.string(),
           name: z.string(),
-          languages: z.array(z.string()),
+          languages: z.array(z.enum(createZodEnum(SupportedLanguage))),
         })
         .nullable(),
     })

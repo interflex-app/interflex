@@ -145,3 +145,8 @@ export const logHeader = () => {
   const gradientMode = gradient(Object.values(poimandresTheme));
   console.log(gradientMode.multiline(HEADER_TITLE));
 };
+
+export const createZodEnum = <T extends { [key: string]: string }>(
+  e: T
+): [T[keyof T], ...[T[keyof T]]] =>
+  Object.values(e) as unknown as [T[keyof T], ...[T[keyof T]]];

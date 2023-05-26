@@ -1,5 +1,5 @@
+import { Variable, VariableType } from "@interflex-app/shared";
 import { useEffect, useState } from "react";
-import { type Variable, VariableType } from "../utils/variables";
 
 export const useVariablesState = (
   initialState: Variable[],

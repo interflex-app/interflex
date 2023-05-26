@@ -64,13 +64,13 @@ import {
   Type,
   Workflow,
 } from "lucide-react";
-import {
-  type Variable,
-  VariableType,
-  extractVariablesFromString,
-} from "../utils/variables";
+import { extractVariablesFromString } from "../utils/variables";
 import { useVariablesState } from "../hooks/use-variables-state";
-import { SUPPORTED_LANGUAGES } from "@interflex-app/shared";
+import {
+  SUPPORTED_LANGUAGES,
+  Variable,
+  VariableType,
+} from "@interflex-app/shared";
 
 const VARIABLE_LABELS: Record<VariableType, React.ReactNode> = {
   [VariableType.STRING]: (

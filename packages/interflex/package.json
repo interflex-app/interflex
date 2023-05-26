@@ -48,6 +48,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@interflex-app/shared": "workspace:*",
     "@inquirer/select": "^1.1.7",
     "@napi-rs/keyring": "^1.1.1",
     "chalk": "^5.2.0",

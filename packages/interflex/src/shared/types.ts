@@ -1,11 +1,13 @@
+import { SupportedLanguage } from "@interflex-app/shared";
+
 export type Translation = {
   [key: string]: string | Translation;
 };
 
 export type LanguageTranslations = {
-  [lang: string]: Translation;
+  [key: string]: Translation;
 };
 
 export type Translations = {
-  [lang: string]: LanguageTranslations;
+  [lang in SupportedLanguage]?: LanguageTranslations;
 };

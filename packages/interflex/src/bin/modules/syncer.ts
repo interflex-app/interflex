@@ -12,6 +12,7 @@ import { LanguageTranslations, Translations } from "../../shared/types.js";
 import path from "path";
 import fs from "fs";
 import chalk from "chalk";
+import { SupportedLanguage } from "@interflex-app/shared";
 
 export const sync = async () => {
   const { authed, token } = checkAuth();
@@ -49,9 +50,9 @@ export const sync = async () => {
     const languages = Object.keys(value);
 
     languages
-      .filter((lang) => project.languages.includes(lang))
+      .filter((lang) => project.languages.includes(lang as SupportedLanguage))
       .forEach((language) => {
-        let obj = result[language] || {};
+        let obj = result[language as SupportedLanguage] || {};
         let nestedObj = obj;
 
         for (let i = 0; i < keys.length; i++) {
@@ -65,7 +66,7 @@ export const sync = async () => {
           }
         }
 
-        result[language] = obj;
+        result[language as SupportedLanguage] = obj;
       });
   });
 
