@@ -185,7 +185,9 @@ export const getTranslationsWithProject = async (
     .safeParse(await projectRes.json());
 
   if (!projectParsed.success || !projectParsed.data.project) {
-    error("There was an error getting the project info.");
+    error(
+      "There was an error getting the project info. Make sure you are signed in."
+    );
     throw new Error();
   }
 
