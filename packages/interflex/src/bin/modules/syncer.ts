@@ -12,7 +12,7 @@ import { LanguageTranslations, Translations } from "../../shared/types.js";
 import path from "path";
 import fs from "fs";
 import chalk from "chalk";
-import { SupportedLanguage } from "interflex-internal";
+import { SupportedLanguage, VariableType } from "interflex-internal";
 import { INTERFLEX_TS_FILE } from "../consts.js";
 
 export const sync = async () => {
@@ -71,6 +71,28 @@ export const sync = async () => {
       });
   });
 
+  const getVarType = (type: VariableType) => {
+    switch (type) {
+      case VariableType.STRING:
+        return "string";
+      case VariableType.NUMBER:
+        return "number";
+      case VariableType.DATE:
+        return "Date";
+    }
+  };
+
+  const variables = translations
+    .filter((t) => !!t.variables)
+    .map(({ variables, key }) => {
+      const vars = variables!
+        .map((v) => `${v.name}: ${getVarType(v.type)}`)
+        .join(", ");
+
+      return `  "${key}": ${vars ? `{ ${vars} }` : "{}"}`;
+    })
+    .join(";\n");
+
   const json = JSON.stringify(result, null, 2);
 
   const i18nPath = path.join(process.cwd(), config.directory!);
@@ -80,7 +102,10 @@ export const sync = async () => {
   }
 
   fs.writeFileSync(path.join(i18nPath, "translations.json"), json);
-  fs.writeFileSync(path.join(i18nPath, "interflex.ts"), INTERFLEX_TS_FILE(""));
+  fs.writeFileSync(
+    path.join(i18nPath, "interflex.ts"),
+    INTERFLEX_TS_FILE(variables)
+  );
 
   spinner.succeed("Generated translation files.");
 };

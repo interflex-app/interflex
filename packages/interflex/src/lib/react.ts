@@ -1,3 +1,4 @@
+import { SupportedLanguage } from "interflex-internal";
 import { Translations } from "../shared/types.js";
 import { VariableTsType } from "./index.js";
 
@@ -9,7 +10,8 @@ export const generateInterflexClient = <
     [key in Keys]?: {
       [varName: string]: VariableTsType;
     };
-  }
+  },
+  Lang extends `${SupportedLanguage}`
 >(
   translations: Translations
 ) => {
@@ -23,8 +25,13 @@ export const generateInterflexClient = <
       return key;
     };
 
+    const changeLocale = (locale: Lang) => {
+      return;
+    };
+
     return {
       t,
+      changeLocale,
     };
   };
 
