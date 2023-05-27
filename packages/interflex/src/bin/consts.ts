@@ -38,13 +38,13 @@ import translations from "./translations.json";
 
 type I18nKey = InterflexKey<typeof translations>;
 
-type Variables = {
+type I18nVariables = {
 ${variables}
 };
 
-type Languages = keyof typeof translations;
+type I18nLanguages = keyof typeof translations;
 
-const { useI18n } = generateInterflexClient<I18nKey, Variables, Languages>(translations);
+const { useI18n } = generateInterflexClient<I18nKey, I18nVariables, I18nLanguages>(translations);
 
 export { useI18n };
 `;
