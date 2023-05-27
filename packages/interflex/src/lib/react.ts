@@ -2,8 +2,6 @@ import { SupportedLanguage } from "interflex-internal";
 import { Translations } from "../shared/types.js";
 import { VariableTsType } from "./index.js";
 
-export type I18nKey = string;
-
 export const generateInterflexClient = <
   Keys extends string,
   Vars extends {
