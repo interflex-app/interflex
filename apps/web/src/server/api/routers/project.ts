@@ -22,6 +22,8 @@ import {
 import { SupportedLanguage, VariableType } from "interflex-internal";
 import { variablesToJson } from "../../../utils/variables";
 
+const keyRegex = /^[A-Za-z0-9](?:[A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)*)?$/g;
+
 export const projectRouter = createTRPCRouter({
   getAllProjects: protectedProcedure
     .input(z.object({ teamId: z.string().min(1) }))
@@ -146,10 +148,7 @@ export const projectRouter = createTRPCRouter({
                 TranslationAction.Update,
               ]),
               id: z.string().min(1),
-              key: z
-                .string()
-                .regex(/^[A-Za-z0-9._]+$/g)
-                .min(1),
+              key: z.string().regex(keyRegex).min(1),
               values: z.array(
                 z.object({
                   language: z.enum(createZodEnum(SupportedLanguage)),
