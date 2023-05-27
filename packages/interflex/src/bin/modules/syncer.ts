@@ -89,8 +89,9 @@ export const sync = async () => {
         .map((v) => `${v.name}: ${getVarType(v.type)}`)
         .join(", ");
 
-      return `  "${key}": ${vars ? `{ ${vars} }` : "{}"}`;
+      return !!vars ? `  "${key}": { ${vars} }` : null;
     })
+    .filter((v) => !!v)
     .join(";\n");
 
   const json = JSON.stringify(result, null, 2);

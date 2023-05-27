@@ -11,14 +11,11 @@ type I18nVariables = {
   "h.hello": { name: string };
   "h.bye": { name: string };
   "test.1": { age: number, date: Date };
-  "test.2": {};
-  "footer.right": {};
-  "footer.left": { num: number };
-  "footer.middle": {}
+  "footer.left": { num: number }
 };
 
-type I18nLanguages = keyof typeof translations;
+type I18nLanguage = keyof typeof translations;
 
-const { useI18n } = generateInterflexClient<I18nKey, I18nVariables, I18nLanguages>(translations);
+const { useI18n } = generateInterflexClient<I18nKey, I18nVariables, I18nLanguage>(translations);
 
 export { useI18n };
