@@ -7,7 +7,7 @@ import translations from "./translations.json";
 
 type I18nKey = InterflexKey<typeof translations>;
 
-type Variables = {
+type I18nVariables = {
   "h.hello": { name: string };
   "h.bye": { name: string };
   "test.1": { age: number, date: Date };
@@ -17,8 +17,8 @@ type Variables = {
   "footer.middle": {}
 };
 
-type Languages = keyof typeof translations;
+type I18nLanguages = keyof typeof translations;
 
-const { useI18n } = generateInterflexClient<I18nKey, Variables, Languages>(translations);
+const { useI18n } = generateInterflexClient<I18nKey, I18nVariables, I18nLanguages>(translations);
 
 export { useI18n };

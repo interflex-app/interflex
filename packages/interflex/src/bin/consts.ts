@@ -42,9 +42,9 @@ type I18nVariables = {
 ${variables}
 };
 
-type I18nLanguages = keyof typeof translations;
+type I18nLanguage = keyof typeof translations;
 
-const { useI18n } = generateInterflexClient<I18nKey, I18nVariables, I18nLanguages>(translations);
+const { useI18n } = generateInterflexClient<I18nKey, I18nVariables, I18nLanguage>(translations);
 
 export { useI18n };
 `;
