@@ -8,6 +8,8 @@ export type LanguageTranslations = {
   [key: string]: Translation;
 };
 
-export type Translations = {
-  [lang in SupportedLanguage]?: LanguageTranslations;
+export type Translations<
+  Langs extends `${SupportedLanguage}` = `${SupportedLanguage}`
+> = {
+  [lang in Langs]?: LanguageTranslations;
 };

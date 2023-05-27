@@ -14,6 +14,15 @@
       "middle": "Test?"
     }
   },
+  "no": {
+    "h": {
+      "hello": "Hei, {name}!"
+    },
+    "test": {
+      "1": "Første test",
+      "2": "Andre test"
+    }
+  },
   "pl": {
     "h": {
       "hello": "Cześć, {name}!",

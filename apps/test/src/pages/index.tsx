@@ -5,6 +5,8 @@ import { useI18n } from "../../i18n/interflex";
 const Index: NextPage = () => {
   const { t, changeLocale } = useI18n();
 
+  changeLocale("no");
+
   return (
     <div className="h-screen w-full flex items-center justify-center flex-col gap-8">
       <h1 className="text-5xl font-black">Test App</h1>

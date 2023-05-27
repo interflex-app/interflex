@@ -46,5 +46,5 @@ type I18nLanguage = keyof typeof translations;
 
 const { useI18n } = generateInterflexClient<I18nKey, I18nVariables, I18nLanguage>(translations);
 
-export { useI18n };
+export { useI18n, type I18nKey, type I18nVariables, type I18nLanguage };
 `;

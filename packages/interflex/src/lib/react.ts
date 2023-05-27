@@ -13,7 +13,7 @@ export const generateInterflexClient = <
   },
   Lang extends `${SupportedLanguage}`
 >(
-  translations: Translations
+  translations: Translations<Lang>
 ) => {
   const useI18n = () => {
     const t = <Key extends Keys>(
