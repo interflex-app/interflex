@@ -1,7 +1,7 @@
 {
   "name": "interflex",
   "private": false,
-  "version": "0.0.22",
+  "version": "0.0.23",
   "type": "module",
   "repository": {
     "type": "git",
@@ -11,16 +11,12 @@
   "types": "dist/lib",
   "exports": {
     ".": {
-      "default": "./dist/lib/index.js",
-      "types": "./dist/lib/index.d.ts"
-    },
-    "./react": {
-      "default": "./dist/lib/react.js",
-      "types": "./dist/lib/react.d.ts"
+      "types": "./dist/lib/index.d.ts",
+      "default": "./dist/lib/index.js"
     },
     "./next": {
-      "default": "./dist/lib/next.js",
-      "types": "./dist/lib/next.d.ts"
+      "types": "./dist/lib/next.d.ts",
+      "default": "./dist/lib/next.js"
     }
   },
   "files": [
@@ -44,21 +40,31 @@
   ],
   "author": "Piotr Pilszczek",
   "license": "MIT",
+  "peerDependencies": {
+    "next": "*",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
   "devDependencies": {
     "@types/gradient-string": "^1.1.2",
     "@types/inquirer": "^9.0.3",
     "@types/node": "^20.1.0",
+    "@types/react": "^18.0.22",
+    "@types/react-dom": "^18.0.7",
+    "next": "^13.4.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "interflex-internal": "latest",
     "@inquirer/select": "^1.1.7",
     "@napi-rs/keyring": "^1.1.1",
     "chalk": "^5.2.0",
     "commander": "^10.0.1",
     "gradient-string": "^2.0.2",
     "inquirer": "^9.2.6",
+    "interflex-internal": "latest",
     "jiti": "^1.18.2",
     "open": "^9.1.0",
     "ora": "^6.3.1",

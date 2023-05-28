@@ -1,39 +1,12 @@
 {
   "en": {
-    "h": {
-      "hello": "Hi, {name}!",
-      "bye": "Bye, {name}!"
-    },
-    "test": {
-      "1": "First test {age} {date}",
-      "2": "Second test!"
-    },
-    "footer": {
-      "right": "All rights reserved",
-      "left": "Lmao {num}",
-      "middle": "Test?"
-    }
-  },
-  "no": {
-    "h": {
-      "hello": "Hei, {name}!"
-    },
-    "test": {
-      "1": "Første test",
-      "2": "Andre test"
-    }
+    "title": "Hello, {name}!",
+    "subtitle": "I'm a smaller message",
+    "clickme": "Click me :)"
   },
   "pl": {
-    "h": {
-      "hello": "Cześć, {name}!",
-      "bye": "Żegnaj, {name}!"
-    },
-    "test": {
-      "2": "Drugi test"
-    },
-    "footer": {
-      "right": "Wszystkie prawa zastrzeżone",
-      "left": "Lmao {num} :DDD"
-    }
+    "title": "Witaj, {name}!",
+    "subtitle": "Jestem mniejszą wiadomością",
+    "clickme": "Kliknij mnie :)"
   }
 }

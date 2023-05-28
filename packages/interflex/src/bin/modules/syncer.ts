@@ -8,10 +8,9 @@ import {
 } from "../utils.js";
 import ora from "ora";
 import { getTranslationsWithProject } from "../api.js";
-import { LanguageTranslations, Translations } from "../../shared/types.js";
+import { Translation, Translations } from "../../shared/types.js";
 import path from "path";
 import fs from "fs";
-import chalk from "chalk";
 import { SupportedLanguage, VariableType } from "interflex-internal";
 import { INTERFLEX_TS_FILE } from "../consts.js";
 
@@ -63,7 +62,7 @@ export const sync = async () => {
             nestedObj[currentKey] = value[language];
           } else {
             nestedObj[currentKey] = nestedObj[currentKey] || {};
-            nestedObj = nestedObj[currentKey] as LanguageTranslations;
+            nestedObj = nestedObj[currentKey] as Translation;
           }
         }
 
@@ -105,7 +104,7 @@ export const sync = async () => {
   fs.writeFileSync(path.join(i18nPath, "translations.json"), json);
   fs.writeFileSync(
     path.join(i18nPath, "interflex.ts"),
-    INTERFLEX_TS_FILE(variables)
+    INTERFLEX_TS_FILE(variables, project.languages[0])
   );
 
   spinner.succeed("Generated translation files.");

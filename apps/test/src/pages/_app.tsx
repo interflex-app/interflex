@@ -1,6 +1,7 @@
 import "@interflex-app/ui/globals.css";
 import type { AppProps } from "next/app";
 import { Inter as FontSans } from "next/font/google";
+import { withInterflex } from "../../i18n/interflex";
 
 const font = FontSans({
   variable: "--font-sans",
@@ -25,4 +26,4 @@ const App = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-export default App;
+export default withInterflex(App);
