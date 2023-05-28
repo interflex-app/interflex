@@ -12,7 +12,7 @@ import { Translation, Translations } from "../../shared/types.js";
 import path from "path";
 import fs from "fs";
 import { SupportedLanguage, VariableType } from "interflex-internal";
-import { INTERFLEX_TS_FILE } from "../consts.js";
+import { INTERFLEX_TS_FILE, NEXT_INTERFLEX_CONFIG_JS_FILE } from "../consts.js";
 
 export const sync = async () => {
   const { authed, token } = checkAuth();
@@ -105,6 +105,13 @@ export const sync = async () => {
   fs.writeFileSync(
     path.join(i18nPath, "interflex.ts"),
     INTERFLEX_TS_FILE(variables, project.languages[0])
+  );
+  fs.writeFileSync(
+    path.join(i18nPath, "next-interflex-config.mjs"),
+    NEXT_INTERFLEX_CONFIG_JS_FILE(
+      project.languages.map((l) => `"${l}"`).join(", "),
+      project.languages[0]
+    )
   );
 
   spinner.succeed("Generated translation files.");

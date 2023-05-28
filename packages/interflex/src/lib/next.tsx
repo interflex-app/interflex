@@ -1,10 +1,21 @@
 import { SupportedLanguage } from "interflex-internal";
 import { Translations } from "../shared/types.js";
 import { VariableTsType } from "./index.js";
-import { type NextComponentType } from "next";
+import { NextConfig, type NextComponentType } from "next";
 import { createContext, useContext } from "react";
 import { NextRouter, useRouter } from "next/router.js";
 import { AppPropsType } from "next/dist/shared/lib/utils.js";
+
+export const nextInterflexConfigFactory =
+  (locales: SupportedLanguage[], defaultLocale: SupportedLanguage) =>
+  (nextConfig: NextConfig) => ({
+    ...nextConfig,
+    i18n: {
+      ...nextConfig.i18n,
+      locales,
+      defaultLocale,
+    },
+  });
 
 interface InterflexClientInterface<Lang extends `${SupportedLanguage}`> {
   locale: Lang;
@@ -67,7 +78,7 @@ export const generateInterflexClient = <
         } else if (typeof value === "number") {
           realVal = value.toString();
         } else if (typeof value === "object") {
-          realVal = (value as Date).toLocaleDateString();
+          realVal = (value as Date).toLocaleDateString(locale);
         }
 
         translation = translation?.replace(`{${varName}}`, realVal);

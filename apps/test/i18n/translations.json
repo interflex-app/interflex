@@ -2,11 +2,13 @@
   "en": {
     "title": "Hello, {name}!",
     "subtitle": "I'm a smaller message",
-    "clickme": "Click me :)"
+    "clickme": "Click me :)",
+    "showDate": "Today is: {date}."
   },
   "pl": {
     "title": "Witaj, {name}!",
     "subtitle": "Jestem mniejszą wiadomością",
-    "clickme": "Kliknij mnie :)"
+    "clickme": "Kliknij mnie :)",
+    "showDate": "Dzisiaj mamy: {date}."
   }
 }

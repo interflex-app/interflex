@@ -8,7 +8,8 @@ import translations from "./translations.json";
 type I18nKey = InterflexKey<typeof translations>;
 
 type I18nVariables = {
-  "title": { name: string }
+  "title": { name: string };
+  "showDate": { date: Date }
 };
 
 type I18nLanguage = keyof typeof translations;
