@@ -6,38 +6,42 @@ const config: DocsThemeConfig = {
     <span style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
       <div
         style={{
-          border: "1px white solid",
-          backgroundColor: "white",
           borderRadius: "9999px",
         }}
       >
-        <img alt="logo" src="/assets/logo-sm.svg" width="25px" />
+        <img alt="logo" src="/assets/interflex-full.svg" width="25px" />
       </div>
 
-      <span>Interflex</span>
+      <b>Interflex</b>
     </span>
   ),
   project: {
     link: "https://interflex.dev",
     icon: (
-      <div
-        style={{
-          border: "1px white solid",
-          backgroundColor: "white",
-          borderRadius: "9999px",
-        }}
-      >
-        <img alt="logo" src="/assets/logo-sm.svg" width="25px" />
+      <div>
+        <img
+          className="show-light"
+          alt="logo"
+          src="/assets/logo-sm.svg"
+          width="25px"
+        />
+        <img
+          className="show-dark"
+          alt="logo"
+          src="/assets/logo-sm-light.svg"
+          width="25px"
+        />
       </div>
     ),
   },
-  docsRepositoryBase: "https://github.com/interflex-app/interflex",
+  docsRepositoryBase:
+    "https://github.com/interflex-app/interflex/tree/main/apps/docs",
   footer: {
-    text: "Copyright © Interflex.",
+    text: <span>Copyright © {new Date().getFullYear()} Interflex.</span>,
   },
   useNextSeoProps() {
     return {
-      titleTemplate: "%s – Interflex",
+      titleTemplate: "%s - Interflex Docs",
     };
   },
 };

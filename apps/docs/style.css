@@ -1,0 +1,15 @@
+.show-light {
+  display: none;
+}
+
+.show-dark {
+  display: none;
+}
+
+html.light .show-light {
+  display: block !important;
+}
+
+html.dark .show-dark {
+  display: block !important;
+}
