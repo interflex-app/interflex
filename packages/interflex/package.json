@@ -48,9 +48,9 @@
   "devDependencies": {
     "@types/gradient-string": "^1.1.2",
     "@types/inquirer": "^9.0.3",
-    "@types/node": "^20.1.0",
-    "@types/react": "^18.0.22",
-    "@types/react-dom": "^18.0.7",
+    "@types/node": "^20.2.5",
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4",
     "next": "^13.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

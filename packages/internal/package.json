@@ -12,11 +12,11 @@
     "build": "tsup"
   },
   "devDependencies": {
-    "@types/node": "^20.1.0",
-    "eslint": "^7.32.0",
+    "@types/node": "^20.2.5",
+    "eslint": "^8.41.0",
     "eslint-config-main": "workspace:*",
     "tsconfig": "workspace:*",
-    "typescript": "^5.0.4",
-    "tsup": "^6.7.0"
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.4"
   }
 }
