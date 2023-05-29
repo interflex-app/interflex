@@ -46,7 +46,7 @@ ${variables}
 
 type I18nLanguage = keyof typeof translations;
 
-const { useI18n, withInterflex } = generateInterflexClient<
+const { useI18n, withInterflex, InterflexProvider } = generateInterflexClient<
   I18nKey,
   I18nVariables,
   I18nLanguage
@@ -55,6 +55,7 @@ const { useI18n, withInterflex } = generateInterflexClient<
 export {
   useI18n,
   withInterflex,
+  InterflexProvider,
   type I18nKey,
   type I18nVariables,
   type I18nLanguage,

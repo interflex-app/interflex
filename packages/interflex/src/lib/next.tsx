@@ -2,7 +2,7 @@ import { SupportedLanguage } from "interflex-internal";
 import { Translations } from "../shared/types.js";
 import { VariableTsType } from "./index.js";
 import { NextConfig, type NextComponentType } from "next";
-import { createContext, useContext } from "react";
+import { PropsWithChildren, createContext, useContext } from "react";
 import { NextRouter, useRouter } from "next/router.js";
 import { AppPropsType } from "next/dist/shared/lib/utils.js";
 
@@ -42,6 +42,19 @@ export const generateInterflexClient = <
   options: InterflexClientOptions<Lang>
 ) => {
   const InterflexContext = createInterflexContext<Lang>();
+
+  const InterflexProvider: React.FC<
+    PropsWithChildren<{
+      locale: Lang;
+      onChangeLocale: (newLocale: Lang) => Promise<void>;
+    }>
+  > = ({ children, locale, onChangeLocale }) => {
+    return (
+      <InterflexContext.Provider value={{ locale, onChangeLocale }}>
+        {children}
+      </InterflexContext.Provider>
+    );
+  };
 
   const useI18n = () => {
     const interflexContext = useContext(InterflexContext);
@@ -105,19 +118,16 @@ export const generateInterflexClient = <
       const router = useRouter();
 
       return (
-        <InterflexContext.Provider
-          value={{
-            locale:
-              (router.locale as Lang | undefined) || options.defaultLocale,
-            onChangeLocale: async (newLocale) => {
-              await router.push(router.asPath, router.asPath, {
-                locale: newLocale,
-              });
-            },
+        <InterflexProvider
+          locale={(router.locale as Lang | undefined) || options.defaultLocale}
+          onChangeLocale={async (newLocale) => {
+            await router.push(router.asPath, router.asPath, {
+              locale: newLocale,
+            });
           }}
         >
           <AppOrPage {...props} />
-        </InterflexContext.Provider>
+        </InterflexProvider>
       );
     };
 
@@ -127,5 +137,6 @@ export const generateInterflexClient = <
   return {
     useI18n,
     withInterflex,
+    InterflexProvider,
   };
 };

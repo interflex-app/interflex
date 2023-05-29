@@ -32,7 +32,7 @@ The `useI18n` hook can be used to access the translations in your React componen
 Here is an example of how to use it:
 
 ```tsx copy
-import { useI18n } from "interflex";
+import { useI18n } from "~/i18n/interflex";
 
 const Component = () => {
   const { t, locale, changeLocale } = useI18n();
@@ -52,7 +52,7 @@ const Component = () => {
 If you want to use variables in your translations, you can do so by passing them as the second argument to the `t` function:
 
 ```tsx copy
-import { useI18n } from "interflex";
+import { useI18n } from "~/i18n/interflex";
 
 const Component = () => {
   const { t } = useI18n();

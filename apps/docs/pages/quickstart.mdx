@@ -6,6 +6,8 @@ This is the fastest way to get your project using Interflex up and running. Befo
 
 For now, Interflex supports only NextJS applications (with app router support coming soon!). Please make sure you are using exactly that.
 
+## Project setup
+
 <Steps>
     ### Install Interflex
 
@@ -87,7 +89,7 @@ For now, Interflex supports only NextJS applications (with app router support co
 
     After changing the NextJS config file, you have to use the `InterflexProvider` in your app. Wrap your app export with it like that:
 
-    ```tsx filename="_app.tsx"
+    ```tsx filename="pages/_app.tsx"
     import { withInterflex } from "~/i18n/interflex";
 
     // ...
@@ -99,7 +101,7 @@ For now, Interflex supports only NextJS applications (with app router support co
 
     You can now use the hooks and methods provided by Interflex. For example, you can use the `useI18n` hook:
 
-    ```tsx filename="index.tsx"
+    ```tsx filename="pages/index.tsx"
     import { useI18n } from "~/i18n/interflex";
     import { type NextPage } from "next";
 
