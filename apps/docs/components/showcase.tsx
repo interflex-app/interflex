@@ -40,7 +40,7 @@ const Showcase: React.FC = () => {
 
       <div>
         <LandingCard idx={3} />
-        <p>3. You're good to go!</p>
+        <p>3. You&apos;re good to go!</p>
       </div>
     </div>
   );

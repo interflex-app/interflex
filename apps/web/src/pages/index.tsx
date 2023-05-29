@@ -65,7 +65,9 @@ const Index: NextPageWithLayout = () => {
 
           <div>
             <LandingCard idx={3} />
-            <h1 className="mt-6 text-xl sm:text-2xl">3. You're good to go!</h1>
+            <h1 className="mt-6 text-xl sm:text-2xl">
+              3. You&apos;re good to go!
+            </h1>
           </div>
         </div>
       </div>
