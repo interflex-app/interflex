@@ -24,7 +24,7 @@ const HomeLayout: React.FC<
     <div>
       <Navbar />
 
-      <div className="mt-12 w-full">
+      <div className="mt-12 w-full px-8 md:px-14">
         {!!data || !authProtected ? (
           children
         ) : (

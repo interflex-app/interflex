@@ -5,6 +5,11 @@ import { ArrowRight } from "lucide-react";
 import { type NextPageWithLayout } from "./_app";
 import HomeLayout from "../layouts/home-layout";
 import { signIn, useSession } from "next-auth/react";
+import dynamic from "next/dynamic.js";
+
+const LandingCard = dynamic(() => import("../components/landing-card"), {
+  ssr: false,
+});
 
 const Index: NextPageWithLayout = () => {
   const { data } = useSession();
@@ -40,9 +45,29 @@ const Index: NextPageWithLayout = () => {
       <div className="mt-48">
         <h2 className="text-3xl">Manage translations with ease</h2>
         <p className="mt-4">
-          Use NPM package and our dashboard. Everything is typesafe and easy to
-          use.
+          Create, synchronize and utilize your translations with ease.
         </p>
+
+        <div className="mt-12 flex flex-col items-center justify-center gap-8 lg:flex-row">
+          <div>
+            <LandingCard idx={1} />
+            <h1 className="mt-6 text-xl sm:text-2xl">
+              1. Create your translations
+            </h1>
+          </div>
+
+          <div>
+            <LandingCard idx={2} />
+            <h1 className="mt-6 text-xl sm:text-2xl">
+              2. Synchronize the values
+            </h1>
+          </div>
+
+          <div>
+            <LandingCard idx={3} />
+            <h1 className="mt-6 text-xl sm:text-2xl">3. You're good to go!</h1>
+          </div>
+        </div>
       </div>
     </div>
   );
