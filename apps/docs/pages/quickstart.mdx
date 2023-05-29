@@ -1,0 +1,61 @@
+import { Steps } from "nextra-theme-docs";
+
+# Quick Start
+
+This is the fastest way to get your project using Interflex up and running. Before running the commands below, make sure you're in your project's working directory.
+
+For now, Interflex supports only NextJS applications. Please make sure you are using exactly that.
+
+<Steps>
+    ### Install Interflex
+
+    Install the `interflex` package in your project:
+
+    ```bash copy
+    npm install interflex
+    ```
+
+    ### Sign in to Interflex
+
+    Use the Interflex CLI to sign in to your account:
+
+    ```bash copy
+    npx interflex login
+    ```
+
+    The command above will open a browser window. You'll have to click the "Authorize" button to sign in. After signing in, you should see a success message in your terminal:
+
+    ```
+    ✔ Signed in. You can now use the CLI.
+    ```
+
+    ### Link your project
+
+    Use the Interflex CLI to link your project:
+
+    ```bash copy
+    npx interflex link
+    ```
+
+    ### Create the `interflex.config.ts` file
+
+    Now, you have to configure Interflex in your app. The config file will tell the CLI how to handle your translations. Please create a file called `interflex.config.ts` in the root of your project and paste the following code:
+
+    ```ts copy
+    import { defineConfig } from "interflex";
+
+    export default defineConfig({
+        directory: "i18n",
+    });
+    ```
+
+    The command above will show you a list with all your projects. You will have to select the one you will be using in your app.
+
+    ### Synchronize the translations
+
+    Use the Interflex CLI to synchronize the translations:
+
+    ```bash copy
+    npx interflex sync
+    ```
+</Steps>
