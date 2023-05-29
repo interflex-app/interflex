@@ -18,19 +18,22 @@ import dynamic from "next/dynamic";
 import TeamSwitcher from "./team-switcher";
 import { useIsApp } from "../hooks/use-is-app";
 import { useTeam } from "../providers/team-provider";
+import { useRouter } from "next/router";
 
 const Logo = dynamic(() => import("./logo"), { ssr: false });
 
 const Navbar: React.FC = () => {
+  const router = useRouter();
+
   const { data } = useSession();
 
   const { clearTeam } = useTeam();
   const isApp = useIsApp();
 
   return (
-    <nav className="sticky top-0 flex items-center justify-between bg-background px-8 py-12 md:px-14 md:py-16">
+    <nav className="sticky top-0 z-10 flex items-center justify-between bg-background px-8 py-12 md:px-14 md:py-16">
       <div className="flex items-center gap-12">
-        <Link href={isApp ? "/app" : "/"}>
+        <Link href={isApp && router.asPath !== "/app" ? "/app" : "/"}>
           <div className="block md:hidden">
             <Logo type="small" />
           </div>

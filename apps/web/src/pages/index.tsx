@@ -69,6 +69,18 @@ const Index: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
+
+      <div className="mt-32">
+        <h2 className="text-3xl">Our pricing</h2>
+        <p className="mt-4">
+          We have a free plan for everyone. If you need more, we offer a
+          commercial plan.
+        </p>
+
+        <p className="mt-12 text-2xl text-gray-500">
+          Pricing coming soon! For now the app is available 100% for free.
+        </p>
+      </div>
     </div>
   );
 };
