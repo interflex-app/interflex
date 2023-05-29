@@ -1,19 +1,25 @@
-const CARD_WIDTH = 0.3 * 839;
-const CARD_HEIGHT = 0.3 * 461;
+import Image from "next/image";
+
+const CARD_WIDTH = 0.6 * 839;
+const CARD_HEIGHT = 0.6 * 461;
 
 const LandingCard: React.FC<{ idx: number }> = ({ idx }) => {
   return (
     <div className="my-4">
-      <img
+      <Image
         className="show-light"
         alt=""
         src={`/assets/cards/card${idx}-light.svg`}
+        width={CARD_WIDTH}
+        height={CARD_HEIGHT}
       />
 
-      <img
+      <Image
         className="show-dark"
         alt=""
         src={`/assets/cards/card${idx}-dark.svg`}
+        width={CARD_WIDTH}
+        height={CARD_HEIGHT}
       />
     </div>
   );
