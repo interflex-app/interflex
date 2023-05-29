@@ -78,9 +78,7 @@ For now, Interflex supports only NextJS applications. Please make sure you are u
         // ...
     };
 
-    const config = defineNextInterflexConfig(nextConfig);
-
-    export default config;
+    export default defineNextInterflexConfig(nextConfig);
     ```
 
     After changing the NextJS config file, you have to use the `InterflexProvider` in your app. Wrap your app export with it like that:
