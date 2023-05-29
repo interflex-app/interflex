@@ -41,7 +41,7 @@ For now, Interflex supports only NextJS applications. Please make sure you are u
 
     Now, you have to configure Interflex in your app. The config file will tell the CLI how to handle your translations. Please create a file called `interflex.config.ts` in the root of your project and paste the following code:
 
-    ```ts copy
+    ```ts filename="interflex.config.ts" copy
     import { defineConfig } from "interflex";
 
     export default defineConfig({
@@ -57,5 +57,33 @@ For now, Interflex supports only NextJS applications. Please make sure you are u
 
     ```bash copy
     npx interflex sync
+    ```
+
+    The command above will download all the translations from your project and save them in the directory you specified in the config file. It will create 3 files:
+    - `translations.json` - contains all the translations in JSON format
+    - `interflex.ts` - exports all the needed types and functions
+    - `next-interflex-config.mjs` - contains the `defineNextInterflexConfig` wrapper function
+
+    ### Prepare your app
+
+    Now, you have to prepare your app to use Interflex.
+
+    Firstly, you have to use the config wrapper described above. Rename your `next.config.js` file to `next.config.mjs`. Then, (assuming your directory is called `i18n`) use the wrapper function like that:
+
+    ```js filename="next.config.mjs"
+    import defineNextInterflexConfig from "./i18n/next-interflex-config.mjs";
+
+    /** @type {import('next').NextConfig} */
+    const nextConfig = defineNextInterflexConfig({
+        // ...
+    });
+
+    export default nextConfig;
+    ```
+
+    After changing the NextJS config file, you have to use the `InterflexProvider` in your app. Wrap your app export with it like that:
+
+    ```tsx filename="_app.tsx"
+    export default withInterflex(App);
     ```
 </Steps>
