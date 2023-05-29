@@ -81,23 +81,15 @@ For now, Interflex supports only NextJS applications. Please make sure you are u
     export default nextConfig;
     ```
 
-    <Tabs items={["Pages Directory", "App Directory"]}>
-        <Tab>
-        After changing the NextJS config file, you have to use the `InterflexProvider` in your app. Wrap your app export with it like that:
+    After changing the NextJS config file, you have to use the `InterflexProvider` in your app. Wrap your app export with it like that:
 
-        ```tsx filename="_app.tsx"
-        import { withInterflex } from "~/i18n/interflex";
+    ```tsx filename="_app.tsx"
+    import { withInterflex } from "~/i18n/interflex";
 
-        // ...
+    // ...
 
-        export default withInterflex(App);
-        ```
-        </Tab>
-
-        <Tab>
-        Coming soon!
-        </Tab>
-    </Tabs>
+    export default withInterflex(App);
+    ```
 
     ### You're good to go!
 
