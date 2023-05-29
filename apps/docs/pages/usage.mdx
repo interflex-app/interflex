@@ -1,1 +1,73 @@
+import { Callout } from "nextra-theme-docs";
+
 # Usage
+
+## Synchronizing the translations
+
+To synchronize the translations, run the following command:
+
+```bash copy
+npx interflex sync
+```
+
+Besides generating the files described in the [quick start section](/quickstart#synchronize-the-translations), the CLI tool will check for changes in your project translations and settings and it will recreate the i18n files with the correct data.
+
+## `interflex.ts` file exports
+
+The `interflex.ts` file exports the following functions:
+
+- `useI18n` - a React hook that can be used to access the translations in your React components (more details in the [`useI18n` section](/usage#usei18n))
+- `withInterflex` - a wrapper for your NextJS application that wraps it with the [`InterflexProvider`](/interflex-provider)
+
+It also exports a few types:
+
+- `I18nKey` - a type that represents a translation key
+- `I18nVariables` - a type that represents the variables that must be passed to a certain translation
+- `I18nLanguage` - a type that represents a language available in your project
+
+## `useI18n`
+
+The `useI18n` hook can be used to access the translations in your React components. It can also be used to change or retrieve the current language of the application.
+
+Here is an example of how to use it:
+
+```tsx copy
+import { useI18n } from "interflex";
+
+const Component = () => {
+  const { t, locale, changeLocale } = useI18n();
+
+  return (
+    <div>
+      <h1>{t("header")}</h1>
+      <p>Current language: {locale}</p>
+      <button onClick={() => changeLocale("en")}>Change language</button>
+    </div>
+  );
+};
+```
+
+### Translations with variables
+
+If you want to use variables in your translations, you can do so by passing them as the second argument to the `t` function:
+
+```tsx copy
+import { useI18n } from "interflex";
+
+const Component = () => {
+  const { t } = useI18n();
+
+  return (
+    <div>
+      <h1>{t("greeting", { name: "John" })}<h1>
+    </div>
+  );
+};
+```
+
+<Callout type="info">
+  Interflex CLI will retrieve the variables that have been configured in the web
+  dashboard. It will then generate the correct types for the `t` function. You
+  will receive type errors if you try to pass variables that are not defined in
+  the web dashboard (or if you don't pass a required variable).
+</Callout>

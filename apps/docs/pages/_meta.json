@@ -1,5 +1,18 @@
 {
+  "-- Introduction": {
+    "type": "separator",
+    "title": "Introduction"
+  },
   "index": "Introduction",
   "quickstart": "Quick Start",
-  "usage": "Usage"
+  "-- Usage": {
+    "type": "separator",
+    "title": "Usage"
+  },
+  "usage": "Usage",
+  "-- Advanced": {
+    "type": "separator",
+    "title": "Advanced"
+  },
+  "interflex-provider": "InterflexProvider"
 }
