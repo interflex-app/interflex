@@ -1,9 +1,11 @@
 import defineNextInterflexConfig from "./i18n/next-interflex-config.mjs";
 
 /** @type {import('next').NextConfig} */
-const nextConfig = defineNextInterflexConfig({
+const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@interflex-app/ui", "interflex"],
-});
+};
 
-export default nextConfig;
+const config = defineNextInterflexConfig(nextConfig);
+
+export default config;
