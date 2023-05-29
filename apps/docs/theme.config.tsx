@@ -3,12 +3,8 @@ import { DocsThemeConfig } from "nextra-theme-docs";
 
 const config: DocsThemeConfig = {
   logo: (
-    <span style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-      <div
-        style={{
-          borderRadius: "9999px",
-        }}
-      >
+    <span className="flex items-center gap-4">
+      <div>
         <img alt="logo" src="/assets/interflex-full.svg" width="25px" />
       </div>
 
