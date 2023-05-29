@@ -9,14 +9,14 @@ Here is an example of how to use the `InterflexProvider` component:
 ```tsx filename="pages/_app.tsx"
 import { useRouter } from "next/router";
 import type { AppProps } from "next/app";
-import { InterflexProvider, type Lang } from "~/i18n/interflex";
+import { InterflexProvider, type I18nLanguage } from "~/i18n/interflex";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
   return (
     <InterflexProvider
-      locale={router.locale as Lang}
+      locale={router.locale as I18nLanguage}
       onChangeLocale={async (newLocale) => {
         // Do something when the locale changes.
         // ...

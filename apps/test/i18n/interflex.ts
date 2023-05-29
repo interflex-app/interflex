@@ -8,13 +8,13 @@ import translations from "./translations.json";
 type I18nKey = InterflexKey<typeof translations>;
 
 type I18nVariables = {
-  title: { name: string };
-  showDate: { date: Date };
+  "title": { name: string };
+  "showDate": { date: Date }
 };
 
 type I18nLanguage = keyof typeof translations;
 
-const { useI18n, withInterflex } = generateInterflexClient<
+const { useI18n, withInterflex, InterflexProvider } = generateInterflexClient<
   I18nKey,
   I18nVariables,
   I18nLanguage
@@ -23,6 +23,7 @@ const { useI18n, withInterflex } = generateInterflexClient<
 export {
   useI18n,
   withInterflex,
+  InterflexProvider,
   type I18nKey,
   type I18nVariables,
   type I18nLanguage,
