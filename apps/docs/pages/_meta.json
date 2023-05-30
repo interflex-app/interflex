@@ -4,7 +4,7 @@
     "title": "Introduction"
   },
   "index": "Introduction",
-  "quickstart": "Quick Start",
+  "quick-start": "Quick Start",
   "-- Usage": {
     "type": "separator",
     "title": "Usage"
