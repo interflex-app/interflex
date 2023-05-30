@@ -6,4 +6,4 @@ const nextConfig = {
   transpilePackages: ["@interflex-app/ui", "interflex"],
 };
 
-export default defineNextInterflexConfig(nextConfig);
+export default nextConfig;
